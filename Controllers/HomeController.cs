@@ -20,6 +20,10 @@ namespace StoryGuardian.Controllers
 
         public IActionResult Index()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Story");
+            }
             return View();
         }
 

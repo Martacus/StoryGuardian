@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using StoryGuardian.Models;
+using StoryGuardian.Models.Story;
 
 namespace StoryGuardian.Data
 {
@@ -14,6 +16,8 @@ namespace StoryGuardian.Data
             : base(options)
         {
         }
+
+        public DbSet<StoryModel> Stories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

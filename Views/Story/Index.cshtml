@@ -1,0 +1,51 @@
+﻿@model StoryGuardian.Models.Story.MainStoryModel
+@using StoryGuardian.Models.Story;
+
+@{
+    ViewData["Title"] = "Index";
+ Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<partial name="_AddStoryModal" model="@(new StoryModel())" />
+<div class="row">
+    <div class="card col-md-12">
+        <div class="card-header">
+            <h1 class="card-title">Stories</h1>
+            <button class="btn btn-primary" style="" onclick="openAddStoryModal()">New Story</button>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                @foreach (var story in Model.Stories)
+                {
+                    <div class="col-md-2">
+                        <div class="card story-card">
+                            <a href="/k">
+                                <span>
+                                    <img class="card-img-top" src="@(story.ImageLocation == null ? @Url.Content("\\images\\default-story-image.jpg") : @Url.Content(story.ImageLocation))" alt="" style="">
+                                </span>
+                                <div class="card-body" style="text-align: center; vertical-align: middle;">
+                                    <h5 class="card-title" style="width: 100%; height: 100%; vertical-align: middle;">@story.Name</h5>
+                                    @*<p class="card-text">@story.Description</p>*@
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+
+<script>
+    function openAddStoryModal() {
+        $('#addStoryModal').modal('toggle');
+    }
+
+    function openChangeImage() {
+        $('#changeImageModal').modal('toggle');
+    }
+</script>

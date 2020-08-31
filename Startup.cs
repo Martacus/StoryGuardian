@@ -44,9 +44,9 @@ namespace StoryGuardian
             services.Configure<IdentityOptions>(options =>
             {
                 // Password settings.
-                options.Password.RequireDigit = false;
+                options.Password.RequireDigit = true;
                 options.Password.RequireLowercase = true;
-                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = true;
                 options.Password.RequiredLength = 6;
                 options.Password.RequiredUniqueChars = 1;
@@ -72,10 +72,12 @@ namespace StoryGuardian
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
                 options.SlidingExpiration = true;
             });
+
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider services)
         {
             if (env.IsDevelopment())
             {
@@ -103,6 +105,37 @@ namespace StoryGuardian
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
+
+            CreateUserRoles(services).Wait();
+        }
+
+        private async Task CreateUserRoles(IServiceProvider serviceProvider)
+        {
+            var _roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var _userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+            IdentityResult roleResult;
+
+            var roleCheck = await _roleManager.RoleExistsAsync("Admin");
+            if (!roleCheck)
+            {
+
+                roleResult = await _roleManager.CreateAsync(new IdentityRole("Admin"));
+            }
+
+            roleCheck = await _roleManager.RoleExistsAsync("User");
+            if (!roleCheck)
+            {
+
+                roleResult = await _roleManager.CreateAsync(new IdentityRole("User"));
+            }
+
+            var user = new IdentityUser { UserName = "Martacus", Email = "martvdham@gmail.com" };
+            var result = await _userManager.CreateAsync(user, "StoryGuardian1999");
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, "Admin");
+            }
         }
     }
 }

@@ -19,8 +19,8 @@ namespace StoryGuardian.Areas.Identity
                     options.UseSqlServer(
                         context.Configuration.GetConnectionString("StoryGuardianDbContextConnection")));
 
-                services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                    .AddEntityFrameworkStores<StoryGuardianDbContext>();
+                services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+                    .AddRoles<IdentityRole>().AddEntityFrameworkStores<StoryGuardianDbContext>();
             });
         }
     }
