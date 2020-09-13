@@ -3,7 +3,6 @@ plugins {
 }
 
 group 'com.guardian'
-artifact 'custodian'
 version '1.0-SNAPSHOT'
 
 repositories {

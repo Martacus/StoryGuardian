@@ -1,0 +1,3 @@
+rootProject.name = 'com.guardian'
+include 'gaia'
+include 'custodian'
