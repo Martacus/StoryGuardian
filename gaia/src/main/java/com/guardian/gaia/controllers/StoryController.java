@@ -8,11 +8,9 @@ import com.guardian.gaia.util.StoryDTOMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,23 +25,39 @@ public class StoryController {
         this.storyMapper = storyMapper;
     }
 
-    @GetMapping("/story")
-    @ResponseBody
-    public List<Story> getAllStories(){
-        return storyService.getStoryList().stream()
-                .map(storyMapper::convertToDto)
-                .collect(Collectors.toList());
-    }
 
+    //Get
     @GetMapping("/story/{id}")
+    @ResponseBody
     public Story getStory(int id){
         return new Story();
     }
 
+    @GetMapping("/story/user/{userid}")
+    @ResponseBody
+    public List<Story> getAllStories(@RequestBody String userid){
+        return storyService.getStoryList(userid).stream()
+                .map(storyMapper::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    //Post
     @PostMapping("/story")
     @ResponseStatus(HttpStatus.OK)
-    public void PostStory(){
-
+    public void PostStory(@RequestBody StoryDTO storyDto){
+        Story story = storyMapper.convertToEntity(storyDto);
+        storyService.saveStory(story);
     }
+
+    //Put
+    @PutMapping("/story")
+    @ResponseStatus(HttpStatus.OK)
+    public void PutStory(@RequestBody StoryDTO storyDto){
+        Story story = storyMapper.convertToEntity(storyDto);
+        storyService.editStory(story);
+    }
+
+
+
 
 }

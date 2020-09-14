@@ -20,13 +20,11 @@ public class StoryDTOMapper<T, J> {
     }
 
     public J convertToDto(T from) {
-        J postDto = modelMapper.map(from, dtoClass);
-        return postDto;
+        return modelMapper.map(from, dtoClass);
     }
 
-    public T convertToEntity(J from) throws ParseException {
-        T post = modelMapper.map(from, modelClass);
-        return post;
+    public T convertToEntity(J from){
+        return modelMapper.map(from, modelClass);
     }
 
 }

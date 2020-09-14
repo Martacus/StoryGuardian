@@ -9,10 +9,18 @@ import java.util.List;
 @Service
 public class StoryService {
 
-    public List<Story> getStoryList(){
+    public List<Story> getStoryList(String userid){
         List<Story> storyList = new ArrayList<>();
         storyList.add(new Story());
         return storyList;
+    }
+
+    public void saveStory(Story story) {
+
+    }
+
+    public void editStory(Story story) {
+
     }
 
 }
