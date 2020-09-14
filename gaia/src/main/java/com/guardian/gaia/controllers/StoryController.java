@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class StoryController {
@@ -30,9 +31,8 @@ public class StoryController {
     @ResponseBody
     public List<Story> getAllStories(){
         return storyService.getStoryList().stream()
-                .map(s -> storyMapper.convertToDto(s, StoryDTO.class))
+                .map(storyMapper::convertToDto)
                 .collect(Collectors.toList());
-        return storyService.getStoryList();
     }
 
     @GetMapping("/story/{id}")

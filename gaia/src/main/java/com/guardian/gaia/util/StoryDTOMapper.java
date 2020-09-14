@@ -7,22 +7,25 @@ import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
 
-@Component
 public class StoryDTOMapper<T, J> {
 
     private final ModelMapper modelMapper;
+    private final Class<T> modelClass;
+    private final Class<J> dtoClass;
 
-    public StoryDTOMapper(ModelMapper modelMapper) {
+    public StoryDTOMapper(ModelMapper modelMapper, Class<T> modelClass, Class<J> dtoClass) {
         this.modelMapper = modelMapper;
+        this.modelClass = modelClass;
+        this.dtoClass = dtoClass;
     }
 
-    public J convertToDto(T from, Class<J> to) {
-        J postDto = modelMapper.map(from, to);
+    public J convertToDto(T from) {
+        J postDto = modelMapper.map(from, dtoClass);
         return postDto;
     }
 
-    public T convertToEntity(J from, Class<T> to) throws ParseException {
-        T post = modelMapper.map(from, to);
+    public T convertToEntity(J from) throws ParseException {
+        T post = modelMapper.map(from, modelClass);
         return post;
     }
 
