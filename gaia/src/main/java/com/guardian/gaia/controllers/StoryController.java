@@ -35,7 +35,7 @@ public class StoryController {
 
     @GetMapping("/story/user/{userid}")
     @ResponseBody
-    public List<Story> getAllStories(@RequestBody String userid){
+    public List<Story> getAllStories(@PathVariable String userid){
         return storyService.getStoryList(userid).stream()
                 .map(storyMapper::convertToDto)
                 .collect(Collectors.toList());
