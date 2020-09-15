@@ -4,7 +4,7 @@ package com.guardian.gaia.controllers;
 import com.guardian.custodian.Story;
 import com.guardian.gaia.dto.StoryDTO;
 import com.guardian.gaia.service.StoryService;
-import com.guardian.gaia.util.StoryDTOMapper;
+import com.guardian.gaia.util.DTOMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
 public class StoryController {
 
     private final StoryService storyService;
-    private final StoryDTOMapper<Story, StoryDTO> storyMapper;
+    private final DTOMapper<Story, StoryDTO> storyMapper;
 
-    public StoryController(StoryService storyService, StoryDTOMapper<Story, StoryDTO> storyMapper) {
+    public StoryController(StoryService storyService, DTOMapper<Story, StoryDTO> storyMapper) {
         this.storyService = storyService;
         this.storyMapper = storyMapper;
     }

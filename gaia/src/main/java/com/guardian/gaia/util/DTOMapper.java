@@ -7,13 +7,13 @@ import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
 
-public class StoryDTOMapper<T, J> {
+public class DTOMapper<T, J> {
 
     private final ModelMapper modelMapper;
     private final Class<T> modelClass;
     private final Class<J> dtoClass;
 
-    public StoryDTOMapper(ModelMapper modelMapper, Class<T> modelClass, Class<J> dtoClass) {
+    public DTOMapper(ModelMapper modelMapper, Class<T> modelClass, Class<J> dtoClass) {
         this.modelMapper = modelMapper;
         this.modelClass = modelClass;
         this.dtoClass = dtoClass;
