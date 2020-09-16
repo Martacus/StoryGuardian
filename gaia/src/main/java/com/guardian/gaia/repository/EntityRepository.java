@@ -1,11 +1,11 @@
 package com.guardian.gaia.repository;
 
-import com.guardian.custodian.Story;
+import com.guardian.custodian.Entity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
 @Repository
-public interface StoryRepository extends JpaRepository<Story, UUID> {
+public interface EntityRepository extends JpaRepository<Entity, UUID> {
 }

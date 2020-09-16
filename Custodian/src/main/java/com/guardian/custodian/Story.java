@@ -25,4 +25,7 @@ public class Story {
     @Size(max = 160)
     private String description;
 
+    public UUID getId() {
+        return id;
+    }
 }

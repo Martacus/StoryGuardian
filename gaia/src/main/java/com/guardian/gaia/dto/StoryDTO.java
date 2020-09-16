@@ -1,6 +1,12 @@
 package com.guardian.gaia.dto;
 
-import com.guardian.custodian.Story;
+import lombok.Data;
 
-public class StoryDTO extends Story {
+import java.util.UUID;
+
+@Data
+public class StoryDTO{
+    private UUID id;
+    private String name;
+    private String description;
 }

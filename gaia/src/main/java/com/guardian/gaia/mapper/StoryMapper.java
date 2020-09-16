@@ -8,12 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class StoryMapper extends DTOMapper<Story, StoryDTO> {
-
     public StoryMapper(ModelMapper modelMapper) {
         super(modelMapper, Story.class, StoryDTO.class);
     }
-
-
-
-
 }
