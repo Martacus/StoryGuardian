@@ -22,13 +22,6 @@ public class EntityController {
     public EntityController(EntityService entityService, DTOMapper<Entity, EntityDTO> entityMapper) {
         this.entityService = entityService;
         this.entityMapper = entityMapper;
-
-        Entity entity = new Entity();
-        Entity entity2 = new Entity();
-        entity.setId(UUID.randomUUID());
-        entity2.setId(UUID.randomUUID());
-        entityService.saveEntity(entity);
-        entityService.saveEntity(entity2);
     }
 
 
@@ -49,10 +42,10 @@ public class EntityController {
 
     //POST
     @RequestMapping(value="/entity", headers="Accept=application/json", method=RequestMethod.POST)
-    @ResponseStatus(HttpStatus.OK)
-    public void PostEntity(@RequestBody EntityDTO entityDTO){
+    @ResponseBody
+    public EntityDTO PostEntity(@RequestBody EntityDTO entityDTO){
         Entity entity = entityMapper.convertToEntity(entityDTO);
-        entityService.saveEntity(entity);
+        return entityMapper.convertToDto(entityService.saveEntity(entity));
     }
 
     @RequestMapping(value="/entity/{parentUUID}/link/{childUUID}", headers="Accept=application/json", method=RequestMethod.POST)

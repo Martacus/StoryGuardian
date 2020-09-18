@@ -44,8 +44,8 @@ class GaiaApplicationTests {
 		entity2 = repository.save(entity2);
 		entity = repository.save(entity);
 
-		entity.linkAsParent(entity2);
-		entity2.addChild(entity);
+		//entity.linkAsParent(entity2);
+		//entity2.addChild(entity);
 
 		assertEquals(entity,entity);
 	}

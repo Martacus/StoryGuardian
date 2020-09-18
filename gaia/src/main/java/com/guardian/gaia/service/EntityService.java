@@ -21,8 +21,8 @@ public class EntityService {
         return entityRepository.findAll();
     }
 
-    public void saveEntity(Entity entity) {
-        entityRepository.save(entity);
+    public Entity saveEntity(Entity entity) {
+        return entityRepository.save(entity);
     }
 
     public void editEntity(Entity entity) {
@@ -41,13 +41,16 @@ public class EntityService {
     }
 
     public void linkEntity(UUID parentUUID, UUID childUUID) {
-        Optional<Entity> parent = entityRepository.findById(parentUUID);
-        Optional<Entity> child = entityRepository.findById(childUUID);
+        Optional<Entity> parentOptional = entityRepository.findById(parentUUID);
+        Optional<Entity> childOptional = entityRepository.findById(childUUID);
 
-        if(parent.isPresent() && child.isPresent()){
-            child.get().linkAsParent(parent.get());
-            //entityRepository.save(child.get());
-            entityRepository.save(parent.get());
+        if(parentOptional.isPresent() && childOptional.isPresent()){
+            Entity parent = parentOptional.get();
+            Entity child = childOptional.get();
+
+            child.linkToParent(parent);
+            parent.addChild(child);
+            entityRepository.save(child);
         }
     }
 }
