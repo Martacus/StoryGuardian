@@ -22,7 +22,7 @@
                 </ul>
             </li> -->
             <li>
-                <router-link to="/portal/about">About</router-link>
+                <router-link to="/portal">About</router-link>
             </li>
         </ul>
     </nav>
@@ -65,9 +65,11 @@
 }
 
 .route-view{
-  padding-top: 50px;
-  padding-left: 50px;
-  padding-right: 50px;
+  padding-top: 100px;
+  padding-left: 200px;
+  padding-right: 200px;
+  height: 100%;
+  width: 100%;
 }
 
  .wrapper {
@@ -147,6 +149,32 @@ a, a:hover, a:focus {
 ul ul a {
     font-size: 0.9em !important;
     padding-left: 30px !important;
+}
+
+.row {
+  padding-top: 10px;
+}
+
+.guardian-btn{
+  border-radius: 0px;
+  background-color: #fff;
+  border-color: #dcdcde;
+  
+}
+
+.guardian-btn:hover{
+  color: #fff;
+  background-color: #f6f7f7;
+  border-color: #dcdcde;
+}
+
+.guardian-btn:focus,.guardian-btn:active {
+   outline: none !important;
+   box-shadow: none;
+}
+
+.guardian-btn:active {
+   background-color: #c1c2c2;
 }
 
 @media (max-width: 768px) {
