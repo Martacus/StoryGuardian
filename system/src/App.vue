@@ -28,7 +28,9 @@
     </nav>
 
     <div class="route-view">
-      <router-view/>
+      <div class="container">
+        <router-view/>
+      </div>
     </div>
   </div>
   

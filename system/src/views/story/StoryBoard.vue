@@ -1,6 +1,5 @@
 <template>
-  <div id="container"> 
-    <div class="row">
+  <div class="row">
       <div class="col-md-12">
         <div class="card" style="width: 100%">
           <div class="card-body" style="text-align: center;">
@@ -24,52 +23,33 @@
 
     <div class="row">
 
-      <div class="col-md-3">
-        <router-link to="home" tag="div">
+      <div v-for="(item, i) in stories" :key="i" class="col-md-3">
+        <router-link :to="item.name" tag="div">
           <div class="card" style="width: 100%">
             <div class="card-body" style="text-align: center;">
-              <h1>Story</h1>
+              <h1>{{item.name}}</h1>
             </div>
-          </div>
-        </router-link>
-        
+         </div>
+         </router-link>
       </div>
-
-      <div class="col-md-3">
-        <a>
-          <div class="card" style="width: 100%">
-          <div class="card-body" style="text-align: center;">
-            <h1 class="">Stories</h1>
-          </div>
-        </div>
-        </a>
-      </div>
-
-      <div class="col-md-3">
-        <div class="card" style="width: 100%">
-          <div class="card-body" style="text-align: center;">
-            <h1 class="">Stories</h1>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-3">
-        <div class="card" style="width: 100%">
-          <div class="card-body" style="text-align: center;">
-            <h1 class="">Stories</h1>
-          </div>
-        </div>
-      </div>
-
     </div>
-
-    
-  </div>
 </template>
 
 <script>
   export default {
-    name: 'StoryBoard'
+    name: 'StoryBoard',
+    data() {
+      return {
+        stories: [
+          {
+            name: "story1"
+          },
+          {
+            name: "story2"
+          }
+        ]
+      }
+    }
   } 
 </script>
 
