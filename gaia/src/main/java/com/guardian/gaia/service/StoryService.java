@@ -24,8 +24,8 @@ public class StoryService {
         return storyRepository.findAll();
     }
 
-    public void saveStory(Story story) {
-        storyRepository.save(story);
+    public Story saveStory(Story story) {
+        return storyRepository.save(story);
     }
 
     public void editStory(Story story) {

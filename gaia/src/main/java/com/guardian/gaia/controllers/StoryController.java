@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@CrossOrigin(origins = "http://localhost:8000")
 @Controller
 public class StoryController {
 
@@ -43,10 +44,11 @@ public class StoryController {
 
     //POST
     @RequestMapping(value="/story", headers="Accept=application/json", method=RequestMethod.POST)
-    @ResponseStatus(HttpStatus.OK)
-    public void PostStory(@RequestBody StoryDTO storyDTO){
+    @ResponseBody
+    public StoryDTO PostStory(@RequestBody StoryDTO storyDTO){
         Story story = storyMapper.convertToEntity(storyDTO);
-        storyService.saveStory(story);
+        story = storyService.saveStory(story);
+        return storyMapper.convertToDto(story);
     }
 
     //PUT
