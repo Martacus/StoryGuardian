@@ -1,11 +1,13 @@
 package com.guardian.gaia.controllers;
 
 
+import com.guardian.custodian.Entity;
 import com.guardian.custodian.Story;
 import com.guardian.gaia.dto.StoryDTO;
 import com.guardian.gaia.service.StoryService;
 import com.guardian.gaia.util.DTOMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,7 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "http://localhost:8000")
+@CrossOrigin
 @RestController
 @RequestMapping("/story")
 public class StoryController {
@@ -28,28 +30,35 @@ public class StoryController {
 
 
     //GET
-    @GetMapping("/story/{uuid}")
-    public StoryDTO getStory(@PathVariable UUID uuid){
+    @GetMapping(value="/story/{uuid}", produces = {"application/json"})
+    public ResponseEntity<StoryDTO> getStory(@PathVariable UUID uuid){
         Optional<Story> story = storyService.getById(uuid);
-        return story.map(storyMapper::convertToDto).orElse(null);
+        if(story.isPresent()){
+            return ResponseEntity.ok(story.map(storyMapper::convertToDto).get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
-    @GetMapping("/story/user/{uuid}")
-    public List<StoryDTO> getAllStories(@PathVariable String uuid){
-        return storyService.getStoryList(uuid).stream()
+    @GetMapping(value="/story/user/{uuid}", produces = {"application/json"})
+    public ResponseEntity<List<StoryDTO>> getAllStories(@PathVariable String uuid){
+        return ResponseEntity.ok(
+            storyService.getStoryList(uuid)
+                .stream()
                 .map(storyMapper::convertToDto)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList())
+        );
     }
 
     //POST
-    @PostMapping("/story")
-    public StoryDTO PostStory(@RequestBody StoryDTO storyDTO){
+    @PostMapping(value="/story", produces = {"application/json"})
+    public ResponseEntity<StoryDTO> PostStory(@RequestBody StoryDTO storyDTO){
         Story story = storyMapper.convertToEntity(storyDTO);
         story = storyService.saveStory(story);
-        return storyMapper.convertToDto(story);
+        return ResponseEntity.ok(storyMapper.convertToDto(story));
     }
 
     //PUT
-    @PutMapping("/story")
+    @PutMapping(value="/story")
     @ResponseStatus(HttpStatus.OK)
     public void PutStory(@RequestBody StoryDTO storyDTO){
         Story story = storyMapper.convertToEntity(storyDTO);
@@ -57,7 +66,7 @@ public class StoryController {
     }
     
     //DELETE
-    @DeleteMapping("/story/{uuid}")
+    @DeleteMapping(value="/story/{uuid}")
     @ResponseStatus(HttpStatus.OK)
     public void DeleteStory(@PathVariable UUID uuid){
         storyService.deleteStory(uuid);

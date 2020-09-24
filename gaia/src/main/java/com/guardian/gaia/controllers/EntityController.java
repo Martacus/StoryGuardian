@@ -5,6 +5,7 @@ import com.guardian.gaia.dto.EntityDTO;
 import com.guardian.gaia.service.EntityService;
 import com.guardian.gaia.util.DTOMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +14,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "http://localhost:8000")
+@CrossOrigin
 @RestController
 @RequestMapping("/entity")
 public class EntityController {
@@ -28,26 +29,33 @@ public class EntityController {
 
 
     //GET
-    @GetMapping(value="/{uuid}")
-    public EntityDTO getEntity(@PathVariable UUID uuid){
+    @GetMapping(value="/{uuid}", produces = {"application/json"})
+    public ResponseEntity<EntityDTO> getEntity(@PathVariable UUID uuid){
         Optional<Entity> entity = entityService.getById(uuid);
-        return entity.map(entityMapper::convertToDto).orElse(null);
+        if(entity.isPresent()){
+            return ResponseEntity.ok(entity.map(entityMapper::convertToDto).get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
-    @GetMapping(value="/user/{uuid}")
-    public List<EntityDTO> getAllEntities(@PathVariable String uuid){
-        return entityService.getEntityList(uuid).stream()
+    @GetMapping(value="/user/{uuid}",produces = {"application/json"})
+    public ResponseEntity<List<EntityDTO>> getAllEntities(@PathVariable String uuid){
+        return ResponseEntity.ok(
+            entityService.getEntityList(uuid)
+                .stream()
                 .map(entityMapper::convertToDto)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList())
+        );
     }
 
     //POST
-    @PostMapping("/")
-    public EntityDTO PostEntity(@RequestBody EntityDTO entityDTO){
+    @PostMapping(value="/", produces = {"application/json"})
+    public ResponseEntity<EntityDTO> PostEntity(@RequestBody EntityDTO entityDTO){
         Entity entity = entityMapper.convertToEntity(entityDTO);
-        return entityMapper.convertToDto(entityService.saveEntity(entity));
+        return ResponseEntity.ok(entityMapper.convertToDto(entityService.saveEntity(entity)));
     }
 
-    @PostMapping("/{parentUUID}/link/{childUUID}")
+    @PostMapping(value="/{parentUUID}/link/{childUUID}")
     @ResponseStatus(HttpStatus.OK)
     public void LinkEntityToParentEntity(@PathVariable UUID parentUUID, @PathVariable UUID childUUID){
         entityService.linkEntity(parentUUID, childUUID);
@@ -55,7 +63,7 @@ public class EntityController {
 
 
     //PUT
-    @PutMapping("/")
+    @PutMapping(value="/")
     @ResponseStatus(HttpStatus.OK)
     public void PutEntity(@RequestBody EntityDTO entityDTO){
         Entity entity = entityMapper.convertToEntity(entityDTO);
@@ -63,7 +71,7 @@ public class EntityController {
     }
 
     //DELETE
-    @DeleteMapping("/{uuid}")
+    @DeleteMapping(value="/{uuid}")
     @ResponseStatus(HttpStatus.OK)
     public void DeleteEntity(@PathVariable UUID uuid){
         entityService.deleteEntity(uuid);
