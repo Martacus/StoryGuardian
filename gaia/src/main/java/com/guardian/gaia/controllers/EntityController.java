@@ -13,7 +13,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Controller
+@CrossOrigin(origins = "http://localhost:8000")
+@RestController
+@RequestMapping("/entity")
 public class EntityController {
 
     private final EntityService entityService;
@@ -26,14 +28,12 @@ public class EntityController {
 
 
     //GET
-    @RequestMapping(value="/entity/{uuid}", method= RequestMethod.GET)
-    @ResponseBody
+    @GetMapping(value="/{uuid}")
     public EntityDTO getEntity(@PathVariable UUID uuid){
         Optional<Entity> entity = entityService.getById(uuid);
         return entity.map(entityMapper::convertToDto).orElse(null);
     }
-    @RequestMapping(value="/entity/user/{uuid}", method=RequestMethod.GET)
-    @ResponseBody
+    @GetMapping(value="/user/{uuid}")
     public List<EntityDTO> getAllEntities(@PathVariable String uuid){
         return entityService.getEntityList(uuid).stream()
                 .map(entityMapper::convertToDto)
@@ -41,14 +41,13 @@ public class EntityController {
     }
 
     //POST
-    @RequestMapping(value="/entity", headers="Accept=application/json", method=RequestMethod.POST)
-    @ResponseBody
+    @PostMapping("/")
     public EntityDTO PostEntity(@RequestBody EntityDTO entityDTO){
         Entity entity = entityMapper.convertToEntity(entityDTO);
         return entityMapper.convertToDto(entityService.saveEntity(entity));
     }
 
-    @RequestMapping(value="/entity/{parentUUID}/link/{childUUID}", headers="Accept=application/json", method=RequestMethod.POST)
+    @PostMapping("/{parentUUID}/link/{childUUID}")
     @ResponseStatus(HttpStatus.OK)
     public void LinkEntityToParentEntity(@PathVariable UUID parentUUID, @PathVariable UUID childUUID){
         entityService.linkEntity(parentUUID, childUUID);
@@ -56,7 +55,7 @@ public class EntityController {
 
 
     //PUT
-    @RequestMapping(value="/entity", headers="Accept=application/json", method=RequestMethod.PUT)
+    @PutMapping("/")
     @ResponseStatus(HttpStatus.OK)
     public void PutEntity(@RequestBody EntityDTO entityDTO){
         Entity entity = entityMapper.convertToEntity(entityDTO);
@@ -64,7 +63,7 @@ public class EntityController {
     }
 
     //DELETE
-    @RequestMapping(value = "/entity/{uuid}", headers = "Accept=application/json", method = RequestMethod.DELETE)
+    @DeleteMapping("/{uuid}")
     @ResponseStatus(HttpStatus.OK)
     public void DeleteEntity(@PathVariable UUID uuid){
         entityService.deleteEntity(uuid);
