@@ -14,8 +14,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@CrossOrigin
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/entity")
 public class EntityController {
 

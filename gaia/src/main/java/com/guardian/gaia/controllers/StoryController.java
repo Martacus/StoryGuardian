@@ -15,8 +15,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@CrossOrigin
+
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/story")
 public class StoryController {
 
@@ -30,7 +31,7 @@ public class StoryController {
 
 
     //GET
-    @GetMapping(value="/story/{uuid}", produces = {"application/json"})
+    @GetMapping(value="/{uuid}", produces = {"application/json"})
     public ResponseEntity<StoryDTO> getStory(@PathVariable UUID uuid){
         Optional<Story> story = storyService.getById(uuid);
         if(story.isPresent()){
@@ -39,7 +40,7 @@ public class StoryController {
             return ResponseEntity.notFound().build();
         }
     }
-    @GetMapping(value="/story/user/{uuid}", produces = {"application/json"})
+    @GetMapping(value="/user/{uuid}", produces = {"application/json"})
     public ResponseEntity<List<StoryDTO>> getAllStories(@PathVariable String uuid){
         return ResponseEntity.ok(
             storyService.getStoryList(uuid)
@@ -50,7 +51,7 @@ public class StoryController {
     }
 
     //POST
-    @PostMapping(value="/story", produces = {"application/json"})
+    @PostMapping(value="/", produces = {"application/json"})
     public ResponseEntity<StoryDTO> PostStory(@RequestBody StoryDTO storyDTO){
         Story story = storyMapper.convertToEntity(storyDTO);
         story = storyService.saveStory(story);
@@ -58,7 +59,7 @@ public class StoryController {
     }
 
     //PUT
-    @PutMapping(value="/story")
+    @PutMapping(value="/")
     @ResponseStatus(HttpStatus.OK)
     public void PutStory(@RequestBody StoryDTO storyDTO){
         Story story = storyMapper.convertToEntity(storyDTO);
@@ -66,7 +67,7 @@ public class StoryController {
     }
     
     //DELETE
-    @DeleteMapping(value="/story/{uuid}")
+    @DeleteMapping(value="/{uuid}")
     @ResponseStatus(HttpStatus.OK)
     public void DeleteStory(@PathVariable UUID uuid){
         storyService.deleteStory(uuid);
