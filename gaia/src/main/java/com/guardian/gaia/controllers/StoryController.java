@@ -51,7 +51,7 @@ public class StoryController {
     }
 
     //POST
-    @PostMapping(value="/", produces = {"application/json"})
+    @PostMapping(produces = {"application/json"})
     public ResponseEntity<StoryDTO> PostStory(@RequestBody StoryDTO storyDTO){
         Story story = storyMapper.convertToEntity(storyDTO);
         story = storyService.saveStory(story);
@@ -59,7 +59,7 @@ public class StoryController {
     }
 
     //PUT
-    @PutMapping(value="/")
+    @PutMapping()
     @ResponseStatus(HttpStatus.OK)
     public void PutStory(@RequestBody StoryDTO storyDTO){
         Story story = storyMapper.convertToEntity(storyDTO);

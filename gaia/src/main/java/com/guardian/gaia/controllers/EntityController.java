@@ -49,7 +49,7 @@ public class EntityController {
     }
 
     //POST
-    @PostMapping(value="/", produces = {"application/json"})
+    @PostMapping(produces = {"application/json"})
     public ResponseEntity<EntityDTO> PostEntity(@RequestBody EntityDTO entityDTO){
         Entity entity = entityMapper.convertToEntity(entityDTO);
         return ResponseEntity.ok(entityMapper.convertToDto(entityService.saveEntity(entity)));
@@ -63,7 +63,7 @@ public class EntityController {
 
 
     //PUT
-    @PutMapping(value="/")
+    @PutMapping()
     @ResponseStatus(HttpStatus.OK)
     public void PutEntity(@RequestBody EntityDTO entityDTO){
         Entity entity = entityMapper.convertToEntity(entityDTO);
