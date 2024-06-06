@@ -14,7 +14,11 @@
       "ESNext",
       "DOM"
     ],
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "include": [
     "src/**/*.ts",
@@ -26,5 +30,6 @@
     {
       "path": "./tsconfig.node.json"
     }
-  ]
+  ],
+
 }
