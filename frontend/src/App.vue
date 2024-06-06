@@ -1,9 +1,13 @@
 <script lang="ts" setup>
-import HelloWorld from './components/HelloWorld.vue'</script>
+import HelloWorld from './components/HelloWorld.vue'
+import {Button} from "@/components/ui/button";</script>
 
 <template>
   <img id="logo" alt="Wails logo" src="./assets/images/logo-universal.png"/>
   <HelloWorld/>
+  <Button>
+    Wow
+  </Button>
 </template>
 
 <style>
