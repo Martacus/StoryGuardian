@@ -1,13 +1,24 @@
 <script lang="ts" setup>
-import HelloWorld from './components/HelloWorld.vue'
-import {Button} from "@/components/ui/button";</script>
+import {useColorMode} from "@vueuse/core";
+import HomeScreen from "@/layouts/HomeScreen.vue";
+import {GetConfig} from "../wailsjs/go/project/ProjectManager";
+import {ref} from "vue";
+import {project} from "../wailsjs/go/models";
+import ProjectConfig = project.ProjectConfig;
+
+const mode = useColorMode();
+const config = ref();
+
+GetConfig().then((x)=>{
+  config.value = x
+})
+
+</script>
 
 <template>
-  <img id="logo" alt="Wails logo" src="./assets/images/logo-universal.png"/>
-  <HelloWorld/>
-  <Button>
-    Wow
-  </Button>
+  <HomeScreen>
+    <p v-if="Object.keys(config.value.projects).length < 1">sss</p>
+  </HomeScreen>
 </template>
 
 <style>
