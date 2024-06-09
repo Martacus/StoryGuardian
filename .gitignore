@@ -1,5 +1,6 @@
 .idea
 frontend/dist/
+frontend/bin/
 frontend/node_modules/
 build/
 .task/
