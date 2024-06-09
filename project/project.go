@@ -1,9 +1,11 @@
 package project
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/adrg/xdg"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"log"
 	"os"
 )
@@ -16,7 +18,12 @@ type ConfigManager interface {
 	GetConfig() ProjectConfig
 }
 
-type ProjectManager struct {
+type ProjectManager interface {
+	CreateProject()
+}
+
+type ApplicationManager struct {
+	ctx    *context.Context
 	Config ProjectConfig
 }
 
@@ -29,7 +36,7 @@ type ProjectConfig struct {
 	Projects map[string]Project `json:"projects"`
 }
 
-func NewProjectManager() *ProjectManager {
+func NewProjectManager(ctx *context.Context) *ApplicationManager {
 	configLocation, err := configOnStartup()
 	if err != nil {
 		log.Fatalf("Could not find/create the config file: %v", err)
@@ -46,13 +53,14 @@ func NewProjectManager() *ProjectManager {
 		log.Fatalf("Could not unmarshal config file into object: %v", err)
 	}
 
-	return &ProjectManager{
+	return &ApplicationManager{
+		ctx:    ctx,
 		Config: config,
 	}
 }
 
-func (p *ProjectManager) GetConfig() ProjectConfig {
-	return p.Config
+func (a *ApplicationManager) GetConfig() ProjectConfig {
+	return a.Config
 }
 
 func configOnStartup() (string, error) {
@@ -65,6 +73,22 @@ func configOnStartup() (string, error) {
 	}
 
 	return configFilePath, nil
+}
+
+func (a *ApplicationManager) CreateProject() {
+	directoryPath, err := runtime.OpenDirectoryDialog(*a.ctx, runtime.OpenDialogOptions{
+		DefaultDirectory: xdg.ConfigHome + "/" + ProjectName,
+	})
+	if err != nil {
+		//Figure out what to return
+		return
+	}
+
+	log.Printf(directoryPath)
+
+	//Create project.json
+	// return true if all works
+	// return false if it doesnt
 }
 
 func createConfigFile() error {

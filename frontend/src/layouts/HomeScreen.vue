@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
-import {Home, ShoppingCart} from 'lucide-vue-next'
+import {FolderOpenDot } from 'lucide-vue-next'
 import {Icon} from '@iconify/vue'
 import {useColorMode} from "@vueuse/core";
 import {Button} from "@/components/ui/button";
@@ -24,20 +24,23 @@ const colorMode = useColorMode()
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
+          <!--suppress TypeScriptValidateTypes -->
           <DropdownMenuItem @click="colorMode = 'light'">
             Light
           </DropdownMenuItem>
+          <!--suppress TypeScriptValidateTypes -->
           <DropdownMenuItem @click="colorMode = 'dark'">
             Dark
           </DropdownMenuItem>
+          <!--suppress TypeScriptValidateTypes -->
           <DropdownMenuItem @click="colorMode = 'system'">
             System
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>
-    <div class="flex flex-1 h-full">
-      <div class="grid md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+    <div class="flex flex-1 h-full w-full">
+      <div class="grid md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr] w-full">
         <!--  Menu  -->
         <div class="border-r bg-muted/40 flex flex-col">
           <div class="flex-1">
@@ -45,14 +48,9 @@ const colorMode = useColorMode()
               <a href="/dashboard">
                 <div
                     class="flex items-center gap-3 rounded-lg px-3 py-2 text-primary transition-all hover:text-primary bg-muted">
-                  <Home class="h-4 w-4"/>
-                  Dashboard
+                  <FolderOpenDot  class="h-4 w-4"/>
+                  Projects
                 </div>
-              </a>
-              <a href="#"
-                 class="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary">
-                <ShoppingCart class="h-4 w-4"/>
-                Entities
               </a>
             </nav>
           </div>

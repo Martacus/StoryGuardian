@@ -29,10 +29,10 @@ func main() {
 	log.Println("Application directories:", xdg.ApplicationDirs)
 	log.Println("Font directories:", xdg.FontDirs)
 
-	//Check for the config file
-	projectManager := project.NewProjectManager()
-
 	app := NewApp()
+
+	//Check for the config file
+	projectManager := project.NewProjectManager(&app.ctx)
 
 	// Create application with options
 	err := wails.Run(&options.App{
