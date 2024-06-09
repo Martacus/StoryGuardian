@@ -1,9 +1,11 @@
 package main
 
 import (
+	"context"
 	"embed"
 	_ "embed"
 	"log"
+	"storyguardian/project"
 	"time"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
@@ -21,7 +23,7 @@ var assets embed.FS
 // and starts a goroutine that emits a time-based event every second. It subsequently runs the application and
 // logs any error that might occur.
 func main() {
-
+	ctx, _ := context.WithCancel(context.Background())
 	// Create a new Wails application by providing the necessary options.
 	// Variables 'Name' and 'Description' are for application metadata.
 	// 'Assets' configures the asset server with the 'FS' variable pointing to the frontend files.
@@ -32,6 +34,7 @@ func main() {
 		Description: "A demo of using raw HTML & CSS",
 		Services: []application.Service{
 			application.NewService(&GreetService{}),
+			application.NewService(project.NewProjectManager(&ctx)),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
@@ -55,6 +58,8 @@ func main() {
 		},
 		BackgroundColour: application.NewRGB(27, 38, 54),
 		URL:              "/",
+		Height:           720,
+		Width:            1280,
 	})
 
 	// Create a goroutine that emits an event containing the current time every second.
