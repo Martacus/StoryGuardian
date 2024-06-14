@@ -1,7 +1,6 @@
 package project
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/adrg/xdg"
@@ -20,12 +19,7 @@ type ConfigManager interface {
 }
 
 type ProjectManager interface {
-	CreateProject()
-}
-
-type ApplicationManager struct {
-	ctx    *context.Context
-	Config ApplicationConfig
+	CreateProject() (string, error)
 }
 
 type Project struct {
@@ -41,37 +35,50 @@ type Config struct {
 	Name string `json:"name"`
 }
 
-func NewProjectManager(ctx *context.Context) *ApplicationManager {
+type ApplicationManager struct {
+	Config ApplicationConfig
+}
+
+func NewProjectManager() *ApplicationManager {
 	configLocation, err := configOnStartup()
 	if err != nil {
 		log.Fatalf("Could not find/create the config file: %v", err)
 	}
 
-	configBytes, err := os.ReadFile(configLocation)
+	config, err := loadConfig(configLocation)
 	if err != nil {
-		log.Fatalf("Could not read config file while it has been found: %v", err)
-	}
-
-	var config ApplicationConfig
-	err = json.Unmarshal(configBytes, &config)
-	if err != nil {
-		log.Fatalf("Could not unmarshal config file into object: %v", err)
+		log.Fatalf("Could not load config: %v", err)
 	}
 
 	return &ApplicationManager{
-		ctx:    ctx,
 		Config: config,
 	}
 }
 
-func (a *ApplicationManager) GetConfig() ApplicationConfig {
-	return a.Config
+func (a *ApplicationManager) CreateProject() (string, error) {
+	projectDirectory, err := promptForProjectDirectory()
+	if err != nil {
+		return "", fmt.Errorf("could not select project directory: %v", err)
+	}
+
+	err = createProjectFile(projectDirectory)
+	if err != nil {
+		return "", fmt.Errorf("could create the project config file: %v", err)
+	}
+
+	return projectDirectory, nil
 }
 
 func configOnStartup() (string, error) {
 	configFilePath, err := xdg.SearchConfigFile(ApplicationName + "/config.json")
+
+	//If te config doesn't exist, create it
 	if err != nil {
-		err := createConfigFile()
+		configFilePath, err = xdg.ConfigFile(ApplicationName + "/config.json")
+		if err != nil {
+			return "", fmt.Errorf("could not create the necessary config file path: %v", err)
+		}
+		err = createConfigFile(configFilePath)
 		if err != nil {
 			return "", fmt.Errorf("could not create the necessary config file: %v", err)
 		}
@@ -80,56 +87,63 @@ func configOnStartup() (string, error) {
 	return configFilePath, nil
 }
 
-func (a *ApplicationManager) CreateProject() (string, error) {
+func loadConfig(configLocation string) (ApplicationConfig, error) {
+	configBytes, err := os.ReadFile(configLocation)
+	if err != nil {
+		return ApplicationConfig{}, fmt.Errorf("could not read config file: %v", err)
+	}
+
+	var config ApplicationConfig
+	err = json.Unmarshal(configBytes, &config)
+	if err != nil {
+		return ApplicationConfig{}, fmt.Errorf("could not unmarshal config file: %v", err)
+	}
+
+	return config, nil
+}
+
+func promptForProjectDirectory() (string, error) {
 	projectDirectory, err := application.OpenFileDialog().CanChooseDirectories(true).PromptForSingleSelection()
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to prompt for project directory: %v", err)
 	}
-
-	filePath := filepath.Join(projectDirectory, "project.json")
-	file, err := os.Create(filePath)
-	if err != nil {
-		return "", fmt.Errorf("error creating file: %v", err)
-	}
-	defer func(file *os.File) {
-		_ = file.Close()
-	}(file)
-
-	projectName := filepath.Base(filePath)
-	config := Config{Name: projectName}
-
-	err = writeStructToFile(config, file)
-	if err != nil {
-		return "", err
-	}
-
 	return projectDirectory, nil
 }
 
-func createConfigFile() error {
-	configFilePath, err := xdg.ConfigFile(ApplicationName + "/config.json")
+func createProjectFile(projectDirectory string) error {
+	filePath := filepath.Join(projectDirectory, "project.json")
+	file, err := os.Create(filePath)
 	if err != nil {
-		return err
+		return fmt.Errorf("error creating file: %v", err)
 	}
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+		}
+	}(file)
 
+	projectName := filepath.Base(projectDirectory)
+	config := Config{Name: projectName}
+
+	return writeStructToFile(config, file)
+}
+
+func createConfigFile(configFilePath string) error {
 	file, err := os.Create(configFilePath)
 	if err != nil {
 		return err
 	}
 	defer func(file *os.File) {
-		_ = file.Close()
+		err := file.Close()
+		if err != nil {
+		}
 	}(file)
 
 	config := ApplicationConfig{
 		Projects: make(map[string]Project),
 	}
 
-	err = writeStructToFile(config, file)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return writeStructToFile(config, file)
 }
 
 func writeStructToFile(toWrite interface{}, file *os.File) error {

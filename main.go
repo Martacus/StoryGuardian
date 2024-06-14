@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"embed"
 	_ "embed"
 	"github.com/wailsapp/wails/v3/pkg/application"
@@ -18,14 +17,12 @@ import (
 var assets embed.FS
 
 func main() {
-	ctx, _ := context.WithCancel(context.Background())
-
 	app := application.New(application.Options{
 		Name:        "storyguardian",
 		Description: "A demo of using raw HTML & CSS",
 		Services: []application.Service{
 			application.NewService(&GreetService{}),
-			application.NewService(project.NewProjectManager(&ctx)),
+			application.NewService(project.NewProjectManager()),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
