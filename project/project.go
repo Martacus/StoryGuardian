@@ -55,6 +55,10 @@ func NewProjectManager() *ApplicationManager {
 	}
 }
 
+func (a *ApplicationManager) GetConfig() ApplicationConfig {
+	return a.Config
+}
+
 func (a *ApplicationManager) CreateProject() (string, error) {
 	projectDirectory, err := promptForProjectDirectory()
 	if err != nil {
