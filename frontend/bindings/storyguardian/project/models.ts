@@ -5,6 +5,31 @@
 // @ts-ignore: Unused imports
 import {Create as $Create} from "@wailsio/runtime";
 
+export class ApplicationConfig {
+    "projects": { [_: string]: Project };
+
+    /** Creates a new ApplicationConfig instance. */
+    constructor($$source: Partial<ApplicationConfig> = {}) {
+        if (!("projects" in $$source)) {
+            this["projects"] = {};
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new ApplicationConfig instance from a string or object.
+     */
+    static createFrom($$source: any = {}): ApplicationConfig {
+        const $$createField0_0 = $$createType1;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("projects" in $$parsedSource) {
+            $$parsedSource["projects"] = $$createField0_0($$parsedSource["projects"]);
+        }
+        return new ApplicationConfig($$parsedSource as Partial<ApplicationConfig>);
+    }
+}
+
 export class Project {
     "name": string;
     "location": string;
@@ -27,31 +52,6 @@ export class Project {
     static createFrom($$source: any = {}): Project {
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         return new Project($$parsedSource as Partial<Project>);
-    }
-}
-
-export class ProjectConfig {
-    "projects": { [_: string]: Project };
-
-    /** Creates a new ProjectConfig instance. */
-    constructor($$source: Partial<ProjectConfig> = {}) {
-        if (!("projects" in $$source)) {
-            this["projects"] = {};
-        }
-
-        Object.assign(this, $$source);
-    }
-
-    /**
-     * Creates a new ProjectConfig instance from a string or object.
-     */
-    static createFrom($$source: any = {}): ProjectConfig {
-        const $$createField0_0 = $$createType1;
-        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
-        if ("projects" in $$parsedSource) {
-            $$parsedSource["projects"] = $$createField0_0($$parsedSource["projects"]);
-        }
-        return new ProjectConfig($$parsedSource as Partial<ProjectConfig>);
     }
 }
 

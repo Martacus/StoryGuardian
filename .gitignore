@@ -4,3 +4,4 @@ bin/
 frontend/node_modules/
 build/
 .task/
+.testprojects/

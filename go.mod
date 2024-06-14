@@ -4,7 +4,6 @@ go 1.22.4
 
 require (
 	github.com/adrg/xdg v0.4.0
-	github.com/wailsapp/wails/v2 v2.8.2
 	github.com/wailsapp/wails/v3 v3.0.0-alpha.0
 )
 
@@ -28,7 +27,6 @@ require (
 	github.com/jchv/go-winloader v0.0.0-20210711035445-715c2860da7e // indirect
 	github.com/kevinburke/ssh_config v1.2.0 // indirect
 	github.com/leaanthony/go-ansi-parser v1.6.1 // indirect
-	github.com/leaanthony/slicer v1.6.0 // indirect
 	github.com/leaanthony/u v1.1.0 // indirect
 	github.com/lmittmann/tint v1.0.4 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect

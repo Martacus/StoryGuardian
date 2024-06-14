@@ -5,17 +5,18 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/adrg/xdg"
-	"github.com/wailsapp/wails/v2/pkg/runtime"
+	"github.com/wailsapp/wails/v3/pkg/application"
 	"log"
 	"os"
+	"path/filepath"
 )
 
 const (
-	ProjectName = "StoryGuardian"
+	ApplicationName = "StoryGuardian"
 )
 
 type ConfigManager interface {
-	GetConfig() ProjectConfig
+	GetConfig() ApplicationConfig
 }
 
 type ProjectManager interface {
@@ -24,7 +25,7 @@ type ProjectManager interface {
 
 type ApplicationManager struct {
 	ctx    *context.Context
-	Config ProjectConfig
+	Config ApplicationConfig
 }
 
 type Project struct {
@@ -32,8 +33,12 @@ type Project struct {
 	Location string `json:"location"`
 }
 
-type ProjectConfig struct {
+type ApplicationConfig struct {
 	Projects map[string]Project `json:"projects"`
+}
+
+type Config struct {
+	Name string `json:"name"`
 }
 
 func NewProjectManager(ctx *context.Context) *ApplicationManager {
@@ -47,7 +52,7 @@ func NewProjectManager(ctx *context.Context) *ApplicationManager {
 		log.Fatalf("Could not read config file while it has been found: %v", err)
 	}
 
-	var config ProjectConfig
+	var config ApplicationConfig
 	err = json.Unmarshal(configBytes, &config)
 	if err != nil {
 		log.Fatalf("Could not unmarshal config file into object: %v", err)
@@ -59,12 +64,12 @@ func NewProjectManager(ctx *context.Context) *ApplicationManager {
 	}
 }
 
-func (a *ApplicationManager) GetConfig() ProjectConfig {
+func (a *ApplicationManager) GetConfig() ApplicationConfig {
 	return a.Config
 }
 
 func configOnStartup() (string, error) {
-	configFilePath, err := xdg.SearchConfigFile(ProjectName + "/config.json")
+	configFilePath, err := xdg.SearchConfigFile(ApplicationName + "/config.json")
 	if err != nil {
 		err := createConfigFile()
 		if err != nil {
@@ -75,24 +80,34 @@ func configOnStartup() (string, error) {
 	return configFilePath, nil
 }
 
-func (a *ApplicationManager) CreateProject() {
-	directoryPath, err := runtime.OpenDirectoryDialog(*a.ctx, runtime.OpenDialogOptions{
-		DefaultDirectory: xdg.ConfigHome + "/" + ProjectName,
-	})
+func (a *ApplicationManager) CreateProject() (string, error) {
+	projectDirectory, err := application.OpenFileDialog().CanChooseDirectories(true).PromptForSingleSelection()
 	if err != nil {
-		//Figure out what to return
-		return
+		return "", err
 	}
 
-	log.Printf(directoryPath)
+	filePath := filepath.Join(projectDirectory, "project.json")
+	file, err := os.Create(filePath)
+	if err != nil {
+		return "", fmt.Errorf("error creating file: %v", err)
+	}
+	defer func(file *os.File) {
+		_ = file.Close()
+	}(file)
 
-	//Create project.json
-	// return true if all works
-	// return false if it doesnt
+	projectName := filepath.Base(filePath)
+	config := Config{Name: projectName}
+
+	err = writeStructToFile(config, file)
+	if err != nil {
+		return "", err
+	}
+
+	return projectDirectory, nil
 }
 
 func createConfigFile() error {
-	configFilePath, err := xdg.ConfigFile(ProjectName + "/config.json")
+	configFilePath, err := xdg.ConfigFile(ApplicationName + "/config.json")
 	if err != nil {
 		return err
 	}
@@ -105,18 +120,27 @@ func createConfigFile() error {
 		_ = file.Close()
 	}(file)
 
-	config := ProjectConfig{
+	config := ApplicationConfig{
 		Projects: make(map[string]Project),
 	}
 
-	jsonData, err := json.Marshal(config)
+	err = writeStructToFile(config, file)
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func writeStructToFile(toWrite interface{}, file *os.File) error {
+	jsonData, err := json.Marshal(toWrite)
+	if err != nil {
+		return fmt.Errorf("error marshaling struct to JSON: %v", err)
 	}
 
 	_, err = file.Write(jsonData)
 	if err != nil {
-		return err
+		return fmt.Errorf("error writing JSON to file: %v", err)
 	}
 
 	return nil
