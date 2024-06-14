@@ -1,62 +1,19 @@
 package project
 
 import (
-	"encoding/json"
 	"fmt"
-	"github.com/adrg/xdg"
 	"github.com/wailsapp/wails/v3/pkg/application"
-	"log"
 	"os"
 	"path/filepath"
 )
-
-const (
-	ApplicationName = "StoryGuardian"
-)
-
-type ConfigManager interface {
-	GetConfig() ApplicationConfig
-}
-
-type ProjectManager interface {
-	CreateProject() (string, error)
-}
 
 type Project struct {
 	Name     string `json:"name"`
 	Location string `json:"location"`
 }
 
-type ApplicationConfig struct {
-	Projects map[string]Project `json:"projects"`
-}
-
 type Config struct {
 	Name string `json:"name"`
-}
-
-type ApplicationManager struct {
-	Config ApplicationConfig
-}
-
-func NewProjectManager() *ApplicationManager {
-	configLocation, err := configOnStartup()
-	if err != nil {
-		log.Fatalf("Could not find/create the config file: %v", err)
-	}
-
-	config, err := loadConfig(configLocation)
-	if err != nil {
-		log.Fatalf("Could not load config: %v", err)
-	}
-
-	return &ApplicationManager{
-		Config: config,
-	}
-}
-
-func (a *ApplicationManager) GetConfig() ApplicationConfig {
-	return a.Config
 }
 
 func (a *ApplicationManager) CreateProject() (string, error) {
@@ -67,43 +24,16 @@ func (a *ApplicationManager) CreateProject() (string, error) {
 
 	err = createProjectFile(projectDirectory)
 	if err != nil {
-		return "", fmt.Errorf("could create the project config file: %v", err)
+		return "", fmt.Errorf("could not create the project config file: %v", err)
 	}
+
+	err = writeProjectToAppConfig(projectDirectory, a)
+	if err != nil {
+		return "", fmt.Errorf("could not write project to application config file: %v", err)
+	}
+	//write nw project to config
 
 	return projectDirectory, nil
-}
-
-func configOnStartup() (string, error) {
-	configFilePath, err := xdg.SearchConfigFile(ApplicationName + "/config.json")
-
-	//If te config doesn't exist, create it
-	if err != nil {
-		configFilePath, err = xdg.ConfigFile(ApplicationName + "/config.json")
-		if err != nil {
-			return "", fmt.Errorf("could not create the necessary config file path: %v", err)
-		}
-		err = createConfigFile(configFilePath)
-		if err != nil {
-			return "", fmt.Errorf("could not create the necessary config file: %v", err)
-		}
-	}
-
-	return configFilePath, nil
-}
-
-func loadConfig(configLocation string) (ApplicationConfig, error) {
-	configBytes, err := os.ReadFile(configLocation)
-	if err != nil {
-		return ApplicationConfig{}, fmt.Errorf("could not read config file: %v", err)
-	}
-
-	var config ApplicationConfig
-	err = json.Unmarshal(configBytes, &config)
-	if err != nil {
-		return ApplicationConfig{}, fmt.Errorf("could not unmarshal config file: %v", err)
-	}
-
-	return config, nil
 }
 
 func promptForProjectDirectory() (string, error) {
@@ -132,10 +62,21 @@ func createProjectFile(projectDirectory string) error {
 	return writeStructToFile(config, file)
 }
 
-func createConfigFile(configFilePath string) error {
-	file, err := os.Create(configFilePath)
+func writeProjectToAppConfig(projectDirectory string, a *ApplicationManager) error {
+	projectName := filepath.Base(projectDirectory)
+	a.Config.Projects[projectName] = Project{
+		Name:     projectName,
+		Location: projectDirectory,
+	}
+
+	configLocation, err := getConfigLocation()
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot find application config file: %v", err)
+	}
+
+	file, err := os.OpenFile(configLocation, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	if err != nil {
+		return fmt.Errorf("cannot open config file: %v", err)
 	}
 	defer func(file *os.File) {
 		err := file.Close()
@@ -143,23 +84,9 @@ func createConfigFile(configFilePath string) error {
 		}
 	}(file)
 
-	config := ApplicationConfig{
-		Projects: make(map[string]Project),
-	}
-
-	return writeStructToFile(config, file)
-}
-
-func writeStructToFile(toWrite interface{}, file *os.File) error {
-	jsonData, err := json.Marshal(toWrite)
+	err = writeStructToFile(a.Config, file)
 	if err != nil {
-		return fmt.Errorf("error marshaling struct to JSON: %v", err)
+		return err
 	}
-
-	_, err = file.Write(jsonData)
-	if err != nil {
-		return fmt.Errorf("error writing JSON to file: %v", err)
-	}
-
 	return nil
 }
