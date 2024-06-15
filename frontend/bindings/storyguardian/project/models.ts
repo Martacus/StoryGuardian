@@ -6,7 +6,7 @@
 import {Create as $Create} from "@wailsio/runtime";
 
 export class ApplicationConfig {
-    "projects": { [_: string]: Project };
+    "projects": { [_: string]: ProjectDetails };
 
     /** Creates a new ApplicationConfig instance. */
     constructor($$source: Partial<ApplicationConfig> = {}) {
@@ -31,16 +31,24 @@ export class ApplicationConfig {
 }
 
 export class Project {
+    "id": string;
     "name": string;
     "location": string;
+    "description": string;
 
     /** Creates a new Project instance. */
     constructor($$source: Partial<Project> = {}) {
+        if (!("id" in $$source)) {
+            this["id"] = "";
+        }
         if (!("name" in $$source)) {
             this["name"] = "";
         }
         if (!("location" in $$source)) {
             this["location"] = "";
+        }
+        if (!("description" in $$source)) {
+            this["description"] = "";
         }
 
         Object.assign(this, $$source);
@@ -55,6 +63,35 @@ export class Project {
     }
 }
 
+export class ProjectDetails {
+    "id": string;
+    "name": string;
+    "location": string;
+
+    /** Creates a new ProjectDetails instance. */
+    constructor($$source: Partial<ProjectDetails> = {}) {
+        if (!("id" in $$source)) {
+            this["id"] = "";
+        }
+        if (!("name" in $$source)) {
+            this["name"] = "";
+        }
+        if (!("location" in $$source)) {
+            this["location"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new ProjectDetails instance from a string or object.
+     */
+    static createFrom($$source: any = {}): ProjectDetails {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new ProjectDetails($$parsedSource as Partial<ProjectDetails>);
+    }
+}
+
 // Private type creation functions
-const $$createType0 = Project.createFrom;
+const $$createType0 = ProjectDetails.createFrom;
 const $$createType1 = $Create.Map($Create.Any, $$createType0);

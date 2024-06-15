@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/adrg/xdg"
+	"io"
 	"os"
 )
 
@@ -12,7 +13,7 @@ const (
 )
 
 type ApplicationConfig struct {
-	Projects map[string]Project `json:"projects"`
+	Projects map[string]ProjectDetails `json:"projects"`
 }
 
 func getConfigLocation() (string, error) {
@@ -60,7 +61,7 @@ func createConfigFile(configFilePath string) error {
 	}(file)
 
 	config := ApplicationConfig{
-		Projects: make(map[string]Project),
+		Projects: make(map[string]ProjectDetails),
 	}
 
 	return writeStructToFile(config, file)
@@ -75,6 +76,32 @@ func writeStructToFile(toWrite interface{}, file *os.File) error {
 	_, err = file.Write(jsonData)
 	if err != nil {
 		return fmt.Errorf("error writing JSON to file: %v", err)
+	}
+
+	return nil
+}
+
+func writeFileToStruct(filename string, data interface{}) error {
+	// Open the file
+	file, err := os.Open(filename)
+	if err != nil {
+		return fmt.Errorf("could not open file: %w", err)
+	}
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+
+		}
+	}(file)
+
+	fileContents, err := io.ReadAll(file)
+	if err != nil {
+		return fmt.Errorf("could not read file: %w", err)
+	}
+
+	// Unmarshal the JSON data into the provided struct
+	if err := json.Unmarshal(fileContents, data); err != nil {
+		return fmt.Errorf("could not unmarshal JSON: %w", err)
 	}
 
 	return nil

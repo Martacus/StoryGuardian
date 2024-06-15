@@ -9,24 +9,15 @@ import {Call as $Call, Create as $Create} from "@wailsio/runtime";
 // @ts-ignore: Unused imports
 import * as $models from "./models.js";
 
-export function CreateProject(): Promise<string> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(3321607049) as any;
-    return $resultPromise;
-}
-
-export function GetConfig(): Promise<$models.ApplicationConfig> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(2061508138) as any;
+export function GetProject(projectId: string): Promise<$models.Project | null> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(3131218426, projectId) as any;
     let $typingPromise = $resultPromise.then(($result) => {
-        return $$createType0($result);
+        return $$createType1($result);
     }) as any;
     $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
     return $typingPromise;
 }
 
-export function OpenProject(projectDirectory: string): Promise<string> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(2619509661, projectDirectory) as any;
-    return $resultPromise;
-}
-
 // Private type creation functions
-const $$createType0 = $models.ApplicationConfig.createFrom;
+const $$createType0 = $models.Project.createFrom;
+const $$createType1 = $Create.Nullable($$createType0);

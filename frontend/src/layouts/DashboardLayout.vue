@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import {FolderOpenDot } from 'lucide-vue-next'
+import {Icon} from '@iconify/vue'
 import {useColorMode} from "@vueuse/core";
+import {Button} from "@/components/ui/button";
 import ThemePicker from "@/layouts/components/ThemePicker.vue";
 import MainContainer from "@/layouts/components/MainContainer.vue";
 

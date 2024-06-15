@@ -2,18 +2,20 @@ package project
 
 import (
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/wailsapp/wails/v3/pkg/application"
 	"os"
 	"path/filepath"
 )
 
-type Project struct {
+type ProjectDetails struct {
+	Id       string `json:"id"`
 	Name     string `json:"name"`
 	Location string `json:"location"`
 }
 
 type Config struct {
-	Name string `json:"name"`
+	ProjectDetails
 }
 
 func (a *ApplicationManager) CreateProject() (string, error) {
@@ -22,15 +24,21 @@ func (a *ApplicationManager) CreateProject() (string, error) {
 		return "", fmt.Errorf("could not select project directory: %v", err)
 	}
 
-	err = createProjectFile(projectDirectory)
+	projectId := uuid.New().String()
+	err = createProjectFile(projectDirectory, projectId)
 	if err != nil {
 		return "", fmt.Errorf("could not create the project config file: %v", err)
 	}
 
-	err = writeProjectToAppConfig(projectDirectory, a)
+	err = writeProjectToAppConfig(projectId, projectDirectory, a)
 	if err != nil {
 		return "", fmt.Errorf("could not write project to application config file: %v", err)
 	}
+
+	return projectId, nil
+}
+
+func (a *ApplicationManager) OpenProject(projectDirectory string) (string, error) {
 	//write nw project to config
 
 	return projectDirectory, nil
@@ -44,7 +52,7 @@ func promptForProjectDirectory() (string, error) {
 	return projectDirectory, nil
 }
 
-func createProjectFile(projectDirectory string) error {
+func createProjectFile(projectDirectory string, projectId string) error {
 	filePath := filepath.Join(projectDirectory, "project.json")
 	file, err := os.Create(filePath)
 	if err != nil {
@@ -57,14 +65,21 @@ func createProjectFile(projectDirectory string) error {
 	}(file)
 
 	projectName := filepath.Base(projectDirectory)
-	config := Config{Name: projectName}
+	config := Config{
+		ProjectDetails{
+			Id:       projectId,
+			Name:     projectName,
+			Location: projectDirectory,
+		},
+	}
 
 	return writeStructToFile(config, file)
 }
 
-func writeProjectToAppConfig(projectDirectory string, a *ApplicationManager) error {
+func writeProjectToAppConfig(projectId string, projectDirectory string, a *ApplicationManager) error {
 	projectName := filepath.Base(projectDirectory)
-	a.Config.Projects[projectName] = Project{
+	a.Config.Projects[projectId] = ProjectDetails{
+		Id:       projectId,
 		Name:     projectName,
 		Location: projectDirectory,
 	}

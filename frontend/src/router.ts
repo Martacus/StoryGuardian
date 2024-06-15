@@ -1,5 +1,6 @@
 import {createRouter, createWebHashHistory} from "vue-router";
 import Home from './pages/Home.vue'
+import Dashboard from "@/pages/Dashboard.vue";
 
 const routes = [
     {
@@ -7,12 +8,12 @@ const routes = [
         name: 'Home',
         component: Home,
     },
-    // {
-    //     path: '/createproject',
-    //     name: 'Create new project',
-    //     component: CreateProject,
-    // },
-]
+    {
+        path: '/dashboard/:id',
+        name: 'Dashboard',
+        component: Dashboard,
+    }
+];
 
 const router = createRouter({
     history: createWebHashHistory(),

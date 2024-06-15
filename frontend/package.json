@@ -10,6 +10,9 @@
   },
   "dependencies": {
     "@iconify/vue": "^4.1.2",
+    "@tiptap/pm": "^2.4.0",
+    "@tiptap/starter-kit": "^2.4.0",
+    "@tiptap/vue-3": "^2.4.0",
     "@vueuse/core": "^10.10.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",

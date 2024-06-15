@@ -8,7 +8,7 @@ type ApplicationManager struct {
 	Config ApplicationConfig
 }
 
-func NewProjectManager() *ApplicationManager {
+func NewApplicationManager() *ApplicationManager {
 	configLocation, err := getConfigLocation()
 	if err != nil {
 		log.Fatalf("Could not find/create the config file: %v", err)

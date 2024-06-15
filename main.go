@@ -17,12 +17,15 @@ import (
 var assets embed.FS
 
 func main() {
+	appManager := project.NewApplicationManager()
+	projectManager := project.NewProjectManager(appManager)
+
 	app := application.New(application.Options{
 		Name:        "storyguardian",
 		Description: "A demo of using raw HTML & CSS",
 		Services: []application.Service{
-			application.NewService(&GreetService{}),
-			application.NewService(project.NewProjectManager()),
+			application.NewService(appManager),
+			application.NewService(projectManager),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
