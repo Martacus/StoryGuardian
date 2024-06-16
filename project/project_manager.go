@@ -8,7 +8,8 @@ import (
 
 type Project struct {
 	ProjectDetails
-	Description string `json:"description"`
+	Description string   `json:"description"`
+	Entities    []Entity `json:"entities"`
 }
 
 type ProjectManager struct {

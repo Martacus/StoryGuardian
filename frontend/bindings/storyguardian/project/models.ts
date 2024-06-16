@@ -30,11 +30,57 @@ export class ApplicationConfig {
     }
 }
 
+export class Entity {
+    "Id": string;
+    "Name": string;
+    "ProjectId": string;
+    "Description": string;
+    "CreatedAt": string;
+    "Tags": string[];
+
+    /** Creates a new Entity instance. */
+    constructor($$source: Partial<Entity> = {}) {
+        if (!("Id" in $$source)) {
+            this["Id"] = "";
+        }
+        if (!("Name" in $$source)) {
+            this["Name"] = "";
+        }
+        if (!("ProjectId" in $$source)) {
+            this["ProjectId"] = "";
+        }
+        if (!("Description" in $$source)) {
+            this["Description"] = "";
+        }
+        if (!("CreatedAt" in $$source)) {
+            this["CreatedAt"] = "";
+        }
+        if (!("Tags" in $$source)) {
+            this["Tags"] = [];
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new Entity instance from a string or object.
+     */
+    static createFrom($$source: any = {}): Entity {
+        const $$createField5_0 = $$createType2;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("Tags" in $$parsedSource) {
+            $$parsedSource["Tags"] = $$createField5_0($$parsedSource["Tags"]);
+        }
+        return new Entity($$parsedSource as Partial<Entity>);
+    }
+}
+
 export class Project {
     "id": string;
     "name": string;
     "location": string;
     "description": string;
+    "entities": Entity[];
 
     /** Creates a new Project instance. */
     constructor($$source: Partial<Project> = {}) {
@@ -50,6 +96,9 @@ export class Project {
         if (!("description" in $$source)) {
             this["description"] = "";
         }
+        if (!("entities" in $$source)) {
+            this["entities"] = [];
+        }
 
         Object.assign(this, $$source);
     }
@@ -58,7 +107,11 @@ export class Project {
      * Creates a new Project instance from a string or object.
      */
     static createFrom($$source: any = {}): Project {
+        const $$createField4_0 = $$createType4;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("entities" in $$parsedSource) {
+            $$parsedSource["entities"] = $$createField4_0($$parsedSource["entities"]);
+        }
         return new Project($$parsedSource as Partial<Project>);
     }
 }
@@ -95,3 +148,6 @@ export class ProjectDetails {
 // Private type creation functions
 const $$createType0 = ProjectDetails.createFrom;
 const $$createType1 = $Create.Map($Create.Any, $$createType0);
+const $$createType2 = $Create.Array($Create.Any);
+const $$createType3 = Entity.createFrom;
+const $$createType4 = $Create.Array($$createType3);

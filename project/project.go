@@ -26,9 +26,8 @@ func (a *ApplicationManager) CreateProject() (string, error) {
 	}
 
 	projectId := uuid.New().String()
-	err = createProjectFile(projectDirectory, projectId)
-	if err != nil {
-		return "", fmt.Errorf("could not create the project config file: %v", err)
+	if err := createProjectFile(projectDirectory, projectId); err != nil {
+		return "", fmt.Errorf("could not create the project config file: %w", err)
 	}
 
 	projectName := filepath.Base(projectDirectory)
@@ -38,9 +37,8 @@ func (a *ApplicationManager) CreateProject() (string, error) {
 		Location: projectDirectory,
 	}
 
-	err = a.writeProjectDetailsToAppConfig(project)
-	if err != nil {
-		return "", fmt.Errorf("could not write project to application config file: %v", err)
+	if err := a.writeProjectDetailsToAppConfig(project); err != nil {
+		return "", fmt.Errorf("could not write project to application config file: %w", err)
 	}
 
 	if err := os.MkdirAll(filepath.Join(projectDirectory, constants.EntityFolderName), 0755); err != nil {
@@ -50,10 +48,18 @@ func (a *ApplicationManager) CreateProject() (string, error) {
 	return projectId, nil
 }
 
-func (a *ApplicationManager) OpenProject(projectDirectory string) (string, error) {
-	//write nw project to config
+func (a *ApplicationManager) OpenProject(projectId string) error {
+	for key, val := range a.Config.Projects {
+		if key == projectId {
+			a.Config.OpenProject = val
+		}
+	}
 
-	return projectDirectory, nil
+	if err := a.writeConfigToFile(); err != nil {
+		return fmt.Errorf("cannot write openProject to app config: %v", err)
+	}
+
+	return nil
 }
 
 func promptForProjectDirectory() (string, error) {

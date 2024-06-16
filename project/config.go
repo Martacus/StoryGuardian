@@ -15,7 +15,8 @@ const (
 )
 
 type ApplicationConfig struct {
-	Projects map[string]ProjectDetails `json:"projects"`
+	Projects    map[string]ProjectDetails `json:"projects"`
+	OpenProject ProjectDetails            `json:"openProject"`
 }
 
 func getConfigLocation() (string, error) {
@@ -75,8 +76,7 @@ func writeStructToFile(toWrite interface{}, file *os.File) error {
 		return fmt.Errorf("error marshaling struct to JSON: %v", err)
 	}
 
-	_, err = file.Write(jsonData)
-	if err != nil {
+	if _, err = file.Write(jsonData); err != nil {
 		return fmt.Errorf("error writing JSON to file: %v", err)
 	}
 
@@ -94,12 +94,7 @@ func writeStructToFilePath(toWrite interface{}, path string) error {
 		}
 	}(file)
 
-	jsonData, err := json.Marshal(toWrite)
-	if err != nil {
-		return fmt.Errorf("error marshaling struct to JSON: %v", err)
-	}
-
-	if _, err = file.Write(jsonData); err != nil {
+	if err = writeStructToFile(toWrite, file); err != nil {
 		return fmt.Errorf("error writing JSON to file: %v", err)
 	}
 
@@ -107,7 +102,6 @@ func writeStructToFilePath(toWrite interface{}, path string) error {
 }
 
 func writeFileToStruct(filename string, data interface{}) error {
-	// Open the file
 	file, err := os.Open(filename)
 	if err != nil {
 		return fmt.Errorf("could not open file: %w", err)
@@ -124,7 +118,6 @@ func writeFileToStruct(filename string, data interface{}) error {
 		return fmt.Errorf("could not read file: %w", err)
 	}
 
-	// Unmarshal the JSON data into the provided struct
 	if err := json.Unmarshal(fileContents, data); err != nil {
 		return fmt.Errorf("could not unmarshal JSON: %w", err)
 	}

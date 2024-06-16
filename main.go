@@ -19,6 +19,7 @@ var assets embed.FS
 func main() {
 	appManager := project.NewApplicationManager()
 	projectManager := project.NewProjectManager(appManager)
+	entityManager := project.NewEntityManager(appManager)
 
 	app := application.New(application.Options{
 		Name:        "storyguardian",
@@ -26,6 +27,7 @@ func main() {
 		Services: []application.Service{
 			application.NewService(appManager),
 			application.NewService(projectManager),
+			application.NewService(entityManager),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),

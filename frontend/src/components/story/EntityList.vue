@@ -1,0 +1,236 @@
+<script setup lang="ts">
+import { Plus, StretchHorizontal, LayoutGrid, ChevronUp, ChevronDown } from 'lucide-vue-next';
+import { toTypedSchema } from '@vee-validate/zod';
+import { z } from 'zod';
+import { useForm } from 'vee-validate';
+import {onMounted, ref} from "vue";
+import {Entity, Project} from "../../../bindings/storyguardian/project";
+import {Card, CardHeader, CardTitle} from "@/components/ui/card";
+import {Dialog, DialogContent, DialogHeader, DialogTrigger} from "@/components/ui/dialog";
+import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
+import {Button} from "@/components/ui/button";
+import {useToast} from "@/components/ui/toast";
+
+type EntityListViewMode = 'grid' | 'list';
+
+const { toast } = useToast()
+
+const entities = ref<Entity[]>([]);
+const showEntities = ref<Entity[]>([]);
+const openFilter = ref(false);
+const dialogOpen = ref(false);
+const listView = ref<EntityListViewMode>('list')
+const showBody = ref(true);
+
+const listHeight = ref<string>('h-0')
+
+const props = defineProps<{
+  story: Project
+}>();
+
+// storyStore.$subscribe(() => {
+//   getEntities();
+// });
+
+//Init
+onMounted(() => {
+  getEntities();
+})
+
+async function getEntities(){
+  const { data, error } = await supabase.from('entities').select("*").eq('story_id', storyStore.storyId);
+  if (error) {
+    toast({
+      title: 'Uh oh! Something went wrong.',
+      description: error.message,
+    });
+  }
+  if (data) {
+    entities.value = data;
+    showEntities.value = data;
+    calcListHeight();
+  }
+
+  listView.value = configStore.entityListView;
+}
+//Form
+const formSchema = toTypedSchema(z.object({
+  name: z.string(),
+  description: z.string(),
+}))
+
+const { handleSubmit } = useForm({
+  validationSchema: formSchema,
+
+})
+
+const onSubmit = handleSubmit(async (values) => {
+  const { data, error } = await supabase
+      .from('entities')
+      .insert([
+        { name: values.name, description: values.description, story_id: props.story.id },
+      ])
+      .select();
+
+  if (error) {
+    toast({
+      title: 'Uh oh! Something went wrong.',
+      description: error.message,
+    });
+  }
+
+  if (data) {
+    entities.value.push(data[0]);
+    //showEntities.value.push(data[0]); //Reapply filtering
+    calcListHeight();
+    toast({
+      title: 'Success',
+      description: 'Entity successfully created.',
+      icon: 'check',
+    });
+    dialogOpen.value = false;
+  }
+})
+
+//View
+function changeListView(view: EntityListViewMode) {
+  listView.value = view;
+  configStore.setEntityListView(view);
+  calcListHeight();
+}
+
+function toggleCard() {
+  if (showBody.value) {
+    showBody.value = false;
+  } else {
+    showBody.value = true;
+  }
+}
+
+function calcListHeight() {
+  if (listView.value === 'list') {
+    if (entities.value.length > 8) {
+      listHeight.value = 'h-96';
+    } else {
+      listHeight.value = 'h-' + entities.value.length * 12;
+    }
+  } else {
+    if (entities.value.length > 24) {
+      listHeight.value = 'h-96';
+    } else {
+      listHeight.value = 'h-' + entities.value.length / 3 * 12;
+    }
+  }
+
+}
+</script>
+
+<template>
+  <div>
+    <Card class="bg-muted/30">
+      <CardHeader class="flex flex-row justify-between items-center">
+        <CardTitle> Entities </CardTitle>
+        <div class="flex flex-row space-x-2">
+          <Dialog v-model:open="dialogOpen" v-if="showBody">
+            <DialogTrigger>
+              <TextTooltip text="Add an entity">
+                <Button size="icon" aria-label="Toggle italic" variant="outline" @click="">
+                  <Plus />
+                </Button>
+              </TextTooltip>
+            </DialogTrigger>
+            <DialogContent>
+              <form class="space-y-6" @submit="onSubmit">
+                <DialogHeader>
+                  <DialogTitle>Create an entity</DialogTitle>
+                </DialogHeader>
+                <!-- Form -->
+                <FormField :validate-on-blur="false" v-slot="{ componentField }" name="name">
+                  <FormItem>
+                    <FormLabel>Entity Name</FormLabel>
+                    <FormControl>
+                      <Input type="text" placeholder="The first Guardian" v-bind="componentField" autocomplete="off" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </FormField>
+                <FormField :validate-on-blur="false" v-slot="{ componentField }" name="description">
+                  <FormItem>
+                    <FormLabel>Entity Description</FormLabel>
+                    <FormControl>
+                      <Textarea type="text" placeholder="The first guardian of Xybal" v-bind="componentField" autocomplete="off" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </FormField>
+                <DialogFooter>
+                  <Button type="submit" class="w-full">
+                    Create
+                  </Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+
+          <TextTooltip text="Switch to grid"  v-if="listView === 'list' && showBody">
+            <Button size="icon" aria-label="Toggle italic" variant="outline" @click="changeListView('grid')">
+              <StretchHorizontal />
+            </Button>
+          </TextTooltip>
+
+          <TextTooltip text="Switch to list" v-if="listView === 'grid' && showBody">
+            <Button size="icon" aria-label="Toggle italic" variant="outline" @click="changeListView('list')">
+              <LayoutGrid />
+            </Button>
+          </TextTooltip>
+
+          <TextTooltip text="Expand" v-if="!showBody">
+            <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCard()" >
+              <ChevronDown />
+            </Button>
+          </TextTooltip>
+
+          <TextTooltip text="Minimize" v-if="showBody">
+            <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCard()" >
+              <ChevronUp />
+            </Button>
+          </TextTooltip>
+
+        </div>
+      </CardHeader>
+      <CardContent v-if="showBody">
+        <ScrollArea class="w-full" :class="listHeight">
+          <div id="single-entity-list" class="flex flex-col gap-2" v-if="listView === 'list'">
+            <!-- Entities -->
+            <NuxtLink :to="'/entity/' + entity.id" class=" bg-muted/30 hover:bg-muted/40 rounded-lg py-2 "
+                      v-for="entity in showEntities">
+              <p class="px-4 text-center">
+                {{ entity.name }}
+              </p>
+            </NuxtLink>
+            <!-- No entities -->
+            <p v-if="showEntities.length <= 0">
+              No Entities have been found.
+            </p>
+          </div>
+          <div id="single-entity-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2"
+               v-if="listView === 'grid'">
+            <!-- Entities -->
+            <NuxtLink :to="'/entity/' + entity.id" class=" bg-muted/30 hover:bg-muted/40 rounded-lg py-2 "
+                      v-for="entity in showEntities">
+              <p class="px-4 text-center">
+                {{ entity.name }}
+              </p>
+            </NuxtLink>
+            <!-- No entities -->
+            <p v-if="showEntities.length <= 0">
+              No Entities have been found.
+            </p>
+          </div>
+        </ScrollArea>
+
+      </CardContent>
+    </Card>
+  </div>
+</template>
+
