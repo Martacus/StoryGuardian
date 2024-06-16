@@ -11,12 +11,13 @@ import {
   DialogTrigger
 } from "@/components/ui/dialog";
 import TextToolTip from "@/components/ui/tooltip/TextTooltip.vue";
-import { Plus, Settings } from 'lucide-vue-next';
+import { Plus, Settings, Pencil } from 'lucide-vue-next';
 import {onMounted, ref} from "vue";
 import {Button} from "@/components/ui/button";
 import {GetProject} from "../../bindings/storyguardian/project/projectmanager";
 import {useRoute} from "vue-router";
 import {Project} from "../../bindings/storyguardian/project";
+import StoryTitle from "@/components/story/StoryTitle.vue";
 
 const addModuleDialogOpened = ref(false);
 const story = ref<Project>();
@@ -33,34 +34,53 @@ onMounted(() => {
     }
   })
 })
+
+async function saveStoryDescription(descriptionValue: string) {
+
+  // const { data, error } = await supabase
+  //     .from('stories')
+  //     .update({ description: descriptionValue })
+  //     .eq('id', storyStore.storyId)
+  //     .select();
+  // if (error) {
+  //   console.error(error)
+  // }
+  // if (data) {
+  //   story.value = data[0]
+  // }
+}
 </script>
 
 <template>
   <DashboardLayout>
-    <Card class="bg-muted/30 flex flex-row p-2 justify-center gap-2">
-      <Dialog v-model:open="addModuleDialogOpened">
-        <DialogTrigger>
-          <TextToolTip text="Add a module">
-            <Button class="btn btn-secondary" variant="outline" size="icon">
-              <Plus/>
-            </Button>
-          </TextToolTip>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Select a module</DialogTitle>
-          </DialogHeader>
-          <DialogDescription>Choose a module to add to your story, you can always remove them later.</DialogDescription>
+    <Card class="bg-muted/30 flex flex-row p-2 gap-2 items-center" v-if="story">
+      <StoryTitle :story="story" class="w-full"/>
+      <div class="flex flex-row justify-end mr-2 gap-2">
+        <Dialog v-model:open="addModuleDialogOpened">
+          <DialogTrigger>
+            <TextToolTip text="Add a module">
+              <Button class="btn btn-secondary" variant="outline" size="icon">
+                <Plus/>
+              </Button>
+            </TextToolTip>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Select a module</DialogTitle>
+            </DialogHeader>
+            <DialogDescription>Choose a module to add to your story, you can always remove them later.</DialogDescription>
 
-        </DialogContent>
-      </Dialog>
-      <TextToolTip text="Story settings">
-        <Button class="btn btn-secondary" variant="outline" size="icon">
-          <Settings/>
-        </Button>
-      </TextToolTip>
+          </DialogContent>
+        </Dialog>
+        <TextToolTip text="Story settings">
+          <Button class="btn btn-secondary" variant="outline" size="icon">
+            <Settings/>
+          </Button>
+        </TextToolTip>
+      </div>
+
     </Card>
-<!--    <Description v-if="story" :description="story.description" @save-description="saveStoryDescription"/>-->
+    <Description v-if="story" :description="story.description" @save-description="saveStoryDescription"/>
 <!--    <EntityList v-if="story" :story="story"/>-->
 <!--    <StoryImageModule v-if="story" :story="story"/>-->
   </DashboardLayout>

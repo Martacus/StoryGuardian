@@ -18,6 +18,11 @@ export function GetProject(projectId: string): Promise<$models.Project | null> &
     return $typingPromise;
 }
 
+export function SetTitle(projectId: string, name: string): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(210871089, projectId, name) as any;
+    return $resultPromise;
+}
+
 // Private type creation functions
 const $$createType0 = $models.Project.createFrom;
 const $$createType1 = $Create.Nullable($$createType0);

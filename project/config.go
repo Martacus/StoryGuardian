@@ -81,6 +81,29 @@ func writeStructToFile(toWrite interface{}, file *os.File) error {
 	return nil
 }
 
+func writeStructToFilePath(toWrite interface{}, path string) error {
+	file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	if err != nil {
+		return err
+	}
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+		}
+	}(file)
+
+	jsonData, err := json.Marshal(toWrite)
+	if err != nil {
+		return fmt.Errorf("error marshaling struct to JSON: %v", err)
+	}
+
+	if _, err = file.Write(jsonData); err != nil {
+		return fmt.Errorf("error writing JSON to file: %v", err)
+	}
+
+	return nil
+}
+
 func writeFileToStruct(filename string, data interface{}) error {
 	// Open the file
 	file, err := os.Open(filename)

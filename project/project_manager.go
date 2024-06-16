@@ -35,3 +35,21 @@ func (p *ProjectManager) GetProject(projectId string) (*Project, error) {
 	}
 	return nil, fmt.Errorf("could not find the project with id %v", projectId)
 }
+
+func (p *ProjectManager) SetTitle(projectId string, name string) error {
+	project, err := p.GetProject(projectId)
+	if err != nil {
+		return fmt.Errorf("could find the project: %v", err)
+	}
+
+	project.Name = name
+	if err = writeStructToFilePath(project, project.Location+"/project.json"); err != nil {
+		return fmt.Errorf("could not save the title change: %v", err)
+	}
+
+	if err = p.ApplicationManager.writeProjectToAppConfig(*project); err != nil {
+		return fmt.Errorf("could not save the title change to application config: %v", err)
+	}
+
+	return nil
+}

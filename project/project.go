@@ -30,7 +30,14 @@ func (a *ApplicationManager) CreateProject() (string, error) {
 		return "", fmt.Errorf("could not create the project config file: %v", err)
 	}
 
-	err = writeProjectToAppConfig(projectId, projectDirectory, a)
+	projectName := filepath.Base(projectDirectory)
+	project := ProjectDetails{
+		Id:       projectId,
+		Name:     projectName,
+		Location: projectDirectory,
+	}
+
+	err = a.writeProjectDetailsToAppConfig(project)
 	if err != nil {
 		return "", fmt.Errorf("could not write project to application config file: %v", err)
 	}
@@ -74,34 +81,4 @@ func createProjectFile(projectDirectory string, projectId string) error {
 	}
 
 	return writeStructToFile(config, file)
-}
-
-func writeProjectToAppConfig(projectId string, projectDirectory string, a *ApplicationManager) error {
-	projectName := filepath.Base(projectDirectory)
-	a.Config.Projects[projectId] = ProjectDetails{
-		Id:       projectId,
-		Name:     projectName,
-		Location: projectDirectory,
-	}
-
-	configLocation, err := getConfigLocation()
-	if err != nil {
-		return fmt.Errorf("cannot find application config file: %v", err)
-	}
-
-	file, err := os.OpenFile(configLocation, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
-	if err != nil {
-		return fmt.Errorf("cannot open config file: %v", err)
-	}
-	defer func(file *os.File) {
-		err := file.Close()
-		if err != nil {
-		}
-	}(file)
-
-	err = writeStructToFile(a.Config, file)
-	if err != nil {
-		return err
-	}
-	return nil
 }
