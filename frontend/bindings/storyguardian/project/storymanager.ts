@@ -9,8 +9,8 @@ import {Call as $Call, Create as $Create} from "@wailsio/runtime";
 // @ts-ignore: Unused imports
 import * as $models from "./models.js";
 
-export function GetProject(projectId: string): Promise<$models.Project | null> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(3131218426, projectId) as any;
+export function GetStory(projectId: string): Promise<$models.Story | null> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(3211350038, projectId) as any;
     let $typingPromise = $resultPromise.then(($result) => {
         return $$createType1($result);
     }) as any;
@@ -18,16 +18,16 @@ export function GetProject(projectId: string): Promise<$models.Project | null> &
     return $typingPromise;
 }
 
-export function SetProjectDescription(projectId: string, description: string): Promise<string> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(1152816440, projectId, description) as any;
+export function SetStoryDescription(storyId: string, description: string): Promise<string> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(3496087388, storyId, description) as any;
     return $resultPromise;
 }
 
-export function SetProjectTitle(projectId: string, name: string): Promise<void> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(473494224, projectId, name) as any;
+export function SetStoryTitle(storyId: string, name: string): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(1553970252, storyId, name) as any;
     return $resultPromise;
 }
 
 // Private type creation functions
-const $$createType0 = $models.Project.createFrom;
+const $$createType0 = $models.Story.createFrom;
 const $$createType1 = $Create.Nullable($$createType0);

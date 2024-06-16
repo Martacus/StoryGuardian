@@ -14,20 +14,21 @@ import TextToolTip from "@/components/ui/tooltip/TextTooltip.vue";
 import {Plus, Settings} from 'lucide-vue-next';
 import {onMounted, ref} from "vue";
 import {Button} from "@/components/ui/button";
-import {GetProject, SetProjectDescription} from "../../bindings/storyguardian/project/projectmanager";
 import {useRoute} from "vue-router";
-import {Project} from "../../bindings/storyguardian/project";
 import StoryTitle from "@/components/story/StoryTitle.vue";
 import Description from "@/components/shared/Description.vue";
+import EntityList from "@/components/story/EntityList.vue";
+import {Story} from "../../bindings/storyguardian/project";
+import {GetStory, SetStoryDescription} from "../../bindings/storyguardian/project/storymanager";
 
 const addModuleDialogOpened = ref(false);
-const story = ref<Project>();
+const story = ref<Story>();
 const route = useRoute();
 
 onMounted(() => {
   let projectId: string = route.params['id'] as string
   console.log(projectId)
-  GetProject(projectId).then(p => {
+  GetStory(projectId).then(p => {
     if(p !== null){
       story.value = p
     } else {
@@ -40,7 +41,7 @@ async function saveStoryDescription(descriptionValue: string) {
   if (!story.value) return;
 
   try {
-    story.value.description = await SetProjectDescription(story.value.id, descriptionValue);
+    story.value.description = await SetStoryDescription(story.value.id, descriptionValue);
   } catch (error) {
     //Alert
     console.error('Failed to save story description:', error);
@@ -78,7 +79,7 @@ async function saveStoryDescription(descriptionValue: string) {
 
     </Card>
     <Description v-if="story" :description="story.description" @save-description="saveStoryDescription"/>
-<!--    <EntityList v-if="story" :story="story"/>-->
+    <EntityList v-if="story" :story="story"/>
 <!--    <StoryImageModule v-if="story" :story="story"/>-->
   </DashboardLayout>
 </template>

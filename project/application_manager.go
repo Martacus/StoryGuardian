@@ -62,7 +62,7 @@ func (a *ApplicationManager) writeProjectDetailsToAppConfig(projectDetails Proje
 	return nil
 }
 
-func (a *ApplicationManager) writeProjectToAppConfig(project Project) error {
+func (a *ApplicationManager) writeProjectToAppConfig(project Story) error {
 	a.Config.Projects[project.Id] = ProjectDetails{
 		Name:     project.Name,
 		Id:       project.Id,

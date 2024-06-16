@@ -9,13 +9,8 @@ import {Call as $Call, Create as $Create} from "@wailsio/runtime";
 // @ts-ignore: Unused imports
 import * as $models from "./models.js";
 
-export function CreateProject(): Promise<string> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(3321607049) as any;
-    return $resultPromise;
-}
-
-export function GetConfig(): Promise<$models.ApplicationConfig> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(2061508138) as any;
+export function CreateEntity(entity: $models.Entity): Promise<$models.Entity> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(1304685636, entity) as any;
     let $typingPromise = $resultPromise.then(($result) => {
         return $$createType0($result);
     }) as any;
@@ -23,10 +18,15 @@ export function GetConfig(): Promise<$models.ApplicationConfig> & { cancel(): vo
     return $typingPromise;
 }
 
-export function OpenProject(projectId: string): Promise<void> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(2619509661, projectId) as any;
-    return $resultPromise;
+export function GetEntities(projectId: string): Promise<$models.Entity[]> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(528989482, projectId) as any;
+    let $typingPromise = $resultPromise.then(($result) => {
+        return $$createType1($result);
+    }) as any;
+    $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
+    return $typingPromise;
 }
 
 // Private type creation functions
-const $$createType0 = $models.ApplicationConfig.createFrom;
+const $$createType0 = $models.Entity.createFrom;
+const $$createType1 = $Create.Array($$createType0);

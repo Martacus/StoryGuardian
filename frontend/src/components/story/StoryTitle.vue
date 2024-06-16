@@ -3,15 +3,15 @@
 import { Pencil, Check } from 'lucide-vue-next';
 import {ref} from "vue";
 import {Button} from "@/components/ui/button";
-import {Project} from "../../../bindings/storyguardian/project";
 import {Input} from "@/components/ui/input";
-import {SetProjectTitle} from "../../../bindings/storyguardian/project/projectmanager";
+import {SetStoryTitle} from "../../../bindings/storyguardian/project/storymanager";
+import {Story} from "../../../bindings/storyguardian/project";
 
 
 const editTitle = ref(false);
 
 const props = defineProps({
-  story: Project
+  story: Story
 })
 
 function activateEdit() {
@@ -21,7 +21,7 @@ function activateEdit() {
 async function save() {
   activateEdit();
   if(props.story){
-    SetProjectTitle(props.story?.id, props.story?.name)
+    SetStoryTitle(props.story?.id, props.story?.name)
   } else {
     //Alert
   }

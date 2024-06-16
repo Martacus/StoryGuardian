@@ -101,7 +101,7 @@ func writeStructToFilePath(toWrite interface{}, path string) error {
 	return nil
 }
 
-func writeFileToStruct(filename string, data interface{}) error {
+func writeFilePathToStruct(filename string, data interface{}) error {
 	file, err := os.Open(filename)
 	if err != nil {
 		return fmt.Errorf("could not open file: %w", err)
@@ -113,6 +113,19 @@ func writeFileToStruct(filename string, data interface{}) error {
 		}
 	}(file)
 
+	fileContents, err := io.ReadAll(file)
+	if err != nil {
+		return fmt.Errorf("could not read file: %w", err)
+	}
+
+	if err := json.Unmarshal(fileContents, data); err != nil {
+		return fmt.Errorf("could not unmarshal JSON: %w", err)
+	}
+
+	return nil
+}
+
+func writeFileToStruct(file *os.File, data interface{}) error {
 	fileContents, err := io.ReadAll(file)
 	if err != nil {
 		return fmt.Errorf("could not read file: %w", err)

@@ -7,11 +7,15 @@ import {Create as $Create} from "@wailsio/runtime";
 
 export class ApplicationConfig {
     "projects": { [_: string]: ProjectDetails };
+    "openProject": ProjectDetails;
 
     /** Creates a new ApplicationConfig instance. */
     constructor($$source: Partial<ApplicationConfig> = {}) {
         if (!("projects" in $$source)) {
             this["projects"] = {};
+        }
+        if (!("openProject" in $$source)) {
+            this["openProject"] = (new ProjectDetails());
         }
 
         Object.assign(this, $$source);
@@ -22,9 +26,13 @@ export class ApplicationConfig {
      */
     static createFrom($$source: any = {}): ApplicationConfig {
         const $$createField0_0 = $$createType1;
+        const $$createField1_0 = $$createType0;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("projects" in $$parsedSource) {
             $$parsedSource["projects"] = $$createField0_0($$parsedSource["projects"]);
+        }
+        if ("openProject" in $$parsedSource) {
+            $$parsedSource["openProject"] = $$createField1_0($$parsedSource["openProject"]);
         }
         return new ApplicationConfig($$parsedSource as Partial<ApplicationConfig>);
     }
@@ -33,7 +41,7 @@ export class ApplicationConfig {
 export class Entity {
     "Id": string;
     "Name": string;
-    "ProjectId": string;
+    "StoryId": string;
     "Description": string;
     "CreatedAt": string;
     "Tags": string[];
@@ -46,8 +54,8 @@ export class Entity {
         if (!("Name" in $$source)) {
             this["Name"] = "";
         }
-        if (!("ProjectId" in $$source)) {
-            this["ProjectId"] = "";
+        if (!("StoryId" in $$source)) {
+            this["StoryId"] = "";
         }
         if (!("Description" in $$source)) {
             this["Description"] = "";
@@ -72,47 +80,6 @@ export class Entity {
             $$parsedSource["Tags"] = $$createField5_0($$parsedSource["Tags"]);
         }
         return new Entity($$parsedSource as Partial<Entity>);
-    }
-}
-
-export class Project {
-    "id": string;
-    "name": string;
-    "location": string;
-    "description": string;
-    "entities": Entity[];
-
-    /** Creates a new Project instance. */
-    constructor($$source: Partial<Project> = {}) {
-        if (!("id" in $$source)) {
-            this["id"] = "";
-        }
-        if (!("name" in $$source)) {
-            this["name"] = "";
-        }
-        if (!("location" in $$source)) {
-            this["location"] = "";
-        }
-        if (!("description" in $$source)) {
-            this["description"] = "";
-        }
-        if (!("entities" in $$source)) {
-            this["entities"] = [];
-        }
-
-        Object.assign(this, $$source);
-    }
-
-    /**
-     * Creates a new Project instance from a string or object.
-     */
-    static createFrom($$source: any = {}): Project {
-        const $$createField4_0 = $$createType4;
-        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
-        if ("entities" in $$parsedSource) {
-            $$parsedSource["entities"] = $$createField4_0($$parsedSource["entities"]);
-        }
-        return new Project($$parsedSource as Partial<Project>);
     }
 }
 
@@ -142,6 +109,47 @@ export class ProjectDetails {
     static createFrom($$source: any = {}): ProjectDetails {
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         return new ProjectDetails($$parsedSource as Partial<ProjectDetails>);
+    }
+}
+
+export class Story {
+    "id": string;
+    "name": string;
+    "location": string;
+    "description": string;
+    "entities": Entity[];
+
+    /** Creates a new Story instance. */
+    constructor($$source: Partial<Story> = {}) {
+        if (!("id" in $$source)) {
+            this["id"] = "";
+        }
+        if (!("name" in $$source)) {
+            this["name"] = "";
+        }
+        if (!("location" in $$source)) {
+            this["location"] = "";
+        }
+        if (!("description" in $$source)) {
+            this["description"] = "";
+        }
+        if (!("entities" in $$source)) {
+            this["entities"] = [];
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new Story instance from a string or object.
+     */
+    static createFrom($$source: any = {}): Story {
+        const $$createField4_0 = $$createType4;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("entities" in $$parsedSource) {
+            $$parsedSource["entities"] = $$createField4_0($$parsedSource["entities"]);
+        }
+        return new Story($$parsedSource as Partial<Story>);
     }
 }
 

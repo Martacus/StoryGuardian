@@ -19,7 +19,7 @@ var assets embed.FS
 func main() {
 	appManager := project.NewApplicationManager()
 	projectManager := project.NewProjectManager(appManager)
-	entityManager := project.NewEntityManager(appManager)
+	entityManager := project.NewEntityManager(projectManager)
 
 	app := application.New(application.Options{
 		Name:        "storyguardian",
