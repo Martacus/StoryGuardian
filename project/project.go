@@ -6,6 +6,7 @@ import (
 	"github.com/wailsapp/wails/v3/pkg/application"
 	"os"
 	"path/filepath"
+	"storyguardian/constants"
 )
 
 type ProjectDetails struct {
@@ -40,6 +41,10 @@ func (a *ApplicationManager) CreateProject() (string, error) {
 	err = a.writeProjectDetailsToAppConfig(project)
 	if err != nil {
 		return "", fmt.Errorf("could not write project to application config file: %v", err)
+	}
+
+	if err := os.MkdirAll(filepath.Join(projectDirectory, constants.EntityFolderName), 0755); err != nil {
+		return "", fmt.Errorf("error creating directory: %v", err)
 	}
 
 	return projectId, nil

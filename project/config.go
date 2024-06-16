@@ -6,6 +6,8 @@ import (
 	"github.com/adrg/xdg"
 	"io"
 	"os"
+	"path/filepath"
+	"storyguardian/constants"
 )
 
 const (
@@ -17,11 +19,11 @@ type ApplicationConfig struct {
 }
 
 func getConfigLocation() (string, error) {
-	configFilePath, err := xdg.SearchConfigFile(ApplicationName + "/config.json")
+	configFilePath, err := xdg.SearchConfigFile(filepath.Join(ApplicationName, constants.ConfigFileName))
 
 	//If te config doesn't exist, create it
 	if err != nil {
-		configFilePath, err = xdg.ConfigFile(ApplicationName + "/config.json")
+		configFilePath, err = xdg.ConfigFile(filepath.Join(ApplicationName, constants.ConfigFileName))
 		if err != nil {
 			return "", fmt.Errorf("could not create the necessary config file path: %v", err)
 		}

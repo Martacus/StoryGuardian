@@ -2,6 +2,8 @@ package project
 
 import (
 	"fmt"
+	"path/filepath"
+	"storyguardian/constants"
 )
 
 type Project struct {
@@ -23,7 +25,7 @@ func (p *ProjectManager) GetProject(projectId string) (*Project, error) {
 	for key, projectDetails := range p.ApplicationManager.Config.Projects {
 		if key == projectId {
 			project := Project{}
-			err := writeFileToStruct(projectDetails.Location+"/project.json", &project)
+			err := writeFileToStruct(filepath.Join(projectDetails.Location, constants.ProjectConfigName), &project)
 			if err != nil {
 				return nil, fmt.Errorf("could not write project json to struct: %v", err)
 			}
@@ -41,7 +43,7 @@ func (p *ProjectManager) SetProjectTitle(projectId string, name string) error {
 	}
 
 	project.Name = name
-	if err = writeStructToFilePath(project, project.Location+"/project.json"); err != nil {
+	if err = writeStructToFilePath(project, filepath.Join(project.Location, constants.ProjectConfigName)); err != nil {
 		return fmt.Errorf("could not save the title change: %v", err)
 	}
 
@@ -59,7 +61,7 @@ func (p *ProjectManager) SetProjectDescription(projectId string, description str
 	}
 
 	project.Description = description
-	if err = writeStructToFilePath(project, project.Location+"/project.json"); err != nil {
+	if err = writeStructToFilePath(project, filepath.Join(project.Location, constants.ProjectConfigName)); err != nil {
 		return "", fmt.Errorf("could not save the description change: %v", err)
 	}
 
