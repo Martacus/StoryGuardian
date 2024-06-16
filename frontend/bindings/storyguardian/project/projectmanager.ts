@@ -18,8 +18,13 @@ export function GetProject(projectId: string): Promise<$models.Project | null> &
     return $typingPromise;
 }
 
-export function SetTitle(projectId: string, name: string): Promise<void> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(210871089, projectId, name) as any;
+export function SetProjectDescription(projectId: string, description: string): Promise<string> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(1152816440, projectId, description) as any;
+    return $resultPromise;
+}
+
+export function SetProjectTitle(projectId: string, name: string): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(473494224, projectId, name) as any;
     return $resultPromise;
 }
 

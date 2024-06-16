@@ -5,6 +5,7 @@ import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
 import TipTap from "@/components/shared/TipTap.vue";
 import {ref} from "vue";
+import {Button} from "@/components/ui/button";
 
 
 const storyDescriptionEditor = ref();

@@ -11,13 +11,14 @@ import {
   DialogTrigger
 } from "@/components/ui/dialog";
 import TextToolTip from "@/components/ui/tooltip/TextTooltip.vue";
-import { Plus, Settings, Pencil } from 'lucide-vue-next';
+import {Plus, Settings} from 'lucide-vue-next';
 import {onMounted, ref} from "vue";
 import {Button} from "@/components/ui/button";
-import {GetProject} from "../../bindings/storyguardian/project/projectmanager";
+import {GetProject, SetProjectDescription} from "../../bindings/storyguardian/project/projectmanager";
 import {useRoute} from "vue-router";
 import {Project} from "../../bindings/storyguardian/project";
 import StoryTitle from "@/components/story/StoryTitle.vue";
+import Description from "@/components/shared/Description.vue";
 
 const addModuleDialogOpened = ref(false);
 const story = ref<Project>();
@@ -36,18 +37,14 @@ onMounted(() => {
 })
 
 async function saveStoryDescription(descriptionValue: string) {
+  if (!story.value) return;
 
-  // const { data, error } = await supabase
-  //     .from('stories')
-  //     .update({ description: descriptionValue })
-  //     .eq('id', storyStore.storyId)
-  //     .select();
-  // if (error) {
-  //   console.error(error)
-  // }
-  // if (data) {
-  //   story.value = data[0]
-  // }
+  try {
+    story.value.description = await SetProjectDescription(story.value.id, descriptionValue);
+  } catch (error) {
+    //Alert
+    console.error('Failed to save story description:', error);
+  }
 }
 </script>
 

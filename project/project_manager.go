@@ -2,7 +2,6 @@ package project
 
 import (
 	"fmt"
-	"log"
 )
 
 type Project struct {
@@ -22,7 +21,6 @@ func NewProjectManager(appManager *ApplicationManager) *ProjectManager {
 
 func (p *ProjectManager) GetProject(projectId string) (*Project, error) {
 	for key, projectDetails := range p.ApplicationManager.Config.Projects {
-		log.Printf("%v : %v", key, projectId)
 		if key == projectId {
 			project := Project{}
 			err := writeFileToStruct(projectDetails.Location+"/project.json", &project)
@@ -36,10 +34,10 @@ func (p *ProjectManager) GetProject(projectId string) (*Project, error) {
 	return nil, fmt.Errorf("could not find the project with id %v", projectId)
 }
 
-func (p *ProjectManager) SetTitle(projectId string, name string) error {
+func (p *ProjectManager) SetProjectTitle(projectId string, name string) error {
 	project, err := p.GetProject(projectId)
 	if err != nil {
-		return fmt.Errorf("could find the project: %v", err)
+		return fmt.Errorf("could not find the project: %v", err)
 	}
 
 	project.Name = name
@@ -52,4 +50,18 @@ func (p *ProjectManager) SetTitle(projectId string, name string) error {
 	}
 
 	return nil
+}
+
+func (p *ProjectManager) SetProjectDescription(projectId string, description string) (string, error) {
+	project, err := p.GetProject(projectId)
+	if err != nil {
+		return "", fmt.Errorf("could not find the project with id: %v | %v", projectId, err)
+	}
+
+	project.Description = description
+	if err = writeStructToFilePath(project, project.Location+"/project.json"); err != nil {
+		return "", fmt.Errorf("could not save the description change: %v", err)
+	}
+
+	return description, nil
 }

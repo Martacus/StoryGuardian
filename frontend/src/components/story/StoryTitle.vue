@@ -5,7 +5,7 @@ import {ref} from "vue";
 import {Button} from "@/components/ui/button";
 import {Project} from "../../../bindings/storyguardian/project";
 import {Input} from "@/components/ui/input";
-import {SetTitle} from "../../../bindings/storyguardian/project/projectmanager";
+import {SetProjectTitle} from "../../../bindings/storyguardian/project/projectmanager";
 
 
 const editTitle = ref(false);
@@ -21,7 +21,7 @@ function activateEdit() {
 async function save() {
   activateEdit();
   if(props.story){
-    SetTitle(props.story?.id, props.story?.name)
+    SetProjectTitle(props.story?.id, props.story?.name)
   } else {
     //Alert
   }

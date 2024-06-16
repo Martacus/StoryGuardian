@@ -43,24 +43,22 @@ watch(selectedStyles, (newValue, oldValue) => {
 </script>
 
 <template>
-  <div v-if="editor">
-    <ToggleGroup type="multiple" size="sm" variant="outline">
-      <ToggleGroupItem value="bold" aria-label="Toggle bold" @click="editor?.chain().focus().toggleBold().run()">
-        <Bold class="h-4 w-4" />
-      </ToggleGroupItem>
-      <ToggleGroupItem value="italic" aria-label="Toggle italic" @click="editor?.chain().focus().toggleItalic().run()">
-        <Italic class="h-4 w-4" />
-      </ToggleGroupItem>
-      <ToggleGroupItem value="underline" aria-label="Toggle underline"
-                       @click="editor?.chain().focus().toggleStrike().run()">
-        <Underline class="h-4 w-4" />
-      </ToggleGroupItem>
-    </ToggleGroup>
+  <ToggleGroup type="multiple" size="sm" variant="outline" v-if="editor">
+    <ToggleGroupItem value="bold" aria-label="Toggle bold" @click="editor?.chain().focus().toggleBold().run()">
+      <Bold class="h-4 w-4" />
+    </ToggleGroupItem>
+    <ToggleGroupItem value="italic" aria-label="Toggle italic" @click="editor?.chain().focus().toggleItalic().run()">
+      <Italic class="h-4 w-4" />
+    </ToggleGroupItem>
+    <ToggleGroupItem value="underline" aria-label="Toggle underline"
+                     @click="editor?.chain().focus().toggleStrike().run()">
+      <Underline class="h-4 w-4" />
+    </ToggleGroupItem>
+  </ToggleGroup>
 
-    <EditorContent :editor="editor" class="w-full min-h-20 h-full border-2 border-ga-border-primary mt-1">
+  <EditorContent :editor="editor" class="w-full min-h-20 h-full border-2 border-ga-border-primary mt-1" v-if="editor">
 
 
-    </EditorContent>
-  </div>
+  </EditorContent>
 </template>
 
