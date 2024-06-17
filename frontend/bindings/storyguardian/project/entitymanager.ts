@@ -36,6 +36,11 @@ export function LoadEntities(projectId: string): Promise<$models.Entity[]> & { c
     return $typingPromise;
 }
 
+export function SetEntityDescription(entityId: string, description: string): Promise<string> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(2423188304, entityId, description) as any;
+    return $resultPromise;
+}
+
 // Private type creation functions
 const $$createType0 = $models.Entity.createFrom;
 const $$createType1 = $Create.Nullable($$createType0);

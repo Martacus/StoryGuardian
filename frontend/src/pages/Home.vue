@@ -7,7 +7,9 @@ import {CreateProject, GetConfig, OpenProject} from "../../bindings/storyguardia
 import {ApplicationConfig} from "../../bindings/storyguardian/project";
 import {Separator} from "@/components/ui/separator";
 import {useRouter} from "vue-router";
+import {useToast} from "@/components/ui/toast";
 
+const {toast} = useToast()
 const config = ref<ApplicationConfig>();
 const router = useRouter()
 
@@ -25,8 +27,11 @@ async function openProject(id: string){
   try{
     await OpenProject(id);
     await router.push('/dashboard/' + id)
-  } catch(error){
-    //Alert
+  } catch(error: any){
+    toast({
+      title: 'Uh oh! Something went wrong.',
+      description: error,
+    });
   }
 }
 </script>

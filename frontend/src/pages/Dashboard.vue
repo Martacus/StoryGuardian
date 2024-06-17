@@ -15,26 +15,32 @@ import {Plus, Settings} from 'lucide-vue-next';
 import {onMounted, ref} from "vue";
 import {Button} from "@/components/ui/button";
 import {useRoute} from "vue-router";
-import StoryTitle from "@/components/story/StoryTitle.vue";
 import Description from "@/components/shared/Description.vue";
 import EntityList from "@/components/story/EntityList.vue";
 import {Story} from "../../bindings/storyguardian/project";
-import {GetStory, SetStoryDescription} from "../../bindings/storyguardian/project/storymanager";
+import {GetStory, SetStoryDescription, SetStoryTitle} from "../../bindings/storyguardian/project/storymanager";
+import {useToast} from "@/components/ui/toast";
+import EntityTitle from "@/components/shared/EntityTitle.vue";
 
 const addModuleDialogOpened = ref(false);
 const story = ref<Story>();
 const route = useRoute();
+const {toast} = useToast()
 
-onMounted(() => {
+onMounted(async () => {
   let projectId: string = route.params['id'] as string
   console.log(projectId)
-  GetStory(projectId).then(p => {
-    if(p !== null){
-      story.value = p
-    } else {
-      //Alert that project couldnt load
+  try{
+    const retrievedStory = await GetStory(projectId)
+    if(retrievedStory !== null){
+      story.value = retrievedStory
     }
-  })
+  } catch(error: any) {
+    toast({
+      title: 'Failed to retrieve story',
+      description: error,
+    });
+  }
 })
 
 async function saveStoryDescription(descriptionValue: string) {
@@ -42,17 +48,32 @@ async function saveStoryDescription(descriptionValue: string) {
 
   try {
     story.value.description = await SetStoryDescription(story.value.id, descriptionValue);
-  } catch (error) {
-    //Alert
-    console.error('Failed to save story description:', error);
+  } catch (error: any) {
+    toast({
+      title: 'Failed to save story description',
+      description: error,
+    });
   }
+}
+
+async function saveStoryTitle(title: string) {
+  if (!story.value) return;
+  try {
+    await SetStoryTitle(story.value.id, title)
+  } catch (error: any) {
+    toast({
+      title: 'Failed to save story title',
+      description: error,
+    });
+  }
+
 }
 </script>
 
 <template>
   <DashboardLayout>
     <Card class="bg-muted/30 flex flex-row p-2 gap-2 items-center" v-if="story">
-      <StoryTitle :story="story" class="w-full"/>
+      <EntityTitle :title="story.name" @save-title="saveStoryTitle" class="w-full"/>
       <div class="flex flex-row justify-end mr-2 gap-2">
         <Dialog v-model:open="addModuleDialogOpened">
           <DialogTrigger>

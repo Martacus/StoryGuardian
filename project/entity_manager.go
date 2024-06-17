@@ -9,12 +9,12 @@ import (
 )
 
 type Entity struct {
-	Id          string
-	Name        string
-	StoryId     string
-	Description string
-	CreatedAt   string
-	Tags        []string
+	Id          string   `json:"id"`
+	Name        string   `json:"name"`
+	StoryId     string   `json:"storyId"`
+	Description string   `json:"description"`
+	CreatedAt   string   `json:"createdAt"`
+	Tags        []string `json:"tags"`
 }
 type EntityManager struct {
 	ProjectManager *StoryManager
@@ -75,4 +75,19 @@ func (e *EntityManager) CreateEntity(entity Entity) (Entity, error) {
 	e.Entities[entity.Id] = entity
 
 	return entity, nil
+}
+
+func (e *EntityManager) SetEntityDescription(entityId string, description string) (string, error) {
+	entity, err := e.GetEntity(entityId)
+	if err != nil {
+		return "", fmt.Errorf("could not find the entity with id: %v | %v", entityId, err)
+	}
+
+	entity.Description = description
+	writePath := filepath.Join(e.ProjectManager.ApplicationManager.Config.OpenProject.Location, constants.EntityFolderName, entityId+".json")
+	if err = writeStructToFilePath(entity, writePath); err != nil {
+		return "", fmt.Errorf("could not save the entity description change: %v", err)
+	}
+
+	return description, nil
 }

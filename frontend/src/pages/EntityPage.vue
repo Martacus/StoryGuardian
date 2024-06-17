@@ -1,0 +1,87 @@
+<script setup lang="ts">
+
+import DashboardLayout from "@/layouts/DashboardLayout.vue";
+import TextToolTip from "@/components/ui/tooltip/TextTooltip.vue";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from "@/components/ui/dialog";
+import {Card} from "@/components/ui/card";
+import {Plus, Settings} from "lucide-vue-next";
+import {Button} from "@/components/ui/button";
+import {onMounted, ref} from "vue";
+import {useRoute} from "vue-router";
+import {GetEntity, SetEntityDescription} from "../../bindings/storyguardian/project/entitymanager";
+import EntityTitle from "@/components/shared/EntityTitle.vue";
+import {Entity} from "../../bindings/storyguardian/project";
+import Description from "@/components/shared/Description.vue";
+import {useToast} from "@/components/ui/toast";
+
+
+const route = useRoute();
+const entity = ref<Entity>();
+const addModuleDialogOpened = ref(false)
+const {toast} = useToast()
+
+onMounted(async () => {
+  let projectId: string = route.params['id'] as string
+  const retrievedEntity = await GetEntity(projectId)
+  if(retrievedEntity){
+    entity.value = retrievedEntity;
+  }
+})
+
+async function saveDescription(descriptionValue: string) {
+  if (!entity.value) return;
+
+  try {
+    entity.value.description = await SetEntityDescription(entity.value.id, descriptionValue);
+  } catch (error: any) {
+    toast({
+      title: 'Failed to save entity description',
+      description: error,
+    });
+  }
+}
+
+</script>
+
+<template>
+  <DashboardLayout>
+    <Card class="bg-muted/30 flex flex-row p-2 gap-2 items-center" v-if="entity">
+      <EntityTitle :title="entity.name" class="w-full" />
+      <div class="flex flex-row justify-end mr-2 gap-2">
+        <Dialog v-model:open="addModuleDialogOpened">
+          <DialogTrigger>
+            <TextToolTip text="Add a module">
+              <Button class="btn btn-secondary" variant="outline" size="icon">
+                <Plus/>
+              </Button>
+            </TextToolTip>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Select a module</DialogTitle>
+            </DialogHeader>
+            <DialogDescription>Choose a module to add to your entity, you can always remove them.</DialogDescription>
+          </DialogContent>
+        </Dialog>
+        <TextToolTip text="Story settings">
+          <Button class="btn btn-secondary" variant="outline" size="icon">
+            <Settings/>
+          </Button>
+        </TextToolTip>
+      </div>
+    </Card>
+
+    <Description v-if="entity" :description="entity.description" @save-description="saveDescription"/>
+  </DashboardLayout>
+</template>
+
+<style scoped>
+
+</style>

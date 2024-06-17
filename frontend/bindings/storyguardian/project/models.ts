@@ -39,32 +39,32 @@ export class ApplicationConfig {
 }
 
 export class Entity {
-    "Id": string;
-    "Name": string;
-    "StoryId": string;
-    "Description": string;
-    "CreatedAt": string;
-    "Tags": string[];
+    "id": string;
+    "name": string;
+    "storyId": string;
+    "description": string;
+    "createdAt": string;
+    "tags": string[];
 
     /** Creates a new Entity instance. */
     constructor($$source: Partial<Entity> = {}) {
-        if (!("Id" in $$source)) {
-            this["Id"] = "";
+        if (!("id" in $$source)) {
+            this["id"] = "";
         }
-        if (!("Name" in $$source)) {
-            this["Name"] = "";
+        if (!("name" in $$source)) {
+            this["name"] = "";
         }
-        if (!("StoryId" in $$source)) {
-            this["StoryId"] = "";
+        if (!("storyId" in $$source)) {
+            this["storyId"] = "";
         }
-        if (!("Description" in $$source)) {
-            this["Description"] = "";
+        if (!("description" in $$source)) {
+            this["description"] = "";
         }
-        if (!("CreatedAt" in $$source)) {
-            this["CreatedAt"] = "";
+        if (!("createdAt" in $$source)) {
+            this["createdAt"] = "";
         }
-        if (!("Tags" in $$source)) {
-            this["Tags"] = [];
+        if (!("tags" in $$source)) {
+            this["tags"] = [];
         }
 
         Object.assign(this, $$source);
@@ -76,8 +76,8 @@ export class Entity {
     static createFrom($$source: any = {}): Entity {
         const $$createField5_0 = $$createType2;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
-        if ("Tags" in $$parsedSource) {
-            $$parsedSource["Tags"] = $$createField5_0($$parsedSource["Tags"]);
+        if ("tags" in $$parsedSource) {
+            $$parsedSource["tags"] = $$createField5_0($$parsedSource["tags"]);
         }
         return new Entity($$parsedSource as Partial<Entity>);
     }

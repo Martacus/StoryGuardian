@@ -16,6 +16,7 @@ import {ScrollArea} from "@/components/ui/scroll-area";
 import {Textarea} from "@/components/ui/textarea";
 import {v4} from "uuid";
 import {CreateEntity, LoadEntities} from "../../../bindings/storyguardian/project/entitymanager";
+import {useRouter} from "vue-router";
 
 type EntityListViewMode = 'grid' | 'list';
 
@@ -27,6 +28,7 @@ const openFilter = ref(false);
 const dialogOpen = ref(false);
 const listView = ref<EntityListViewMode>('list')
 const showBody = ref(true);
+const router = useRouter()
 
 const listHeight = ref<string>('h-0')
 
@@ -34,11 +36,6 @@ const props = defineProps<{
   story: Story
 }>();
 
-// storyStore.$subscribe(() => {
-//   getEntities();
-// });
-
-//Init
 onMounted(() => {
   getEntities();
 })
@@ -119,7 +116,10 @@ function calcListHeight() {
       listHeight.value = 'h-' + Math.max(entities.value.length, 3) / 3 * 12;
     }
   }
+}
 
+async function navigateToEntity(id: string){
+  await router.push('/entity/' + id)
 }
 </script>
 
@@ -201,10 +201,11 @@ function calcListHeight() {
         <ScrollArea class="w-full" :class="listHeight">
           <div id="single-entity-list" class="flex flex-col gap-2" v-if="listView === 'list'">
             <!-- Entities -->
-            <div :to="'/entity/' + entity.Id" class=" bg-muted/30 hover:bg-muted/40 rounded-lg py-2 "
+            <div :to="'/entity/' + entity.id" class=" bg-muted/30 hover:bg-muted/40 rounded-lg py-2 hover:cursor-pointer"
+                 @click="navigateToEntity(entity.id)"
                  v-for="entity in showEntities">
               <p class="px-4 text-center">
-                {{ entity.Name }}
+                {{ entity.name }}
               </p>
             </div>
             <!-- No entities -->
@@ -215,10 +216,11 @@ function calcListHeight() {
           <div id="single-entity-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2"
                v-if="listView === 'grid'">
             <!-- Entities -->
-            <div :to="'/entity/' + entity.Id" class=" bg-muted/30 hover:bg-muted/40 rounded-lg py-2 "
+            <div class=" bg-muted/30 hover:bg-muted/40 rounded-lg py-2 hover:cursor-pointer"
+                 @click="navigateToEntity(entity.id)"
                  v-for="entity in showEntities">
               <p class="px-4 text-center">
-                {{ entity.Name }}
+                {{ entity.name }}
               </p>
             </div>
             <!-- No entities -->
