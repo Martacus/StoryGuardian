@@ -18,15 +18,17 @@ type Entity struct {
 }
 type EntityManager struct {
 	ProjectManager *StoryManager
+	Entities       map[string]Entity
 }
 
 func NewEntityManager(projectManager *StoryManager) *EntityManager {
 	return &EntityManager{
 		ProjectManager: projectManager,
+		Entities:       make(map[string]Entity),
 	}
 }
 
-func (e *EntityManager) GetEntities(projectId string) ([]Entity, error) {
+func (e *EntityManager) LoadEntities(projectId string) ([]Entity, error) {
 	project, err := e.ProjectManager.GetStory(projectId)
 	if err != nil {
 		return make([]Entity, 0), err
@@ -44,7 +46,21 @@ func (e *EntityManager) GetEntities(projectId string) ([]Entity, error) {
 		entityList = append(entityList, newEntity)
 	}
 
+	entityMap := make(map[string]Entity)
+	for _, entity := range entityList {
+		entityMap[entity.Id] = entity
+	}
+	e.Entities = entityMap
+
 	return entityList, nil
+}
+
+func (e *EntityManager) GetEntity(entityId string) (*Entity, error) {
+	if value, ok := e.Entities[entityId]; ok {
+		return &value, nil
+	}
+
+	return nil, fmt.Errorf("could not find entity: %v", entityId)
 }
 
 func (e *EntityManager) CreateEntity(entity Entity) (Entity, error) {
@@ -55,6 +71,8 @@ func (e *EntityManager) CreateEntity(entity Entity) (Entity, error) {
 	if err := writeStructToFilePath(entity, filePath); err != nil {
 		return entity, fmt.Errorf("could save new entity to file: %v", err)
 	}
+
+	e.Entities[entity.Id] = entity
 
 	return entity, nil
 }

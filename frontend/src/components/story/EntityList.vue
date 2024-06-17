@@ -13,9 +13,9 @@ import {Toast, useToast} from "@/components/ui/toast";
 import {FormControl, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {ScrollArea} from "@/components/ui/scroll-area";
-import {CreateEntity, GetEntities} from "../../../bindings/storyguardian/project/entitymanager";
 import {Textarea} from "@/components/ui/textarea";
 import {v4} from "uuid";
+import {CreateEntity, LoadEntities} from "../../../bindings/storyguardian/project/entitymanager";
 
 type EntityListViewMode = 'grid' | 'list';
 
@@ -45,7 +45,7 @@ onMounted(() => {
 
 async function getEntities() {
   try {
-    let data = await GetEntities(props.story.id);
+    let data = await LoadEntities(props.story.id);
     entities.value = data;
     showEntities.value = data;
     calcListHeight();
@@ -102,11 +102,7 @@ function changeListView(view: EntityListViewMode) {
 }
 
 function toggleCard() {
-  if (showBody.value) {
-    showBody.value = false;
-  } else {
-    showBody.value = true;
-  }
+  showBody.value = !showBody.value;
 }
 
 function calcListHeight() {

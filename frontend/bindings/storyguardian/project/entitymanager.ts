@@ -18,8 +18,8 @@ export function CreateEntity(entity: $models.Entity): Promise<$models.Entity> & 
     return $typingPromise;
 }
 
-export function GetEntities(projectId: string): Promise<$models.Entity[]> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(528989482, projectId) as any;
+export function GetEntity(entityId: string): Promise<$models.Entity | null> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(3162533658, entityId) as any;
     let $typingPromise = $resultPromise.then(($result) => {
         return $$createType1($result);
     }) as any;
@@ -27,6 +27,16 @@ export function GetEntities(projectId: string): Promise<$models.Entity[]> & { ca
     return $typingPromise;
 }
 
+export function LoadEntities(projectId: string): Promise<$models.Entity[]> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(979633696, projectId) as any;
+    let $typingPromise = $resultPromise.then(($result) => {
+        return $$createType2($result);
+    }) as any;
+    $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
+    return $typingPromise;
+}
+
 // Private type creation functions
 const $$createType0 = $models.Entity.createFrom;
-const $$createType1 = $Create.Array($$createType0);
+const $$createType1 = $Create.Nullable($$createType0);
+const $$createType2 = $Create.Array($$createType0);
