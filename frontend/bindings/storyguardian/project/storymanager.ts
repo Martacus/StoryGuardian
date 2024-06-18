@@ -18,6 +18,15 @@ export function GetStory(projectId: string): Promise<$models.Story | null> & { c
     return $typingPromise;
 }
 
+export function GetStoryImages(storyId: string): Promise<$models.ImageFile[]> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(2016402648, storyId) as any;
+    let $typingPromise = $resultPromise.then(($result) => {
+        return $$createType3($result);
+    }) as any;
+    $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
+    return $typingPromise;
+}
+
 export function SetStoryDescription(storyId: string, description: string): Promise<string> & { cancel(): void } {
     let $resultPromise = $Call.ByID(3496087388, storyId, description) as any;
     return $resultPromise;
@@ -31,3 +40,5 @@ export function SetStoryTitle(storyId: string, name: string): Promise<void> & { 
 // Private type creation functions
 const $$createType0 = $models.Story.createFrom;
 const $$createType1 = $Create.Nullable($$createType0);
+const $$createType2 = $models.ImageFile.createFrom;
+const $$createType3 = $Create.Array($$createType2);

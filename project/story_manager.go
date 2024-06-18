@@ -2,6 +2,7 @@ package project
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"storyguardian/constants"
 )
@@ -16,6 +17,11 @@ type StoryManager struct {
 	ApplicationManager *ApplicationManager
 }
 
+type ImageFile struct {
+	Location string `json:"location"`
+	Name     string `json:"name"`
+}
+
 func NewProjectManager(appManager *ApplicationManager) *StoryManager {
 	return &StoryManager{
 		ApplicationManager: appManager,
@@ -28,7 +34,7 @@ func (p *StoryManager) GetStory(projectId string) (*Story, error) {
 			story := Story{}
 			err := writeFilePathToStruct(filepath.Join(projectDetails.Location, constants.ProjectConfigName), &story)
 			if err != nil {
-				return nil, fmt.Errorf("could not write story json to struct: %v", err)
+				return nil, fmt.Errorf("could not find the story with id: %v | %v", projectId, err)
 			}
 
 			return &story, nil
@@ -67,4 +73,29 @@ func (p *StoryManager) SetStoryDescription(storyId string, description string) (
 	}
 
 	return description, nil
+}
+
+func (p *StoryManager) GetStoryImages(storyId string) ([]ImageFile, error) {
+	story, err := p.GetStory(storyId)
+	if err != nil {
+		return make([]ImageFile, 0), err
+	}
+
+	images := make([]ImageFile, 0)
+	imagesFolderPath := filepath.Join(story.Location, "images")
+	files, err := os.ReadDir(imagesFolderPath)
+	for _, file := range files {
+		if !file.IsDir() {
+			ext := filepath.Ext(file.Name())
+			switch ext {
+			case ".jpg", ".jpeg", ".png", ".gif", ".bmp":
+				images = append(images, ImageFile{
+					Name:     file.Name(),
+					Location: filepath.Join(imagesFolderPath, file.Name()),
+				})
+			}
+		}
+	}
+
+	return images, nil
 }

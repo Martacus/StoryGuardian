@@ -83,6 +83,31 @@ export class Entity {
     }
 }
 
+export class ImageFile {
+    "location": string;
+    "name": string;
+
+    /** Creates a new ImageFile instance. */
+    constructor($$source: Partial<ImageFile> = {}) {
+        if (!("location" in $$source)) {
+            this["location"] = "";
+        }
+        if (!("name" in $$source)) {
+            this["name"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new ImageFile instance from a string or object.
+     */
+    static createFrom($$source: any = {}): ImageFile {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new ImageFile($$parsedSource as Partial<ImageFile>);
+    }
+}
+
 export class ProjectDetails {
     "id": string;
     "name": string;

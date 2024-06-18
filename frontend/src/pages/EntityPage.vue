@@ -10,8 +10,8 @@ import {
   DialogTitle,
   DialogTrigger
 } from "@/components/ui/dialog";
-import {Card} from "@/components/ui/card";
-import {Plus, Settings} from "lucide-vue-next";
+import {Card, CardHeader} from "@/components/ui/card";
+import {Plus, Settings, ArrowLeft} from "lucide-vue-next";
 import {Button} from "@/components/ui/button";
 import {onMounted, ref} from "vue";
 import {useRoute} from "vue-router";
@@ -30,7 +30,7 @@ const {toast} = useToast()
 onMounted(async () => {
   let projectId: string = route.params['id'] as string
   const retrievedEntity = await GetEntity(projectId)
-  if(retrievedEntity){
+  if (retrievedEntity) {
     entity.value = retrievedEntity;
   }
 })
@@ -52,30 +52,35 @@ async function saveDescription(descriptionValue: string) {
 
 <template>
   <DashboardLayout>
-    <Card class="bg-muted/30 flex flex-row p-2 gap-2 items-center" v-if="entity">
-      <EntityTitle :title="entity.name" class="w-full" />
-      <div class="flex flex-row justify-end mr-2 gap-2">
-        <Dialog v-model:open="addModuleDialogOpened">
-          <DialogTrigger>
-            <TextToolTip text="Add a module">
-              <Button class="btn btn-secondary" variant="outline" size="icon">
-                <Plus/>
-              </Button>
-            </TextToolTip>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Select a module</DialogTitle>
-            </DialogHeader>
-            <DialogDescription>Choose a module to add to your entity, you can always remove them.</DialogDescription>
-          </DialogContent>
-        </Dialog>
-        <TextToolTip text="Story settings">
-          <Button class="btn btn-secondary" variant="outline" size="icon">
-            <Settings/>
-          </Button>
-        </TextToolTip>
-      </div>
+    <Card class="bg-muted/30" v-if="entity">
+      <CardHeader class="flex flex-row items-center justify-between py-4">
+        <Button class="btn btn-secondary" variant="outline" size="icon">
+          <ArrowLeft />
+        </Button>
+        <EntityTitle :title="entity.name" class="flex flex-1 justify-center"/>
+        <div class="flex flex-row gap-2">
+          <Dialog v-model:open="addModuleDialogOpened">
+            <DialogTrigger>
+              <TextToolTip text="Add a module">
+                <Button class="btn btn-secondary" variant="outline" size="icon">
+                  <Plus/>
+                </Button>
+              </TextToolTip>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Select a module</DialogTitle>
+              </DialogHeader>
+              <DialogDescription>Choose a module to add to your entity, you can always remove them.</DialogDescription>
+            </DialogContent>
+          </Dialog>
+          <TextToolTip text="Story settings">
+            <Button class="btn btn-secondary" variant="outline" size="icon">
+              <Settings/>
+            </Button>
+          </TextToolTip>
+        </div>
+      </CardHeader>
     </Card>
 
     <Description v-if="entity" :description="entity.description" @save-description="saveDescription"/>

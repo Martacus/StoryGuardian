@@ -6,7 +6,7 @@ import {Field, useForm} from 'vee-validate';
 import {onMounted, ref} from "vue";
 import {Entity, Story} from "../../../bindings/storyguardian/project";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTrigger} from "@/components/ui/dialog";
+import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
 import {Button} from "@/components/ui/button";
 import {Toast, useToast} from "@/components/ui/toast";

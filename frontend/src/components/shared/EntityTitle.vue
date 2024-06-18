@@ -35,8 +35,8 @@ async function save() {
         <Pencil/>
       </Button>
     </div>
-    <div class="flex flex-row gap-2 m-2 items-center w-full" v-if="editTitle">
-      <Input type="text" :placeholder="props.title" v-model="localTitle" class="max-w-64"/>
+    <div class="flex flex-row gap-2 m-2 items-center" v-if="editTitle">
+      <Input type="text" :placeholder="props.title" v-model="localTitle" class="min-w-64"/>
       <Button class="btn btn-secondary" variant="outline" size="icon" @click="save">
         <Check />
       </Button>

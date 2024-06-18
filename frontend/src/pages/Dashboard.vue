@@ -21,6 +21,7 @@ import {Story} from "../../bindings/storyguardian/project";
 import {GetStory, SetStoryDescription, SetStoryTitle} from "../../bindings/storyguardian/project/storymanager";
 import {useToast} from "@/components/ui/toast";
 import EntityTitle from "@/components/shared/EntityTitle.vue";
+import ImageModule from "@/components/modules/ImageModule.vue";
 
 const addModuleDialogOpened = ref(false);
 const story = ref<Story>();
@@ -101,6 +102,9 @@ async function saveStoryTitle(title: string) {
     </Card>
     <Description v-if="story" :description="story.description" @save-description="saveStoryDescription"/>
     <EntityList v-if="story" :story="story"/>
+    <ImageModule v-if="story" :story="story">
+
+    </ImageModule>
 <!--    <StoryImageModule v-if="story" :story="story"/>-->
   </DashboardLayout>
 </template>
