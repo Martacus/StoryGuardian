@@ -5,11 +5,11 @@ import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
 
 import {ChevronDown, ChevronUp, RefreshCcw} from 'lucide-vue-next';
 import {onMounted, ref} from "vue";
-import {ImageFile, Story} from "../../../bindings/storyguardian/project";
 import {Button} from "@/components/ui/button";
-import {GetStoryImages} from "../../../bindings/storyguardian/project/storymanager";
 import {useToast} from "@/components/ui/toast";
 import {Dialog, DialogContent} from "@/components/ui/dialog";
+import {ImageFile, Story} from "../../../bindings/storyguardian/internal/project";
+import {GetStoryImages} from "../../../bindings/storyguardian/internal/project/storymanager";
 
 const showBody = ref(true);
 const {toast} = useToast()
@@ -101,8 +101,6 @@ function toggleCard() {
         </TableBody>
       </Table>
     </CardContent>
-
-
   </Card>
 </template>
 

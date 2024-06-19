@@ -6,7 +6,7 @@ import (
 	"github.com/wailsapp/wails/v3/pkg/application"
 	"os"
 	"path/filepath"
-	"storyguardian/constants"
+	"storyguardian/internal/constants"
 )
 
 type ProjectDetails struct {

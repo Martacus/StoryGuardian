@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import {FolderOpenDot } from 'lucide-vue-next'
-import {useColorMode} from "@vueuse/core";
 import ThemePicker from "@/layouts/components/ThemePicker.vue";
-import MainContainer from "@/layouts/components/MainContainer.vue";
 
-const colorMode = useColorMode()
 </script>
 
 <template>
@@ -30,9 +27,9 @@ const colorMode = useColorMode()
             </nav>
           </div>
         </div>
-        <MainContainer>
+        <main class="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 w-full h-full">
           <slot/>
-        </MainContainer>
+        </main>
       </div>
     </div>
   </div>

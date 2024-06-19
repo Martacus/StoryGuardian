@@ -3,11 +3,11 @@ import HomeScreen from "@/layouts/HomeScreen.vue";
 import {ref} from "vue";
 import {Card, CardContent, CardHeader} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-import {CreateProject, GetConfig, OpenProject} from "../../bindings/storyguardian/project/applicationmanager";
-import {ApplicationConfig} from "../../bindings/storyguardian/project";
 import {Separator} from "@/components/ui/separator";
 import {useRouter} from "vue-router";
 import {useToast} from "@/components/ui/toast";
+import {ApplicationConfig} from "../../bindings/storyguardian/internal/project";
+import {CreateProject, GetConfig, OpenProject} from "../../bindings/storyguardian/internal/project/applicationmanager";
 
 const {toast} = useToast()
 const config = ref<ApplicationConfig>();
@@ -38,7 +38,7 @@ async function openProject(id: string){
 
 <template>
   <HomeScreen>
-    <Card  class="m-auto max-w-lg lg:min-w-96">
+    <Card class="m-auto max-w-lg lg:min-w-96 col-span-4">
       <CardHeader>
         <div class="flex flex-row gap-2 items-center">
           <h1 class="text-2xl">Stories</h1>

@@ -33,7 +33,7 @@ async function save() {
 </script>
 
 <template>
-  <Card class="bg-muted/30">
+  <Card class="bg-muted/30 col-span-4">
     <CardHeader class="flex flex-row justify-between items-center">
       <CardTitle>Description</CardTitle>
       <div class="flex flex-row space-x-2">

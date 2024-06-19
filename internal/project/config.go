@@ -7,7 +7,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"storyguardian/constants"
+	"storyguardian/internal/constants"
 )
 
 const (

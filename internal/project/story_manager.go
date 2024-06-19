@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"storyguardian/constants"
+	"storyguardian/internal/constants"
 )
 
 type Story struct {
@@ -22,7 +22,7 @@ type ImageFile struct {
 	Name     string `json:"name"`
 }
 
-func NewProjectManager(appManager *ApplicationManager) *StoryManager {
+func NewStoryManager(appManager *ApplicationManager) *StoryManager {
 	return &StoryManager{
 		ApplicationManager: appManager,
 	}

@@ -17,8 +17,8 @@ import {Button} from "@/components/ui/button";
 import {useRoute} from "vue-router";
 import Description from "@/components/shared/Description.vue";
 import EntityList from "@/components/story/EntityList.vue";
-import {Story} from "../../bindings/storyguardian/project";
-import {GetStory, SetStoryDescription, SetStoryTitle} from "../../bindings/storyguardian/project/storymanager";
+import {Story} from "../../bindings/storyguardian/internal/project";
+import {GetStory, SetStoryDescription, SetStoryTitle} from "../../bindings/storyguardian/internal/project/storymanager";
 import {useToast} from "@/components/ui/toast";
 import EntityTitle from "@/components/shared/EntityTitle.vue";
 import ImageModule from "@/components/modules/ImageModule.vue";
@@ -73,7 +73,7 @@ async function saveStoryTitle(title: string) {
 
 <template>
   <DashboardLayout>
-    <Card class="bg-muted/30 flex flex-row p-2 gap-2 items-center" v-if="story">
+    <Card class="bg-muted/30 flex flex-row p-2 gap-2 items-center col-span-4" v-if="story">
       <EntityTitle :title="story.name" @save-title="saveStoryTitle" class="w-full"/>
       <div class="flex flex-row justify-end mr-2 gap-2">
         <Dialog v-model:open="addModuleDialogOpened">
@@ -100,9 +100,9 @@ async function saveStoryTitle(title: string) {
       </div>
 
     </Card>
-    <Description v-if="story" :description="story.description" @save-description="saveStoryDescription"/>
-    <EntityList v-if="story" :story="story"/>
-    <ImageModule v-if="story" :story="story">
+    <Description v-if="story" :description="story.description" @save-description="saveStoryDescription" class="col-span-4"/>
+    <EntityList v-if="story" :story="story" class="col-span-4"/>
+    <ImageModule v-if="story" :story="story" class="col-span-4">
 
     </ImageModule>
 <!--    <StoryImageModule v-if="story" :story="story"/>-->

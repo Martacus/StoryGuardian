@@ -14,15 +14,17 @@ import {Card, CardHeader} from "@/components/ui/card";
 import {Plus, Settings, ArrowLeft} from "lucide-vue-next";
 import {Button} from "@/components/ui/button";
 import {onMounted, ref} from "vue";
-import {useRoute} from "vue-router";
-import {GetEntity, SetEntityDescription} from "../../bindings/storyguardian/project/entitymanager";
+import {useRoute, useRouter} from "vue-router";
+import {GetEntity, SetEntityDescription} from "../../bindings/storyguardian/internal/project/entitymanager";
 import EntityTitle from "@/components/shared/EntityTitle.vue";
-import {Entity} from "../../bindings/storyguardian/project";
+import {Entity} from "../../bindings/storyguardian/internal/project";
 import Description from "@/components/shared/Description.vue";
 import {useToast} from "@/components/ui/toast";
+import RelationModule from "@/components/modules/RelationModule.vue";
 
 
 const route = useRoute();
+const router = useRouter()
 const entity = ref<Entity>();
 const addModuleDialogOpened = ref(false)
 const {toast} = useToast()
@@ -52,9 +54,9 @@ async function saveDescription(descriptionValue: string) {
 
 <template>
   <DashboardLayout>
-    <Card class="bg-muted/30" v-if="entity">
+    <Card class="bg-muted/30 col-span-4" v-if="entity">
       <CardHeader class="flex flex-row items-center justify-between py-4">
-        <Button class="btn btn-secondary" variant="outline" size="icon">
+        <Button class="btn btn-secondary" variant="outline" size="icon" @click="router.back()">
           <ArrowLeft />
         </Button>
         <EntityTitle :title="entity.name" class="flex flex-1 justify-center"/>
@@ -84,6 +86,7 @@ async function saveDescription(descriptionValue: string) {
     </Card>
 
     <Description v-if="entity" :description="entity.description" @save-description="saveDescription"/>
+    <RelationModule v-if="entity" :entity="entity"/>
   </DashboardLayout>
 </template>
 

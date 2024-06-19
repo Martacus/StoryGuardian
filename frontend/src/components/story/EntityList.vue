@@ -4,7 +4,6 @@ import {toTypedSchema} from '@vee-validate/zod';
 import {z} from 'zod';
 import {Field, useForm} from 'vee-validate';
 import {onMounted, ref} from "vue";
-import {Entity, Story} from "../../../bindings/storyguardian/project";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
@@ -15,8 +14,9 @@ import {Input} from "@/components/ui/input";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import {Textarea} from "@/components/ui/textarea";
 import {v4} from "uuid";
-import {CreateEntity, LoadEntities} from "../../../bindings/storyguardian/project/entitymanager";
 import {useRouter} from "vue-router";
+import {Entity, Story} from "../../../bindings/storyguardian/internal/project";
+import {CreateEntity, LoadEntities} from "../../../bindings/storyguardian/internal/project/entitymanager";
 
 type EntityListViewMode = 'grid' | 'list';
 
@@ -63,16 +63,15 @@ const formSchema = toTypedSchema(z.object({
 
 const {handleSubmit} = useForm({
   validationSchema: formSchema,
-
 })
 
 const onSubmit = handleSubmit(async (values) => {
   try {
     let entity = await CreateEntity({
-      Id: v4(),
-      Name: values.name,
-      Description: values.description,
-      StoryId: props.story.id
+      id: v4(),
+      name: values.name,
+      description: values.description,
+      storyId: props.story.id,
     } as Entity);
 
     entities.value.push(entity);
