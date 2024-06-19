@@ -71,7 +71,6 @@ func (e *EntityManager) LoadEntities(projectId string) ([]Entity, error) {
 }
 
 func (e *EntityManager) LoadRelationInfo(entityId string) ([]RelationInfo, error) {
-	fmt.Println("================================")
 	entity, err := e.GetEntity(entityId)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get entity: %v", err)
@@ -79,7 +78,6 @@ func (e *EntityManager) LoadRelationInfo(entityId string) ([]RelationInfo, error
 
 	relationInfo := make([]RelationInfo, 0)
 	for _, relation := range entity.Relations {
-		fmt.Printf("Relation: %v \n", relation.Name)
 		relationEntity, err := e.GetEntity(relation.To)
 		if err != nil {
 			return nil, fmt.Errorf("failed to get entity: %v", err)
@@ -90,8 +88,6 @@ func (e *EntityManager) LoadRelationInfo(entityId string) ([]RelationInfo, error
 			Relation: relation,
 		})
 	}
-
-	fmt.Println("================================")
 	return relationInfo, nil
 
 }
