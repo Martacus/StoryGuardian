@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/adrg/xdg"
-	"io"
 	"os"
 	"path/filepath"
 	"storyguardian/internal/constants"
+	"storyguardian/internal/fileio"
 )
 
 const (
@@ -19,6 +19,16 @@ type ApplicationConfig struct {
 	OpenProject ProjectDetails            `json:"openProject"`
 }
 
+// getConfigLocation retrieves the path to the configuration file for the application.
+// It first attempts to locate an existing configuration file using xdg.SearchConfigFile.
+// If the configuration file does not exist, it creates a new one using xdg.ConfigFile
+// and then calls createConfigFile to initialize it.
+//
+// If any error occurs during the file search or creation process, an error is returned.
+//
+// Returns:
+//   - string: The path to the configuration file.
+//   - error: An error if the configuration file path cannot be retrieved or created.
 func getConfigLocation() (string, error) {
 	configFilePath, err := xdg.SearchConfigFile(filepath.Join(ApplicationName, constants.ConfigFileName))
 
@@ -67,73 +77,5 @@ func createConfigFile(configFilePath string) error {
 		Projects: make(map[string]ProjectDetails),
 	}
 
-	return writeStructToFile(config, file)
-}
-
-func writeStructToFile(toWrite interface{}, file *os.File) error {
-	jsonData, err := json.Marshal(toWrite)
-	if err != nil {
-		return fmt.Errorf("error marshaling struct to JSON: %v", err)
-	}
-
-	if _, err = file.Write(jsonData); err != nil {
-		return fmt.Errorf("error writing JSON to file: %v", err)
-	}
-
-	return nil
-}
-
-func writeStructToFilePath(toWrite interface{}, path string) error {
-	file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
-	if err != nil {
-		return err
-	}
-	defer func(file *os.File) {
-		err := file.Close()
-		if err != nil {
-		}
-	}(file)
-
-	if err = writeStructToFile(toWrite, file); err != nil {
-		return fmt.Errorf("error writing JSON to file: %v", err)
-	}
-
-	return nil
-}
-
-func writeFilePathToStruct(filename string, data interface{}) error {
-	file, err := os.Open(filename)
-	if err != nil {
-		return fmt.Errorf("could not open file: %w", err)
-	}
-	defer func(file *os.File) {
-		err := file.Close()
-		if err != nil {
-
-		}
-	}(file)
-
-	fileContents, err := io.ReadAll(file)
-	if err != nil {
-		return fmt.Errorf("could not read file: %w", err)
-	}
-
-	if err := json.Unmarshal(fileContents, data); err != nil {
-		return fmt.Errorf("could not unmarshal JSON: %w", err)
-	}
-
-	return nil
-}
-
-func writeFileToStruct(file *os.File, data interface{}) error {
-	fileContents, err := io.ReadAll(file)
-	if err != nil {
-		return fmt.Errorf("could not read file: %w", err)
-	}
-
-	if err := json.Unmarshal(fileContents, data); err != nil {
-		return fmt.Errorf("could not unmarshal JSON: %w", err)
-	}
-
-	return nil
+	return fileio.WriteStructToFile(config, file)
 }

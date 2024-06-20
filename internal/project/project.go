@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"storyguardian/internal/constants"
+	"storyguardian/internal/fileio"
 )
 
 type ProjectDetails struct {
@@ -91,5 +92,5 @@ func createProjectFile(projectDirectory string, projectId string) error {
 		},
 	}
 
-	return writeStructToFile(config, file)
+	return fileio.WriteStructToFile(config, file)
 }

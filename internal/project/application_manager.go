@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"storyguardian/internal/fileio"
 )
 
 type ApplicationManager struct {
@@ -46,7 +47,7 @@ func (a *ApplicationManager) writeConfigToFile() error {
 		}
 	}(file)
 
-	err = writeStructToFile(a.Config, file)
+	err = fileio.WriteStructToFile(a.Config, file)
 	if err != nil {
 		return err
 	}

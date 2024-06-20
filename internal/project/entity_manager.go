@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"storyguardian/internal/constants"
+	"storyguardian/internal/fileio"
 	"time"
 )
 
@@ -55,7 +56,7 @@ func (e *EntityManager) LoadEntities(projectId string) ([]Entity, error) {
 	files, err := os.ReadDir(entitiesPath)
 	for _, file := range files {
 		newEntity := Entity{}
-		if err := writeFilePathToStruct(filepath.Join(entitiesPath, file.Name()), &newEntity); err != nil {
+		if err := fileio.WriteFilePathToStruct(filepath.Join(entitiesPath, file.Name()), &newEntity); err != nil {
 			return make([]Entity, 0), fmt.Errorf("could not load entity: %v", err)
 		}
 		entityList = append(entityList, newEntity)
@@ -105,7 +106,7 @@ func (e *EntityManager) CreateEntity(entity Entity) (Entity, error) {
 	entity.CreatedAt = time.Now().String()
 
 	filePath := filepath.Join(project.Location, constants.EntityFolderName, entity.Id+".json")
-	if err := writeStructToFilePath(entity, filePath); err != nil {
+	if err := fileio.WriteStructToFilePath(entity, filePath); err != nil {
 		return entity, fmt.Errorf("could save new entity to file: %v", err)
 	}
 
@@ -121,7 +122,7 @@ func (e *EntityManager) SetEntityDescription(entityId string, description string
 	}
 
 	entity.Description = description
-	if err = writeStructToFilePath(entity, e.getEntityFilePath(entityId)); err != nil {
+	if err = fileio.WriteStructToFilePath(entity, e.getEntityFilePath(entityId)); err != nil {
 		return "", fmt.Errorf("could not save the entity description change: %v", err)
 	}
 
@@ -140,7 +141,7 @@ func (e *EntityManager) CreateRelation(entityId string, relation Relation) error
 
 	entity.Relations = append(entity.Relations, relation)
 
-	if err = writeStructToFilePath(entity, e.getEntityFilePath(entityId)); err != nil {
+	if err = fileio.WriteStructToFilePath(entity, e.getEntityFilePath(entityId)); err != nil {
 		return fmt.Errorf("could not save new relation: %v", err)
 	}
 

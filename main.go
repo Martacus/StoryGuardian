@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	project2 "storyguardian/internal/project"
+	"storyguardian/internal/project"
 )
 
 // Wails uses Go's `embed` package to embed the frontend files into the binary.
@@ -22,9 +22,9 @@ import (
 var assets embed.FS
 
 func main() {
-	appManager := project2.NewApplicationManager()
-	projectManager := project2.NewStoryManager(appManager)
-	entityManager := project2.NewEntityManager(projectManager)
+	appManager := project.NewApplicationManager()
+	projectManager := project.NewStoryManager(appManager)
+	entityManager := project.NewEntityManager(projectManager)
 
 	wailsAssetHandler := application.AssetFileServerFS(assets)
 	finalAssetHandler := wrapWithImageServer(wailsAssetHandler)

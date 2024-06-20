@@ -3,14 +3,11 @@
 import {Button} from "@/components/ui/button";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import {ChevronUp, ChevronDown, Plus} from "lucide-vue-next";
+import {ChevronDown, ChevronUp, Plus, Trash2} from "lucide-vue-next";
 import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
 import {onMounted, ref} from "vue";
 import {Entity, RelationInfo} from "../../../bindings/storyguardian/internal/project";
-import {
-  CreateRelation,
-  LoadRelationInfo
-} from "../../../bindings/storyguardian/internal/project/entitymanager";
+import {CreateRelation, LoadRelationInfo} from "../../../bindings/storyguardian/internal/project/entitymanager";
 import {Toast, useToast} from "@/components/ui/toast";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Field, useForm} from "vee-validate";
@@ -38,10 +35,10 @@ onMounted(async () => {
   await loadRelations()
 })
 
-async function loadRelations(){
+async function loadRelations() {
   try {
     relations.value = await LoadRelationInfo(props.entity.id)
-  } catch(error: any){
+  } catch (error: any) {
     toast({
       title: 'error loading relations',
       description: error
@@ -111,13 +108,10 @@ const onSubmit = handleSubmit(async (values) => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead >
-              Name
-            </TableHead>
-            <TableHead >
-              Relation
-            </TableHead>
+            <TableHead>Name</TableHead>
+            <TableHead>Relation</TableHead>
             <TableHead>Description</TableHead>
+            <TableHead class="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -128,6 +122,13 @@ const onSubmit = handleSubmit(async (values) => {
             </TableCell>
             <TableCell>{{ relation.toName }}</TableCell>
             <TableCell>{{ relation.description }}</TableCell>
+            <TableCell class="text-right">
+              <TextTooltip text="Delete">
+                <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCard()">
+                  <Trash2 />
+                </Button>
+              </TextTooltip>
+            </TableCell>
           </TableRow>
         </TableBody>
       </Table>
@@ -137,12 +138,12 @@ const onSubmit = handleSubmit(async (values) => {
       <DialogContent>
         <form class="space-y-6" @submit="onSubmit">
           <DialogHeader>
-            <DialogTitle>Create an entity</DialogTitle>
+            <DialogTitle>Create a relation</DialogTitle>
           </DialogHeader>
           <!-- Form -->
           <Field :validate-on-blur="false" v-slot="{ componentField }" name="name">
             <FormItem>
-              <FormLabel>Entity Name</FormLabel>
+              <FormLabel>Relation Name</FormLabel>
               <FormControl>
                 <Input type="text" placeholder="The first Guardian" v-bind="componentField" autocomplete="off"/>
               </FormControl>
@@ -151,7 +152,7 @@ const onSubmit = handleSubmit(async (values) => {
           </Field>
           <Field :validate-on-blur="false" v-slot="{ componentField }" name="description">
             <FormItem>
-              <FormLabel>Entity Description</FormLabel>
+              <FormLabel>Relation Description</FormLabel>
               <FormControl>
                       <Textarea type="text" placeholder="The first guardian of Xybal" v-bind="componentField"
                                 autocomplete="off"/>
