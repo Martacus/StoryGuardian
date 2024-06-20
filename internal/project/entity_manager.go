@@ -2,6 +2,7 @@ package project
 
 import (
 	"fmt"
+	"github.com/google/uuid"
 	"os"
 	"path/filepath"
 	"storyguardian/internal/constants"
@@ -10,18 +11,20 @@ import (
 )
 
 type Entity struct {
-	Id          string     `json:"id"`
-	Name        string     `json:"name"`
-	StoryId     string     `json:"storyId"`
-	Description string     `json:"description"`
-	CreatedAt   string     `json:"createdAt"`
-	Tags        []string   `json:"tags"`
-	Relations   []Relation `json:"relations"`
+	Id          string   `json:"id"`
+	Name        string   `json:"name"`
+	StoryId     string   `json:"storyId"`
+	Description string   `json:"description"`
+	CreatedAt   string   `json:"createdAt"`
+	Tags        []string `json:"tags"`
+	Relations   []string `json:"relations"`
 }
 
 type Relation struct {
+	Id          string `json:"id"`
 	Name        string `json:"name"`
-	To          string `json:"to"`
+	EntityOne   string `json:"entityOne"`
+	EntityTwo   string `json:"entityTwo"`
 	Description string `json:"description"`
 }
 
@@ -71,28 +74,6 @@ func (e *EntityManager) LoadEntities(projectId string) ([]Entity, error) {
 	return entityList, nil
 }
 
-func (e *EntityManager) LoadRelationInfo(entityId string) ([]RelationInfo, error) {
-	entity, err := e.GetEntity(entityId)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get entity: %v", err)
-	}
-
-	relationInfo := make([]RelationInfo, 0)
-	for _, relation := range entity.Relations {
-		relationEntity, err := e.GetEntity(relation.To)
-		if err != nil {
-			return nil, fmt.Errorf("failed to get entity: %v", err)
-		}
-
-		relationInfo = append(relationInfo, RelationInfo{
-			ToName:   relationEntity.Name,
-			Relation: relation,
-		})
-	}
-	return relationInfo, nil
-
-}
-
 func (e *EntityManager) GetEntity(entityId string) (*Entity, error) {
 	entity, ok := e.Entities[entityId]
 	if !ok {
@@ -129,21 +110,89 @@ func (e *EntityManager) SetEntityDescription(entityId string, description string
 	return description, nil
 }
 
+func (e *EntityManager) SetEntityName(entityId string, name string) (string, error) {
+	entity, err := e.GetEntity(entityId)
+	if err != nil {
+		return "", fmt.Errorf("failed to get entity: %v", err)
+	}
+
+	entity.Name = name
+	if err = fileio.WriteStructToFilePath(entity, e.getEntityFilePath(entityId)); err != nil {
+		return "", fmt.Errorf("could not save the entity description change: %v", err)
+	}
+
+	return name, nil
+}
+
 func (e *EntityManager) getEntityFilePath(entityID string) string {
 	return filepath.Join(e.ProjectManager.ApplicationManager.Config.OpenProject.Location, constants.EntityFolderName, entityID+".json")
 }
 
-func (e *EntityManager) CreateRelation(entityId string, relation Relation) error {
+// Relations
+func (r *Relation) getOther(entityId string) string {
+	if r.EntityOne == entityId {
+		return r.EntityTwo
+	} else {
+		return r.EntityOne
+	}
+}
+
+func (e *EntityManager) LoadRelationInfo(entityId string, paginationStart int, amount int) ([]RelationInfo, error) {
 	entity, err := e.GetEntity(entityId)
 	if err != nil {
-		return fmt.Errorf("failed to get entity: %v", err)
+		return nil, fmt.Errorf("failed to get entity: %v", err)
 	}
 
-	entity.Relations = append(entity.Relations, relation)
+	relationInfo := make([]RelationInfo, 0)
+	for _, relationId := range entity.Relations {
+		relation := Relation{}
+		if err := fileio.WriteFilePathToStruct(e.getRelationPath(relationId), &relation); err != nil {
+			return nil, fmt.Errorf("failed to write relation to struct: %v", err)
+		}
 
+		relationEntity, err := e.GetEntity(relation.getOther(entityId))
+		if err != nil {
+			return nil, fmt.Errorf("failed to get entity: %v", err)
+		}
+
+		relationInfo = append(relationInfo, RelationInfo{
+			ToName:   relationEntity.Name,
+			Relation: relation,
+		})
+	}
+	return relationInfo, nil
+
+}
+
+func (e *EntityManager) CreateRelation(entityId string) (string, error) {
+	entity, err := e.GetEntity(entityId)
+	if err != nil {
+		return "", fmt.Errorf("failed to get entity: %v", err)
+	}
+
+	relation := Relation{
+		Id:          uuid.New().String(),
+		EntityOne:   entityId,
+		EntityTwo:   "e01e7ce9-36e1-4943-af20-6da01f77038a",
+		Name:        "Placeholder",
+		Description: "Placeholder",
+	}
+
+	//Write the relation to the system
+	filePath := filepath.Join(e.ProjectManager.ApplicationManager.Config.OpenProject.Location, constants.RelationsFolderName, relation.Id+".json")
+	if err := fileio.WriteStructToFilePath(relation, filePath); err != nil {
+		return "", fmt.Errorf("could save new relation to file: %v", err)
+	}
+
+	//Write the relation id to the entity
+	entity.Relations = append(entity.Relations, relation.Id)
 	if err = fileio.WriteStructToFilePath(entity, e.getEntityFilePath(entityId)); err != nil {
-		return fmt.Errorf("could not save new relation: %v", err)
+		return "", fmt.Errorf("could not save entity with new relation: %v", err)
 	}
 
-	return nil
+	return relation.Id, nil
+}
+
+func (e *EntityManager) getRelationPath(relationId string) string {
+	return filepath.Join(e.ProjectManager.ApplicationManager.Config.OpenProject.Location, constants.RelationsFolderName, relationId+".json")
 }

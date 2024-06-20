@@ -18,8 +18,8 @@ export function CreateEntity(entity: $models.Entity): Promise<$models.Entity> & 
     return $typingPromise;
 }
 
-export function CreateRelation(entityId: string, relation: $models.Relation): Promise<void> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(504077, entityId, relation) as any;
+export function CreateRelation(entityId: string): Promise<string> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(504077, entityId) as any;
     return $resultPromise;
 }
 
@@ -41,8 +41,8 @@ export function LoadEntities(projectId: string): Promise<$models.Entity[]> & { c
     return $typingPromise;
 }
 
-export function LoadRelationInfo(entityId: string): Promise<$models.RelationInfo[]> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(3362194505, entityId) as any;
+export function LoadRelationInfo(entityId: string, paginationStart: number, amount: number): Promise<$models.RelationInfo[]> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(3362194505, entityId, paginationStart, amount) as any;
     let $typingPromise = $resultPromise.then(($result) => {
         return $$createType4($result);
     }) as any;
@@ -52,6 +52,11 @@ export function LoadRelationInfo(entityId: string): Promise<$models.RelationInfo
 
 export function SetEntityDescription(entityId: string, description: string): Promise<string> & { cancel(): void } {
     let $resultPromise = $Call.ByID(2374441714, entityId, description) as any;
+    return $resultPromise;
+}
+
+export function SetEntityName(entityId: string, name: string): Promise<string> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(3082711131, entityId, name) as any;
     return $resultPromise;
 }
 

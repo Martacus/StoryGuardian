@@ -67,7 +67,6 @@ async function saveStoryTitle(title: string) {
       description: error,
     });
   }
-
 }
 </script>
 

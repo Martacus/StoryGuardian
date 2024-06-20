@@ -16,10 +16,13 @@ import {Textarea} from "@/components/ui/textarea";
 import {Input} from "@/components/ui/input";
 import {toTypedSchema} from "@vee-validate/zod";
 import {z} from "zod";
+import {useRouter} from "vue-router";
+
+const {toast} = useToast();
+const router = useRouter();
 
 const dialogOpen = ref(false);
 const showBody = ref(true);
-const {toast} = useToast()
 
 function toggleCard() {
   showBody.value = !showBody.value;
@@ -37,7 +40,7 @@ onMounted(async () => {
 
 async function loadRelations() {
   try {
-    relations.value = await LoadRelationInfo(props.entity.id)
+    relations.value = await LoadRelationInfo(props.entity.id, 0, 20)
   } catch (error: any) {
     toast({
       title: 'error loading relations',
@@ -57,28 +60,20 @@ const {handleSubmit} = useForm({
 })
 
 const onSubmit = handleSubmit(async (values) => {
+
+});
+
+async function createRelation(){
   try {
-    await CreateRelation(props.entity.id, {
-      description: values.description,
-      name: values.name,
-      to: 'e01e7ce9-36e1-4943-af20-6da01f77038a'
-    });
-
-    toast({
-      title: 'Success',
-      description: 'Relation successfully created.',
-      icon: 'check',
-    } as Toast);
-
-    await loadRelations();
-    dialogOpen.value = false;
+    const relationId = await CreateRelation(props.entity.id);
+    await router.push("/relation/" + relationId)
   } catch (error: any) {
     toast({
       title: 'Uh oh! Something went wrong.',
       description: error.message,
     });
   }
-})
+}
 </script>
 
 <template>
@@ -87,7 +82,7 @@ const onSubmit = handleSubmit(async (values) => {
       <CardTitle>Relations</CardTitle>
       <div class="flex flex-row space-x-2">
         <TextTooltip text="Add relation" v-if="showBody">
-          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="dialogOpen = !dialogOpen">
+          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="createRelation()">
             <Plus/>
           </Button>
         </TextTooltip>
@@ -124,8 +119,8 @@ const onSubmit = handleSubmit(async (values) => {
             <TableCell>{{ relation.description }}</TableCell>
             <TableCell class="text-right">
               <TextTooltip text="Delete">
-                <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCard()">
-                  <Trash2 />
+                <Button size="icon" aria-label="Toggle italic" variant="outline" @click="router.push('/relation/create')">
+                  <Trash2/>
                 </Button>
               </TextTooltip>
             </TableCell>
@@ -134,12 +129,13 @@ const onSubmit = handleSubmit(async (values) => {
       </Table>
     </CardContent>
 
-    <Dialog v-model:open="dialogOpen" v-if="showBody">
+    <Dialog v-model:open="dialogOpen">
       <DialogContent>
         <form class="space-y-6" @submit="onSubmit">
           <DialogHeader>
             <DialogTitle>Create a relation</DialogTitle>
           </DialogHeader>
+
           <!-- Form -->
           <Field :validate-on-blur="false" v-slot="{ componentField }" name="name">
             <FormItem>
@@ -154,8 +150,8 @@ const onSubmit = handleSubmit(async (values) => {
             <FormItem>
               <FormLabel>Relation Description</FormLabel>
               <FormControl>
-                      <Textarea type="text" placeholder="The first guardian of Xybal" v-bind="componentField"
-                                autocomplete="off"/>
+                <Textarea type="text" placeholder="The first guardian of Xybal" v-bind="componentField"
+                          autocomplete="off"/>
               </FormControl>
               <FormMessage/>
             </FormItem>

@@ -45,7 +45,7 @@ export class Entity {
     "description": string;
     "createdAt": string;
     "tags": string[];
-    "relations": Relation[];
+    "relations": string[];
 
     /** Creates a new Entity instance. */
     constructor($$source: Partial<Entity> = {}) {
@@ -79,7 +79,7 @@ export class Entity {
      */
     static createFrom($$source: any = {}): Entity {
         const $$createField5_0 = $$createType2;
-        const $$createField6_0 = $$createType4;
+        const $$createField6_0 = $$createType2;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("tags" in $$parsedSource) {
             $$parsedSource["tags"] = $$createField5_0($$parsedSource["tags"]);
@@ -145,48 +145,27 @@ export class ProjectDetails {
     }
 }
 
-export class Relation {
-    "name": string;
-    "to": string;
-    "description": string;
-
-    /** Creates a new Relation instance. */
-    constructor($$source: Partial<Relation> = {}) {
-        if (!("name" in $$source)) {
-            this["name"] = "";
-        }
-        if (!("to" in $$source)) {
-            this["to"] = "";
-        }
-        if (!("description" in $$source)) {
-            this["description"] = "";
-        }
-
-        Object.assign(this, $$source);
-    }
-
-    /**
-     * Creates a new Relation instance from a string or object.
-     */
-    static createFrom($$source: any = {}): Relation {
-        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
-        return new Relation($$parsedSource as Partial<Relation>);
-    }
-}
-
 export class RelationInfo {
+    "id": string;
     "name": string;
-    "to": string;
+    "entityOne": string;
+    "entityTwo": string;
     "description": string;
     "toName": string;
 
     /** Creates a new RelationInfo instance. */
     constructor($$source: Partial<RelationInfo> = {}) {
+        if (!("id" in $$source)) {
+            this["id"] = "";
+        }
         if (!("name" in $$source)) {
             this["name"] = "";
         }
-        if (!("to" in $$source)) {
-            this["to"] = "";
+        if (!("entityOne" in $$source)) {
+            this["entityOne"] = "";
+        }
+        if (!("entityTwo" in $$source)) {
+            this["entityTwo"] = "";
         }
         if (!("description" in $$source)) {
             this["description"] = "";
@@ -239,7 +218,7 @@ export class Story {
      * Creates a new Story instance from a string or object.
      */
     static createFrom($$source: any = {}): Story {
-        const $$createField4_0 = $$createType6;
+        const $$createField4_0 = $$createType4;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("entities" in $$parsedSource) {
             $$parsedSource["entities"] = $$createField4_0($$parsedSource["entities"]);
@@ -252,7 +231,5 @@ export class Story {
 const $$createType0 = ProjectDetails.createFrom;
 const $$createType1 = $Create.Map($Create.Any, $$createType0);
 const $$createType2 = $Create.Array($Create.Any);
-const $$createType3 = Relation.createFrom;
+const $$createType3 = Entity.createFrom;
 const $$createType4 = $Create.Array($$createType3);
-const $$createType5 = Entity.createFrom;
-const $$createType6 = $Create.Array($$createType5);

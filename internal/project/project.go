@@ -46,6 +46,10 @@ func (a *ApplicationManager) CreateProject() (string, error) {
 		return "", fmt.Errorf("error creating directory: %v", err)
 	}
 
+	if err := os.MkdirAll(filepath.Join(projectDirectory, constants.RelationsFolderName), 0755); err != nil {
+		return "", fmt.Errorf("error creating directory: %v", err)
+	}
+
 	return projectId, nil
 }
 

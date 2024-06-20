@@ -15,12 +15,17 @@ import {Plus, Settings, ArrowLeft} from "lucide-vue-next";
 import {Button} from "@/components/ui/button";
 import {onMounted, ref} from "vue";
 import {useRoute, useRouter} from "vue-router";
-import {GetEntity, SetEntityDescription} from "../../bindings/storyguardian/internal/project/entitymanager";
+import {
+  GetEntity,
+  SetEntityDescription,
+  SetEntityName
+} from "../../bindings/storyguardian/internal/project/entitymanager";
 import EntityTitle from "@/components/shared/EntityTitle.vue";
 import {Entity} from "../../bindings/storyguardian/internal/project";
 import Description from "@/components/shared/Description.vue";
 import {useToast} from "@/components/ui/toast";
 import RelationModule from "@/components/modules/RelationModule.vue";
+import {SetStoryTitle} from "../../bindings/storyguardian/internal/project/storymanager";
 
 
 const route = useRoute();
@@ -35,7 +40,19 @@ onMounted(async () => {
   if (retrievedEntity) {
     entity.value = retrievedEntity;
   }
-})
+});
+
+async function saveStoryTitle(title: string) {
+  if (!entity.value) return;
+  try {
+    await SetEntityName(entity.value.id, title)
+  } catch (error: any) {
+    toast({
+      title: 'Failed to save entity title',
+      description: error,
+    });
+  }
+}
 
 async function saveDescription(descriptionValue: string) {
   if (!entity.value) return;
@@ -59,7 +76,7 @@ async function saveDescription(descriptionValue: string) {
         <Button class="btn btn-secondary" variant="outline" size="icon" @click="router.back()">
           <ArrowLeft />
         </Button>
-        <EntityTitle :title="entity.name" class="flex flex-1 justify-center"/>
+        <EntityTitle :title="entity.name" @save-title="saveStoryTitle" class="flex flex-1 justify-center"/>
         <div class="flex flex-row gap-2">
           <Dialog v-model:open="addModuleDialogOpened">
             <DialogTrigger>
