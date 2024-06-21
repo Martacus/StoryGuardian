@@ -66,13 +66,17 @@ const onSubmit = handleSubmit(async (values) => {
 async function createRelation(){
   try {
     const relationId = await CreateRelation(props.entity.id);
-    await router.push("/relation/" + relationId)
+    await router.push("/relation/" + relationId);
   } catch (error: any) {
     toast({
       title: 'Uh oh! Something went wrong.',
       description: error.message,
     });
   }
+}
+
+function openRelation(relationId: string){
+ router.push("/relation/" + relationId);
 }
 </script>
 
@@ -105,18 +109,16 @@ async function createRelation(){
           <TableRow>
             <TableHead>Name</TableHead>
             <TableHead>Relation</TableHead>
-            <TableHead>Description</TableHead>
             <TableHead class="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          <TableRow v-for="(relation) in relations">
+          <TableRow v-for="relation in relations" @click="openRelation(relation.id)" class="hover:cursor-pointer">
             <!-- Table Data -->
             <TableCell class="font-medium">
               {{ relation.name }}
             </TableCell>
             <TableCell>{{ relation.toName }}</TableCell>
-            <TableCell>{{ relation.description }}</TableCell>
             <TableCell class="text-right">
               <TextTooltip text="Delete">
                 <Button size="icon" aria-label="Toggle italic" variant="outline" @click="router.push('/relation/create')">

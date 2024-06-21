@@ -32,10 +32,19 @@ export function GetEntity(entityId: string): Promise<$models.Entity | null> & { 
     return $typingPromise;
 }
 
+export function GetRelation(relationId: string): Promise<$models.Relation> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(2193284483, relationId) as any;
+    let $typingPromise = $resultPromise.then(($result) => {
+        return $$createType2($result);
+    }) as any;
+    $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
+    return $typingPromise;
+}
+
 export function LoadEntities(projectId: string): Promise<$models.Entity[]> & { cancel(): void } {
     let $resultPromise = $Call.ByID(2389256634, projectId) as any;
     let $typingPromise = $resultPromise.then(($result) => {
-        return $$createType2($result);
+        return $$createType3($result);
     }) as any;
     $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
     return $typingPromise;
@@ -44,7 +53,7 @@ export function LoadEntities(projectId: string): Promise<$models.Entity[]> & { c
 export function LoadRelationInfo(entityId: string, paginationStart: number, amount: number): Promise<$models.RelationInfo[]> & { cancel(): void } {
     let $resultPromise = $Call.ByID(3362194505, entityId, paginationStart, amount) as any;
     let $typingPromise = $resultPromise.then(($result) => {
-        return $$createType4($result);
+        return $$createType5($result);
     }) as any;
     $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
     return $typingPromise;
@@ -60,9 +69,20 @@ export function SetEntityName(entityId: string, name: string): Promise<string> &
     return $resultPromise;
 }
 
+export function SetRelationDescription(relationId: string, description: string): Promise<string> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(1961424163, relationId, description) as any;
+    return $resultPromise;
+}
+
+export function SetRelationName(relationId: string, name: string): Promise<string> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(1826415948, relationId, name) as any;
+    return $resultPromise;
+}
+
 // Private type creation functions
 const $$createType0 = $models.Entity.createFrom;
 const $$createType1 = $Create.Nullable($$createType0);
-const $$createType2 = $Create.Array($$createType0);
-const $$createType3 = $models.RelationInfo.createFrom;
-const $$createType4 = $Create.Array($$createType3);
+const $$createType2 = $models.Relation.createFrom;
+const $$createType3 = $Create.Array($$createType0);
+const $$createType4 = $models.RelationInfo.createFrom;
+const $$createType5 = $Create.Array($$createType4);

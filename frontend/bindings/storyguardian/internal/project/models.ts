@@ -145,6 +145,43 @@ export class ProjectDetails {
     }
 }
 
+export class Relation {
+    "id": string;
+    "name": string;
+    "entityOne": string;
+    "entityTwo": string;
+    "description": string;
+
+    /** Creates a new Relation instance. */
+    constructor($$source: Partial<Relation> = {}) {
+        if (!("id" in $$source)) {
+            this["id"] = "";
+        }
+        if (!("name" in $$source)) {
+            this["name"] = "";
+        }
+        if (!("entityOne" in $$source)) {
+            this["entityOne"] = "";
+        }
+        if (!("entityTwo" in $$source)) {
+            this["entityTwo"] = "";
+        }
+        if (!("description" in $$source)) {
+            this["description"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new Relation instance from a string or object.
+     */
+    static createFrom($$source: any = {}): Relation {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new Relation($$parsedSource as Partial<Relation>);
+    }
+}
+
 export class RelationInfo {
     "id": string;
     "name": string;

@@ -28,5 +28,10 @@ export function OpenProject(projectId: string): Promise<void> & { cancel(): void
     return $resultPromise;
 }
 
+export function OpenProjectFolder(folder: string): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(2539773143, folder) as any;
+    return $resultPromise;
+}
+
 // Private type creation functions
 const $$createType0 = $models.ApplicationConfig.createFrom;

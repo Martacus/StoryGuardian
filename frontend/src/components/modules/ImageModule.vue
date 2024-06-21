@@ -10,6 +10,7 @@ import {useToast} from "@/components/ui/toast";
 import {Dialog, DialogContent} from "@/components/ui/dialog";
 import {ImageFile, Story} from "../../../bindings/storyguardian/internal/project";
 import {GetStoryImages} from "../../../bindings/storyguardian/internal/project/storymanager";
+import {OpenProjectFolder} from "../../../bindings/storyguardian/internal/project/applicationmanager";
 
 const showBody = ref(true);
 const {toast} = useToast()
@@ -44,6 +45,10 @@ async function retrieveImages(){
 function toggleCard() {
   showBody.value = !showBody.value;
 }
+
+function openImageFolder(){
+  OpenProjectFolder('images');
+}
 </script>
 
 <template>
@@ -51,7 +56,7 @@ function toggleCard() {
     <CardHeader class="flex flex-row justify-between items-center">
       <CardTitle>Images</CardTitle>
       <div class="flex flex-row space-x-2">
-        <Button class="btn btn-primary" aria-label="Toggle italic" variant="outline" @click="toggleCard()">
+        <Button class="btn btn-primary" aria-label="Toggle italic" variant="outline" @click="openImageFolder()">
           Open folder
         </Button>
         <Button size="icon" aria-label="Toggle italic" variant="outline" @click="retrieveImages()">

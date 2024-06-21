@@ -19,9 +19,8 @@ import Description from "@/components/shared/Description.vue";
 import TextToolTip from "@/components/ui/tooltip/TextTooltip.vue";
 import {onMounted, ref} from "vue";
 import {
-  GetEntity,
-  SetEntityDescription,
-  SetEntityName
+  GetRelation,
+  SetRelationDescription, SetRelationName
 } from "../../bindings/storyguardian/internal/project/entitymanager";
 import {useToast} from "@/components/ui/toast";
 
@@ -34,35 +33,32 @@ const addModuleDialogOpened = ref(false)
 
 onMounted(async () => {
   let relationid: string = route.params['id'] as string
-  const getRelation = await GetRelation(relationid)
-  if (getRelation) {
-    relation.value = getRelation;
-  }
+  relation.value = await GetRelation(relationid)
 });
 
 async function saveRelationTitle(title: string) {
-  // if (!relation.value) return;
-  // try {
-  //   await SetRelationName(relation.value.id, title)
-  // } catch (error: any) {
-  //   toast({
-  //     title: 'Failed to save relation title',
-  //     description: error,
-  //   });
-  // }
+  if (!relation.value) return;
+  try {
+    await SetRelationName(relation.value.id, title)
+  } catch (error: any) {
+    toast({
+      title: 'Failed to save relation title',
+      description: error,
+    });
+  }
 }
 
 async function saveDescription(descriptionValue: string) {
-  // if (!relation.value) return;
-  //
-  // try {
-  //   relation.value.description = await SetRelationDescription(relation.value.id, descriptionValue);
-  // } catch (error: any) {
-  //   toast({
-  //     title: 'Failed to save relation description',
-  //     description: error,
-  //   });
-  // }
+  if (!relation.value) return;
+
+  try {
+    relation.value.description = await SetRelationDescription(relation.value.id, descriptionValue);
+  } catch (error: any) {
+    toast({
+      title: 'Failed to save relation description',
+      description: error,
+    });
+  }
 }
 </script>
 
