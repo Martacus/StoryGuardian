@@ -18,11 +18,12 @@ import {
 import Description from "@/components/shared/Description.vue";
 import TextToolTip from "@/components/ui/tooltip/TextTooltip.vue";
 import {onMounted, ref} from "vue";
+import {useToast} from "@/components/ui/toast";
 import {
   GetRelation,
-  SetRelationDescription, SetRelationName
+  SetRelationDescription,
+  SetRelationName
 } from "../../bindings/storyguardian/internal/project/entitymanager";
-import {useToast} from "@/components/ui/toast";
 
 const router = useRouter();
 const route = useRoute();
@@ -67,9 +68,11 @@ async function saveDescription(descriptionValue: string) {
     <Card class="bg-muted/30 col-span-4" v-if="relation">
       <CardHeader class="flex flex-row items-center justify-between py-4">
         <Button class="btn btn-secondary" variant="outline" size="icon" @click="router.back()">
-          <ArrowLeft />
+          <ArrowLeft/>
         </Button>
-        <EntityTitle :title="relation.name" @save-title="saveRelationTitle" class="flex flex-1 justify-center"/>
+        <div class="flex flex-1 justify-center">
+          <p class="text-2xl leading-loose ml-2">Relation - </p> <EntityTitle :title="relation.name" @save-title="saveRelationTitle" />
+        </div>
         <div class="flex flex-row gap-2">
           <Dialog v-model:open="addModuleDialogOpened">
             <DialogTrigger>
@@ -83,7 +86,8 @@ async function saveDescription(descriptionValue: string) {
               <DialogHeader>
                 <DialogTitle>Select a module</DialogTitle>
               </DialogHeader>
-              <DialogDescription>Choose a module to add to your relation, you can always remove them.</DialogDescription>
+              <DialogDescription>Choose a module to add to your relation, you can always remove them.
+              </DialogDescription>
             </DialogContent>
           </Dialog>
           <TextToolTip text="Story settings">

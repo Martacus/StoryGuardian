@@ -32,7 +32,7 @@ onMounted(async () => {
 
 async function retrieveImages(){
   try {
-    images.value = await GetStoryImages(props.story.id);
+    images.value = await GetStoryImages();
     openDialogs.value = images.value.map(() => false);
   } catch (error: any) {
     toast({

@@ -34,21 +34,24 @@ type RelationInfo struct {
 }
 
 type EntityManager struct {
-	ProjectManager *StoryManager
-	Entities       map[string]*Entity
+	StoryManager *StoryManager
+	Entities     map[string]*Entity
+}
+
+type Category struct {
 }
 
 func NewEntityManager(projectManager *StoryManager) *EntityManager {
 	entityManager := EntityManager{
-		ProjectManager: projectManager,
-		Entities:       make(map[string]*Entity),
+		StoryManager: projectManager,
+		Entities:     make(map[string]*Entity),
 	}
 
 	return &entityManager
 }
 
 func (e *EntityManager) LoadEntities(projectId string) ([]Entity, error) {
-	project, err := e.ProjectManager.GetStory(projectId)
+	project, err := e.StoryManager.GetStory(projectId)
 	if err != nil {
 		return nil, err
 	}
@@ -126,7 +129,7 @@ func (e *EntityManager) SetEntityName(entityId string, name string) (string, err
 }
 
 func (e *EntityManager) getEntityFilePath(entityID string) string {
-	return filepath.Join(e.ProjectManager.ApplicationManager.Config.OpenProject.Location, constants.EntityFolderName, entityID+".json")
+	return filepath.Join(e.StoryManager.Story.Location, constants.EntityFolderName, entityID+".json")
 }
 
 // Relations
@@ -194,7 +197,7 @@ func (e *EntityManager) CreateRelation(entityId string) (string, error) {
 }
 
 func (e *EntityManager) getRelationPath(relationId string) string {
-	return filepath.Join(e.ProjectManager.ApplicationManager.Config.OpenProject.Location, constants.RelationsFolderName, relationId+".json")
+	return filepath.Join(e.StoryManager.Story.Location, constants.RelationsFolderName, relationId+".json")
 }
 
 func (e *EntityManager) GetRelation(relationId string) (Relation, error) {

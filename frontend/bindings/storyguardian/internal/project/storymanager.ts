@@ -9,6 +9,11 @@ import {Call as $Call, Create as $Create} from "@wailsio/runtime";
 // @ts-ignore: Unused imports
 import * as $models from "./models.js";
 
+export function CreateTag(tagName: string): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(798792175, tagName) as any;
+    return $resultPromise;
+}
+
 export function GetStory(projectId: string): Promise<$models.Story | null> & { cancel(): void } {
     let $resultPromise = $Call.ByID(941168768, projectId) as any;
     let $typingPromise = $resultPromise.then(($result) => {
@@ -18,8 +23,8 @@ export function GetStory(projectId: string): Promise<$models.Story | null> & { c
     return $typingPromise;
 }
 
-export function GetStoryImages(storyId: string): Promise<$models.ImageFile[]> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(4053663178, storyId) as any;
+export function GetStoryImages(): Promise<$models.ImageFile[]> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(4053663178) as any;
     let $typingPromise = $resultPromise.then(($result) => {
         return $$createType3($result);
     }) as any;
@@ -27,13 +32,18 @@ export function GetStoryImages(storyId: string): Promise<$models.ImageFile[]> & 
     return $typingPromise;
 }
 
-export function SetStoryDescription(storyId: string, description: string): Promise<string> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(1384865094, storyId, description) as any;
+export function SaveStory(): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(2504230633) as any;
     return $resultPromise;
 }
 
-export function SetStoryTitle(storyId: string, name: string): Promise<void> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(1996276650, storyId, name) as any;
+export function SetStoryDescription(description: string): Promise<string> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(1384865094, description) as any;
+    return $resultPromise;
+}
+
+export function SetStoryTitle(name: string): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(1996276650, name) as any;
     return $resultPromise;
 }
 

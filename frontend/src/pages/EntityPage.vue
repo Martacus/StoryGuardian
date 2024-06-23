@@ -24,8 +24,7 @@ import EntityTitle from "@/components/shared/EntityTitle.vue";
 import {Entity} from "../../bindings/storyguardian/internal/project";
 import Description from "@/components/shared/Description.vue";
 import {useToast} from "@/components/ui/toast";
-import RelationModule from "@/components/modules/RelationModule.vue";
-import {SetStoryTitle} from "../../bindings/storyguardian/internal/project/storymanager";
+import RelationModule from "@/components/entity/RelationModule.vue";
 
 
 const route = useRoute();

@@ -229,6 +229,7 @@ export class Story {
     "location": string;
     "description": string;
     "entities": Entity[];
+    "tags": string[];
 
     /** Creates a new Story instance. */
     constructor($$source: Partial<Story> = {}) {
@@ -247,6 +248,9 @@ export class Story {
         if (!("entities" in $$source)) {
             this["entities"] = [];
         }
+        if (!("tags" in $$source)) {
+            this["tags"] = [];
+        }
 
         Object.assign(this, $$source);
     }
@@ -256,9 +260,13 @@ export class Story {
      */
     static createFrom($$source: any = {}): Story {
         const $$createField4_0 = $$createType4;
+        const $$createField5_0 = $$createType2;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("entities" in $$parsedSource) {
             $$parsedSource["entities"] = $$createField4_0($$parsedSource["entities"]);
+        }
+        if ("tags" in $$parsedSource) {
+            $$parsedSource["tags"] = $$createField5_0($$parsedSource["tags"]);
         }
         return new Story($$parsedSource as Partial<Story>);
     }

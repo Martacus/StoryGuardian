@@ -17,11 +17,12 @@ import {Button} from "@/components/ui/button";
 import {useRoute} from "vue-router";
 import Description from "@/components/shared/Description.vue";
 import EntityList from "@/components/story/EntityList.vue";
-import {Story} from "../../bindings/storyguardian/internal/project";
-import {GetStory, SetStoryDescription, SetStoryTitle} from "../../bindings/storyguardian/internal/project/storymanager";
 import {useToast} from "@/components/ui/toast";
 import EntityTitle from "@/components/shared/EntityTitle.vue";
-import ImageModule from "@/components/modules/ImageModule.vue";
+import ImageModule from "@/components/story/ImageModule.vue";
+import {Story} from "../../bindings/storyguardian/internal/project";
+import {GetStory, SetStoryDescription, SetStoryTitle} from "../../bindings/storyguardian/internal/project/storymanager";
+import TagList from "@/components/story/TagList.vue";
 
 const addModuleDialogOpened = ref(false);
 const story = ref<Story>();
@@ -30,7 +31,6 @@ const {toast} = useToast()
 
 onMounted(async () => {
   let projectId: string = route.params['id'] as string
-  console.log(projectId)
   try{
     const retrievedStory = await GetStory(projectId)
     if(retrievedStory !== null){
@@ -48,7 +48,7 @@ async function saveStoryDescription(descriptionValue: string) {
   if (!story.value) return;
 
   try {
-    story.value.description = await SetStoryDescription(story.value.id, descriptionValue);
+    story.value.description = await SetStoryDescription(descriptionValue);
   } catch (error: any) {
     toast({
       title: 'Failed to save story description',
@@ -60,7 +60,7 @@ async function saveStoryDescription(descriptionValue: string) {
 async function saveStoryTitle(title: string) {
   if (!story.value) return;
   try {
-    await SetStoryTitle(story.value.id, title)
+    await SetStoryTitle(title)
   } catch (error: any) {
     toast({
       title: 'Failed to save story title',
@@ -88,7 +88,6 @@ async function saveStoryTitle(title: string) {
               <DialogTitle>Select a module</DialogTitle>
             </DialogHeader>
             <DialogDescription>Choose a module to add to your story, you can always remove them later.</DialogDescription>
-
           </DialogContent>
         </Dialog>
         <TextToolTip text="Story settings">
@@ -97,14 +96,11 @@ async function saveStoryTitle(title: string) {
           </Button>
         </TextToolTip>
       </div>
-
     </Card>
     <Description v-if="story" :description="story.description" @save-description="saveStoryDescription" class="col-span-4"/>
     <EntityList v-if="story" :story="story" class="col-span-4"/>
-    <ImageModule v-if="story" :story="story" class="col-span-4">
-
-    </ImageModule>
-<!--    <StoryImageModule v-if="story" :story="story"/>-->
+    <TagList v-if="story"  :tags="story.tags"/>
+    <ImageModule v-if="story" :story="story" class="col-span-4"/>
   </DashboardLayout>
 </template>
 

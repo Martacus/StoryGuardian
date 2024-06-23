@@ -12,10 +12,12 @@ type Story struct {
 	ProjectDetails
 	Description string   `json:"description"`
 	Entities    []Entity `json:"entities"`
+	Tags        []string `json:"tags"`
 }
 
 type StoryManager struct {
 	ApplicationManager *ApplicationManager
+	Story              *Story
 }
 
 type ImageFile struct {
@@ -29,62 +31,64 @@ func NewStoryManager(appManager *ApplicationManager) *StoryManager {
 	}
 }
 
-func (p *StoryManager) GetStory(projectId string) (*Story, error) {
-	for key, projectDetails := range p.ApplicationManager.Config.Projects {
+func (s *StoryManager) GetStory(projectId string) (*Story, error) {
+	if s.Story != nil && s.Story.Id == projectId {
+		return s.Story, nil
+	}
+
+	for key, projectDetails := range s.ApplicationManager.Config.Projects {
 		if key == projectId {
 			story := Story{}
 			err := fileio.WriteFilePathToStruct(filepath.Join(projectDetails.Location, constants.ProjectConfigName), &story)
 			if err != nil {
 				return nil, fmt.Errorf("could not find the story with id: %v | %v", projectId, err)
 			}
-
+			s.Story = &story
 			return &story, nil
 		}
 	}
 	return nil, fmt.Errorf("could not find the story with id %v", projectId)
 }
 
-func (p *StoryManager) SetStoryTitle(storyId string, name string) error {
-	story, err := p.GetStory(storyId)
-	if err != nil {
-		return fmt.Errorf("could not find the story: %v", err)
+func (s *StoryManager) SaveStory() error {
+	if err := fileio.WriteStructToFilePath(s.Story, filepath.Join(s.Story.Location, constants.ProjectConfigName)); err != nil {
+		return fmt.Errorf("could not save story to file system: %v", err)
 	}
 
-	story.Name = name
-	if err = fileio.WriteStructToFilePath(story, filepath.Join(story.Location, constants.ProjectConfigName)); err != nil {
+	return nil
+}
+
+func (s *StoryManager) SetStoryTitle(name string) error {
+	s.Story.Name = name
+	if err := s.SaveStory(); err != nil {
 		return fmt.Errorf("could not save the title change: %v", err)
 	}
 
-	if err = p.ApplicationManager.writeProjectToAppConfig(*story); err != nil {
+	if err := s.ApplicationManager.writeProjectToAppConfig(*s.Story); err != nil {
 		return fmt.Errorf("could not save the title change to application config: %v", err)
 	}
 
 	return nil
 }
 
-func (p *StoryManager) SetStoryDescription(storyId string, description string) (string, error) {
-	story, err := p.GetStory(storyId)
-	if err != nil {
-		return "", fmt.Errorf("could not find the story with id: %v | %v", storyId, err)
-	}
-
-	story.Description = description
-	if err = fileio.WriteStructToFilePath(story, filepath.Join(story.Location, constants.ProjectConfigName)); err != nil {
+func (s *StoryManager) SetStoryDescription(description string) (string, error) {
+	s.Story.Description = description
+	if err := s.SaveStory(); err != nil {
 		return "", fmt.Errorf("could not save the description change: %v", err)
 	}
 
 	return description, nil
 }
 
-func (p *StoryManager) GetStoryImages(storyId string) ([]ImageFile, error) {
-	story, err := p.GetStory(storyId)
+func (s *StoryManager) GetStoryImages() ([]ImageFile, error) {
+	images := make([]ImageFile, 0)
+	imagesFolderPath := filepath.Join(s.Story.Location, "images")
+
+	files, err := os.ReadDir(imagesFolderPath)
 	if err != nil {
-		return make([]ImageFile, 0), err
+		return nil, fmt.Errorf("could not read image folder: %v", err)
 	}
 
-	images := make([]ImageFile, 0)
-	imagesFolderPath := filepath.Join(story.Location, "images")
-	files, err := os.ReadDir(imagesFolderPath)
 	for _, file := range files {
 		if !file.IsDir() {
 			ext := filepath.Ext(file.Name())
@@ -99,4 +103,12 @@ func (p *StoryManager) GetStoryImages(storyId string) ([]ImageFile, error) {
 	}
 
 	return images, nil
+}
+
+func (s *StoryManager) CreateTag(tagName string) error {
+	s.Story.Tags = append(s.Story.Tags, tagName)
+	if err := s.SaveStory(); err != nil {
+		return fmt.Errorf("could not save the tag insertion: %v", err)
+	}
+	return nil
 }

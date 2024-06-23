@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import HomeScreen from "@/layouts/HomeScreen.vue";
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import {Card, CardContent, CardHeader} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {Separator} from "@/components/ui/separator";
@@ -13,12 +13,13 @@ const {toast} = useToast()
 const config = ref<ApplicationConfig>();
 const router = useRouter()
 
-GetConfig().then((x) => {
-  config.value = x
-})
+onMounted(async () => {
+  config.value = await GetConfig()
+});
+
 
 function createProject(){
-  CreateProject().then((id) => {
+  CreateProject().then((id: string) => {
     router.push('/dashboard/' + id)
   })
 }
