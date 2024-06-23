@@ -8,7 +8,7 @@ import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
 import {onMounted, ref} from "vue";
 import {Entity, RelationInfo} from "../../../bindings/storyguardian/internal/project";
 import {CreateRelation, LoadRelationInfo} from "../../../bindings/storyguardian/internal/project/entitymanager";
-import {Toast, useToast} from "@/components/ui/toast";
+import {useToast} from "@/components/ui/toast";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Field, useForm} from "vee-validate";
 import {FormControl, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
@@ -59,7 +59,7 @@ const {handleSubmit} = useForm({
   validationSchema: formSchema,
 })
 
-const onSubmit = handleSubmit(async (values) => {
+const onSubmit = handleSubmit(async () => {
 
 });
 
