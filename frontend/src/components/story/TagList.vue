@@ -92,8 +92,6 @@ async function navigateToTag(id: string){
 }
 
 onMounted(() => {
-  console.log(props.tags)
-
   calcListHeight();
 })
 </script>

@@ -36,13 +36,12 @@ const {toast} = useToast()
 
 onMounted(async () => {
   let projectId: string = route.params['id'] as string
-  try{
+  try {
     const retrievedStory = await GetStory(projectId)
-    if(retrievedStory !== null){
+    if (retrievedStory !== null) {
       story.value = retrievedStory
-      console.log(retrievedStory.modules)
     }
-  } catch(error: any) {
+  } catch (error: any) {
     toast({
       title: 'Failed to retrieve story',
       description: error,
@@ -75,13 +74,19 @@ async function saveStoryTitle(title: string) {
   }
 }
 
-function descriptionConfigChange(key: string, value: string){
-  EditStoryModuleConfig('description', key, value).catch(error => {
-    toast({
-      title: 'Failed to save story title',
-      description: error,
-    });
-  })
+function descriptionConfigChange(key: string, value: string) {
+  EditStoryModuleConfig('description', key, value).catch(() => moduleChangeSaveFail);
+}
+
+function entityConfigChange(key: string, value: string) {
+  EditStoryModuleConfig('entityList', key, value).catch(() => moduleChangeSaveFail);
+}
+
+function moduleChangeSaveFail(error: any){
+  toast({
+    title: 'Failed to save module config change',
+    description: error,
+  });
 }
 </script>
 
@@ -102,7 +107,8 @@ function descriptionConfigChange(key: string, value: string){
             <DialogHeader>
               <DialogTitle>Select a module</DialogTitle>
             </DialogHeader>
-            <DialogDescription>Choose a module to add to your story, you can always remove them later.</DialogDescription>
+            <DialogDescription>Choose a module to add to your story, you can always remove them later.
+            </DialogDescription>
           </DialogContent>
         </Dialog>
         <TextToolTip text="Story settings">
@@ -120,8 +126,13 @@ function descriptionConfigChange(key: string, value: string){
         @save-description="saveStoryDescription"
         @config-change="descriptionConfigChange"
     />
-    <EntityList v-if="story" :story="story" class="col-span-4"/>
-    <TagList v-if="story"  :tags="story.tags"/>
+    <EntityList
+        v-if="story"
+        :module-config="story.modules['entityList']"
+        :story="story"
+        @config-change="entityConfigChange"
+    />
+    <TagList v-if="story" :tags="story.tags"/>
     <ImageModule v-if="story" :story="story" class="col-span-4"/>
   </DashboardLayout>
 </template>
