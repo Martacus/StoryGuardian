@@ -35,6 +35,7 @@ onMounted(async () => {
     const retrievedStory = await GetStory(projectId)
     if(retrievedStory !== null){
       story.value = retrievedStory
+      console.log(retrievedStory.modules)
     }
   } catch(error: any) {
     toast({
@@ -97,7 +98,8 @@ async function saveStoryTitle(title: string) {
         </TextToolTip>
       </div>
     </Card>
-    <Description v-if="story" :description="story.description" @save-description="saveStoryDescription" class="col-span-4"/>
+
+    <Description v-if="story" :module-config="story.modules['description']" :description="story.description" @save-description="saveStoryDescription"/>
     <EntityList v-if="story" :story="story" class="col-span-4"/>
     <TagList v-if="story"  :tags="story.tags"/>
     <ImageModule v-if="story" :story="story" class="col-span-4"/>

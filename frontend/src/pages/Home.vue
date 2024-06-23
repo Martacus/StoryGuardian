@@ -8,6 +8,7 @@ import {useRouter} from "vue-router";
 import {useToast} from "@/components/ui/toast";
 import {ApplicationConfig} from "../../bindings/storyguardian/internal/project";
 import {CreateProject, GetConfig, OpenProject} from "../../bindings/storyguardian/internal/project/applicationmanager";
+import {NewStory} from "../../bindings/storyguardian/internal/project/storymanager";
 
 const {toast} = useToast()
 const config = ref<ApplicationConfig>();
@@ -19,9 +20,11 @@ onMounted(async () => {
 
 
 function createProject(){
-  CreateProject().then((id: string) => {
-    router.push('/dashboard/' + id)
-  })
+  CreateProject().then((projectDirectory: string) => {
+    NewStory(projectDirectory).then(story => {
+      router.push('/dashboard/' + story?.id)
+    });
+  });
 }
 
 async function openProject(id: string){

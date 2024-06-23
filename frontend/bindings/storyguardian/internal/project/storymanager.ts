@@ -32,6 +32,15 @@ export function GetStoryImages(): Promise<$models.ImageFile[]> & { cancel(): voi
     return $typingPromise;
 }
 
+export function NewStory(projectDirectory: string): Promise<$models.Story | null> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(1310826610, projectDirectory) as any;
+    let $typingPromise = $resultPromise.then(($result) => {
+        return $$createType1($result);
+    }) as any;
+    $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
+    return $typingPromise;
+}
+
 export function SaveStory(): Promise<void> & { cancel(): void } {
     let $resultPromise = $Call.ByID(2504230633) as any;
     return $resultPromise;

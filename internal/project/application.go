@@ -2,7 +2,6 @@ package project
 
 import (
 	"fmt"
-	"github.com/google/uuid"
 	"github.com/wailsapp/wails/v3/pkg/application"
 	"log"
 	"os"
@@ -98,22 +97,6 @@ func (a *ApplicationManager) CreateProject() (string, error) {
 		return "", fmt.Errorf("could not select project directory: %v", err)
 	}
 
-	projectId := uuid.New().String()
-	if err := createProjectFile(projectDirectory, projectId); err != nil {
-		return "", fmt.Errorf("could not create the project config file: %w", err)
-	}
-
-	projectName := filepath.Base(projectDirectory)
-	project := ProjectDetails{
-		Id:       projectId,
-		Name:     projectName,
-		Location: projectDirectory,
-	}
-
-	if err := a.writeProjectDetailsToAppConfig(project); err != nil {
-		return "", fmt.Errorf("could not write project to application config file: %w", err)
-	}
-
 	if err := os.MkdirAll(filepath.Join(projectDirectory, constants.EntityFolderName), 0755); err != nil {
 		return "", fmt.Errorf("error creating directory: %v", err)
 	}
@@ -122,7 +105,11 @@ func (a *ApplicationManager) CreateProject() (string, error) {
 		return "", fmt.Errorf("error creating directory: %v", err)
 	}
 
-	return projectId, nil
+	if err := os.MkdirAll(filepath.Join(projectDirectory, constants.ImagesFolderName), 0755); err != nil {
+		return "", fmt.Errorf("error creating directory: %v", err)
+	}
+
+	return projectDirectory, nil
 }
 
 func (a *ApplicationManager) OpenProject(projectId string) error {
@@ -145,30 +132,6 @@ func promptForProjectDirectory() (string, error) {
 		return "", fmt.Errorf("failed to prompt for project directory: %v", err)
 	}
 	return projectDirectory, nil
-}
-
-func createProjectFile(projectDirectory string, projectId string) error {
-	filePath := filepath.Join(projectDirectory, "project.json")
-	file, err := os.Create(filePath)
-	if err != nil {
-		return fmt.Errorf("error creating file: %v", err)
-	}
-	defer func(file *os.File) {
-		err := file.Close()
-		if err != nil {
-		}
-	}(file)
-
-	projectName := filepath.Base(projectDirectory)
-	config := Config{
-		ProjectDetails{
-			Id:       projectId,
-			Name:     projectName,
-			Location: projectDirectory,
-		},
-	}
-
-	return fileio.WriteStructToFile(config, file)
 }
 
 func (a *ApplicationManager) OpenProjectFolder(folder string) error {

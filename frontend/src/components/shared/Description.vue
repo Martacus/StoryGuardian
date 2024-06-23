@@ -4,18 +4,22 @@ import { ChevronDown, ChevronUp, Edit } from 'lucide-vue-next';
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
 import TipTap from "@/components/shared/TipTap.vue";
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import {Button} from "@/components/ui/button";
+import {StoryModule} from "../../../bindings/storyguardian/internal/project";
+import GridSizeSelector from "@/components/shared/GridSizeSelector.vue";
 
 
 const storyDescriptionEditor = ref();
 const editDescription = ref(false);
 const showDescription = ref(true);
+const columnSize = ref('col-span-4')
 
 const emit = defineEmits(['saveDescription'])
 
-defineProps({
-  description: String
+const props = defineProps({
+  description: String,
+  moduleConfig: StoryModule
 })
 
 function activateEditDescription() {
@@ -30,29 +34,41 @@ async function save() {
   emit('saveDescription', storyDescriptionEditor.value?.getHTML());
   activateEditDescription();
 }
+
+onMounted(()=> {
+  columnSize.value = columnSize.value.slice(0, -1) + props.moduleConfig?.configuration['columnSize'];
+})
+
+function changeGridSize(newColumnSize: string){
+  if(props.moduleConfig){
+    props.moduleConfig.configuration['columnSize'] = newColumnSize;
+    columnSize.value = columnSize.value.slice(0, -1) + newColumnSize;
+  }
+}
 </script>
 
 <template>
-  <Card class="bg-muted/30 col-span-4">
+  <Card class="bg-muted/30" :class="columnSize">
     <CardHeader class="flex flex-row justify-between items-center">
       <CardTitle>Description</CardTitle>
       <div class="flex flex-row space-x-2">
-        <TextTooltip text="Edit">
-          <Button size="icon" aria-label="Toggle italic" variant="outline" v-if="showDescription"
+        <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="changeGridSize"/>
+        <TextTooltip text="Edit" v-if="showDescription">
+          <Button size="icon" aria-label="Toggle italic" variant="outline"
                   @click="activateEditDescription()">
             <Edit />
           </Button>
         </TextTooltip>
 
-        <TextTooltip text="Minimize">
-          <Button size="icon" aria-label="Toggle italic" variant="outline" v-if="showDescription"
+        <TextTooltip text="Minimize" v-if="showDescription">
+          <Button size="icon" aria-label="Toggle italic" variant="outline"
                   @click="toggleDescription()">
             <ChevronUp />
           </Button>
         </TextTooltip>
 
-        <TextTooltip text="Expand">
-          <Button size="icon" aria-label="Toggle italic" variant="outline" v-if="!showDescription"
+        <TextTooltip text="Expand" v-if="!showDescription">
+          <Button size="icon" aria-label="Toggle italic" variant="outline"
                   @click="toggleDescription()">
             <ChevronDown />
           </Button>

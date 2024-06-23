@@ -2,6 +2,7 @@ package project
 
 import (
 	"fmt"
+	"github.com/google/uuid"
 	"os"
 	"path/filepath"
 	"storyguardian/internal/constants"
@@ -10,9 +11,10 @@ import (
 
 type Story struct {
 	ProjectDetails
-	Description string   `json:"description"`
-	Entities    []Entity `json:"entities"`
-	Tags        []string `json:"tags"`
+	Description string                 `json:"description"`
+	Entities    []Entity               `json:"entities"`
+	Tags        []string               `json:"tags"`
+	Modules     map[string]StoryModule `json:"modules"`
 }
 
 type StoryManager struct {
@@ -25,10 +27,46 @@ type ImageFile struct {
 	Name     string `json:"name"`
 }
 
+type StoryModule struct {
+	Name          string            `json:"name"`
+	Configuration map[string]string `json:"configuration"`
+}
+
 func NewStoryManager(appManager *ApplicationManager) *StoryManager {
 	return &StoryManager{
 		ApplicationManager: appManager,
 	}
+}
+
+func (s *StoryManager) NewStory(projectDirectory string) (*Story, error) {
+	projectId := uuid.New().String()
+	projectName := filepath.Base(projectDirectory)
+
+	projectDetails := ProjectDetails{
+		Id:       projectId,
+		Name:     projectName,
+		Location: projectDirectory,
+	}
+
+	moduleMap := addStoryModules(make(map[string]StoryModule))
+
+	story := Story{
+		ProjectDetails: projectDetails,
+		Description:    "Placeholder",
+		Modules:        moduleMap,
+	}
+
+	filePath := filepath.Join(projectDirectory, "story.json")
+
+	if err := fileio.WriteStructToFilePath(story, filePath); err != nil {
+		return nil, fmt.Errorf("could not write story to story.json: %w", err)
+	}
+
+	if err := s.ApplicationManager.writeProjectDetailsToAppConfig(projectDetails); err != nil {
+		return nil, fmt.Errorf("could not write project to application config file: %w", err)
+	}
+
+	return &story, nil
 }
 
 func (s *StoryManager) GetStory(projectId string) (*Story, error) {
@@ -39,7 +77,7 @@ func (s *StoryManager) GetStory(projectId string) (*Story, error) {
 	for key, projectDetails := range s.ApplicationManager.Config.Projects {
 		if key == projectId {
 			story := Story{}
-			err := fileio.WriteFilePathToStruct(filepath.Join(projectDetails.Location, constants.ProjectConfigName), &story)
+			err := fileio.WriteFilePathToStruct(filepath.Join(projectDetails.Location, constants.StoryConfigName), &story)
 			if err != nil {
 				return nil, fmt.Errorf("could not find the story with id: %v | %v", projectId, err)
 			}
@@ -51,7 +89,7 @@ func (s *StoryManager) GetStory(projectId string) (*Story, error) {
 }
 
 func (s *StoryManager) SaveStory() error {
-	if err := fileio.WriteStructToFilePath(s.Story, filepath.Join(s.Story.Location, constants.ProjectConfigName)); err != nil {
+	if err := fileio.WriteStructToFilePath(s.Story, filepath.Join(s.Story.Location, constants.StoryConfigName)); err != nil {
 		return fmt.Errorf("could not save story to file system: %v", err)
 	}
 
@@ -111,4 +149,33 @@ func (s *StoryManager) CreateTag(tagName string) error {
 		return fmt.Errorf("could not save the tag insertion: %v", err)
 	}
 	return nil
+}
+
+func addStoryModules(moduleMap map[string]StoryModule) map[string]StoryModule {
+	moduleMap["description"] = StoryModule{
+		Name: "Description",
+		Configuration: map[string]string{
+			"columnSize": "4",
+			"name":       "description",
+		},
+	}
+
+	moduleMap["entityList"] = StoryModule{
+		Name: "Entities",
+		Configuration: map[string]string{
+			"columnSize": "4",
+			"listView":   "list",
+			"name":       "entityList",
+		},
+	}
+
+	moduleMap["images"] = StoryModule{
+		Name: "Images",
+		Configuration: map[string]string{
+			"columnSize": "4",
+			"name":       "images",
+		},
+	}
+
+	return moduleMap
 }
