@@ -14,6 +14,11 @@ export function CreateTag(tagName: string): Promise<void> & { cancel(): void } {
     return $resultPromise;
 }
 
+export function EditStoryModuleConfig($module: string, config: string, value: string): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(1912382016, $module, config, value) as any;
+    return $resultPromise;
+}
+
 export function GetStory(projectId: string): Promise<$models.Story | null> & { cancel(): void } {
     let $resultPromise = $Call.ByID(941168768, projectId) as any;
     let $typingPromise = $resultPromise.then(($result) => {

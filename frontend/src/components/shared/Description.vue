@@ -11,28 +11,28 @@ import GridSizeSelector from "@/components/shared/GridSizeSelector.vue";
 
 
 const storyDescriptionEditor = ref();
-const editDescription = ref(false);
-const showDescription = ref(true);
+const isEditing = ref(false);
+const showCardBody = ref(true);
 const columnSize = ref('col-span-4')
 
-const emit = defineEmits(['saveDescription'])
+const emit = defineEmits(['saveDescription', 'configChange'])
 
 const props = defineProps({
   description: String,
   moduleConfig: StoryModule
 })
 
-function activateEditDescription() {
-  editDescription.value = !editDescription.value;
+function toggleEdit() {
+  isEditing.value = !isEditing.value;
 }
 
-function toggleDescription() {
-  showDescription.value = !showDescription.value;
+function toggleCardBody() {
+  showCardBody.value = !showCardBody.value;
 }
 
 async function save() {
   emit('saveDescription', storyDescriptionEditor.value?.getHTML());
-  activateEditDescription();
+  toggleEdit();
 }
 
 onMounted(()=> {
@@ -44,6 +44,7 @@ function changeGridSize(newColumnSize: string){
     props.moduleConfig.configuration['columnSize'] = newColumnSize;
     columnSize.value = columnSize.value.slice(0, -1) + newColumnSize;
   }
+  emit('configChange', 'columnSize', newColumnSize)
 }
 </script>
 
@@ -53,32 +54,32 @@ function changeGridSize(newColumnSize: string){
       <CardTitle>Description</CardTitle>
       <div class="flex flex-row space-x-2">
         <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="changeGridSize"/>
-        <TextTooltip text="Edit" v-if="showDescription">
+        <TextTooltip text="Edit" v-if="showCardBody">
           <Button size="icon" aria-label="Toggle italic" variant="outline"
-                  @click="activateEditDescription()">
+                  @click="toggleEdit()">
             <Edit />
           </Button>
         </TextTooltip>
 
-        <TextTooltip text="Minimize" v-if="showDescription">
+        <TextTooltip text="Minimize" v-if="showCardBody">
           <Button size="icon" aria-label="Toggle italic" variant="outline"
-                  @click="toggleDescription()">
+                  @click="toggleCardBody()">
             <ChevronUp />
           </Button>
         </TextTooltip>
 
-        <TextTooltip text="Expand" v-if="!showDescription">
+        <TextTooltip text="Expand" v-if="!showCardBody">
           <Button size="icon" aria-label="Toggle italic" variant="outline"
-                  @click="toggleDescription()">
+                  @click="toggleCardBody()">
             <ChevronDown />
           </Button>
         </TextTooltip>
       </div>
 
     </CardHeader>
-    <CardContent v-if="showDescription">
-      <div v-html="description" v-if="!editDescription"></div>
-      <div v-if="editDescription" class="flex flex-col items-center">
+    <CardContent v-if="showCardBody">
+      <div v-html="description" v-if="!isEditing"></div>
+      <div v-if="isEditing" class="flex flex-col items-center">
         <TipTap v-bind:content="description" ref="storyDescriptionEditor"></TipTap>
         <Button class="btn btn-primary mt-2 max-w-40" @click="save()">Save Description</Button>
       </div>

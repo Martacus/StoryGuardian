@@ -21,7 +21,12 @@ import {useToast} from "@/components/ui/toast";
 import EntityTitle from "@/components/shared/EntityTitle.vue";
 import ImageModule from "@/components/story/ImageModule.vue";
 import {Story} from "../../bindings/storyguardian/internal/project";
-import {GetStory, SetStoryDescription, SetStoryTitle} from "../../bindings/storyguardian/internal/project/storymanager";
+import {
+  EditStoryModuleConfig,
+  GetStory,
+  SetStoryDescription,
+  SetStoryTitle
+} from "../../bindings/storyguardian/internal/project/storymanager";
 import TagList from "@/components/story/TagList.vue";
 
 const addModuleDialogOpened = ref(false);
@@ -69,6 +74,15 @@ async function saveStoryTitle(title: string) {
     });
   }
 }
+
+function descriptionConfigChange(key: string, value: string){
+  EditStoryModuleConfig('description', key, value).catch(error => {
+    toast({
+      title: 'Failed to save story title',
+      description: error,
+    });
+  })
+}
 </script>
 
 <template>
@@ -99,7 +113,13 @@ async function saveStoryTitle(title: string) {
       </div>
     </Card>
 
-    <Description v-if="story" :module-config="story.modules['description']" :description="story.description" @save-description="saveStoryDescription"/>
+    <Description
+        v-if="story"
+        :module-config="story.modules['description']"
+        :description="story.description"
+        @save-description="saveStoryDescription"
+        @config-change="descriptionConfigChange"
+    />
     <EntityList v-if="story" :story="story" class="col-span-4"/>
     <TagList v-if="story"  :tags="story.tags"/>
     <ImageModule v-if="story" :story="story" class="col-span-4"/>

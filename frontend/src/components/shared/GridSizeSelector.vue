@@ -27,26 +27,17 @@ function updateGridSize(newSize: string) {
 </script>
 
 <template>
-  <TextTooltip text="Switch to grid" v-if="localColumnSize === '1'">
-    <Button size="icon" aria-label="Toggle italic" variant="outline" @click="updateGridSize('2')">
+  <TextTooltip text="Switch column width">
+    <Button size="icon" aria-label="Toggle italic" variant="outline" @click="updateGridSize('2')" v-if="localColumnSize === '1'">
       <Square/>
     </Button>
-  </TextTooltip>
-
-  <TextTooltip text="Switch to list" v-if="localColumnSize === '2'">
-    <Button size="icon" aria-label="Toggle italic" variant="outline" @click="updateGridSize('3')">
+    <Button size="icon" aria-label="Toggle italic" variant="outline" @click="updateGridSize('3')"  v-if="localColumnSize === '2'">
       <Columns2/>
     </Button>
-  </TextTooltip>
-
-  <TextTooltip text="Switch to list" v-if="localColumnSize === '3'">
-    <Button size="icon" aria-label="Toggle italic" variant="outline" @click="updateGridSize('4')">
+    <Button size="icon" aria-label="Toggle italic" variant="outline" @click="updateGridSize('4')" v-if="localColumnSize === '3'">
       <Columns3/>
     </Button>
-  </TextTooltip>
-
-  <TextTooltip text="Switch to list" v-if="localColumnSize === '4'">
-    <Button size="icon" aria-label="Toggle italic" variant="outline" @click="updateGridSize('1')">
+    <Button size="icon" aria-label="Toggle italic" variant="outline" @click="updateGridSize('1')" v-if="localColumnSize === '4'">
       <Columns4/>
     </Button>
   </TextTooltip>
