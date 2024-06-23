@@ -4,47 +4,32 @@ import { ChevronDown, ChevronUp, Edit } from 'lucide-vue-next';
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
 import TipTap from "@/components/shared/TipTap.vue";
-import {onMounted, ref} from "vue";
+import {ref} from "vue";
 import {Button} from "@/components/ui/button";
 import {StoryModule} from "../../../bindings/storyguardian/internal/project";
 import GridSizeSelector from "@/components/shared/GridSizeSelector.vue";
-
-
-const storyDescriptionEditor = ref();
-const isEditing = ref(false);
-const showCardBody = ref(true);
-const columnSize = ref('col-span-4')
-
-const emit = defineEmits(['saveDescription', 'configChange'])
+import {useGridSize} from "@/composables/useGridSize";
+import {useToggleBody} from "@/composables/useToggleBody";
 
 const props = defineProps({
   description: String,
   moduleConfig: StoryModule
 })
+const emit = defineEmits(['saveDescription', 'configChange'])
+
+const storyDescriptionEditor = ref();
+const isEditing = ref(false);
+
+const {showCardBody, toggleCardBody} = useToggleBody(props.moduleConfig)
+const {columnSize, changeGridSize } = useGridSize(props.moduleConfig)
 
 function toggleEdit() {
   isEditing.value = !isEditing.value;
 }
 
-function toggleCardBody() {
-  showCardBody.value = !showCardBody.value;
-}
-
 async function save() {
   emit('saveDescription', storyDescriptionEditor.value?.getHTML());
   toggleEdit();
-}
-
-onMounted(()=> {
-  columnSize.value = columnSize.value.slice(0, -1) + props.moduleConfig?.configuration['columnSize'];
-})
-
-function changeGridSize(newColumnSize: string){
-  if(props.moduleConfig){
-    props.moduleConfig.configuration['columnSize'] = newColumnSize;
-    columnSize.value = columnSize.value.slice(0, -1) + newColumnSize;
-  }
-  emit('configChange', 'columnSize', newColumnSize)
 }
 </script>
 
@@ -53,7 +38,7 @@ function changeGridSize(newColumnSize: string){
     <CardHeader class="flex flex-row justify-between items-center">
       <CardTitle>Description</CardTitle>
       <div class="flex flex-row space-x-2">
-        <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="changeGridSize"/>
+        <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize(newSize, emit)"/>
         <TextTooltip text="Edit" v-if="showCardBody">
           <Button size="icon" aria-label="Toggle italic" variant="outline"
                   @click="toggleEdit()">
@@ -63,14 +48,14 @@ function changeGridSize(newColumnSize: string){
 
         <TextTooltip text="Minimize" v-if="showCardBody">
           <Button size="icon" aria-label="Toggle italic" variant="outline"
-                  @click="toggleCardBody()">
+                  @click="toggleCardBody(emit)">
             <ChevronUp />
           </Button>
         </TextTooltip>
 
         <TextTooltip text="Expand" v-if="!showCardBody">
           <Button size="icon" aria-label="Toggle italic" variant="outline"
-                  @click="toggleCardBody()">
+                  @click="toggleCardBody(emit)">
             <ChevronDown />
           </Button>
         </TextTooltip>
