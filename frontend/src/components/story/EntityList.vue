@@ -126,7 +126,7 @@ async function navigateToEntity(id: string){
     <CardHeader class="flex flex-row justify-between items-center">
       <CardTitle> Entities</CardTitle>
       <div class="flex flex-row space-x-2">
-        <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize(newSize, emit)"/>
+        <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('entityList', newSize, emit)"/>
         <Dialog v-model:open="dialogOpen" v-if="showCardBody">
           <DialogTrigger>
             <TextTooltip text="Add an entity">
@@ -182,13 +182,13 @@ async function navigateToEntity(id: string){
         </TextTooltip>
 
         <TextTooltip text="Expand" v-if="!showCardBody">
-          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCardBody(emit)">
+          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCardBody('entityList', emit)">
             <ChevronDown/>
           </Button>
         </TextTooltip>
 
         <TextTooltip text="Minimize" v-if="showCardBody">
-          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCardBody(emit)">
+          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCardBody('entityList', emit)">
             <ChevronUp/>
           </Button>
         </TextTooltip>

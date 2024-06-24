@@ -14,22 +14,26 @@ import {Input} from "@/components/ui/input";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import {useRouter} from "vue-router";
 import {CreateTag} from "../../../bindings/storyguardian/src/project/storymanager";
+import {useToggleBody} from "@/composables/useToggleBody";
+import {useGridSize} from "@/composables/useGridSize";
+import {StoryModule} from "../../../bindings/storyguardian/src/project";
+import GridSizeSelector from "@/components/shared/GridSizeSelector.vue";
 
 type ListViewMode = 'grid' | 'list';
-
-const {toast} = useToast()
-
-const openFilter = ref(false);
-const dialogOpen = ref(false);
-const listView = ref<ListViewMode>('list')
-const showBody = ref(true);
-const router = useRouter()
-
-const listHeight = ref<string>('h-0')
-
 const props = defineProps<{
-  tags: string[]
+  tags: string[],
+  moduleConfig: StoryModule
 }>();
+const emit = defineEmits(['configChange'])
+
+const {toast} = useToast();
+const {showCardBody, toggleCardBody} = useToggleBody(props.moduleConfig);
+const {columnSize, changeGridSize } = useGridSize(props.moduleConfig);
+
+const dialogOpen = ref(false);
+const listView = ref<ListViewMode>('list');
+const router = useRouter();
+const listHeight = ref<string>('h-0');
 
 //Form
 const formSchema = toTypedSchema(z.object({
@@ -67,10 +71,6 @@ function changeListView(view: ListViewMode) {
   calcListHeight();
 }
 
-function toggleCard() {
-  showBody.value = !showBody.value;
-}
-
 function calcListHeight() {
   if (listView.value === 'list') {
     if (props.tags.length > 8) {
@@ -97,11 +97,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <Card class="bg-muted/30 col-span-4">
+  <Card class="bg-muted/30" :class="columnSize">
     <CardHeader class="flex flex-row justify-between items-center">
       <CardTitle>Tags</CardTitle>
       <div class="flex flex-row space-x-2">
-        <Dialog v-model:open="dialogOpen" v-if="showBody">
+        <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('tagList', newSize, emit)"/>
+        <Dialog v-model:open="dialogOpen" v-if="showCardBody">
           <DialogTrigger>
             <TextTooltip text="Add an entity">
               <Button size="icon" aria-label="Toggle italic" variant="outline" @click="">
@@ -133,33 +134,33 @@ onMounted(() => {
           </DialogContent>
         </Dialog>
 
-        <TextTooltip text="Switch to grid" v-if="listView === 'list' && showBody">
+        <TextTooltip text="Switch to grid" v-if="listView === 'list' && showCardBody">
           <Button size="icon" aria-label="Toggle italic" variant="outline" @click="changeListView('grid')">
             <StretchHorizontal/>
           </Button>
         </TextTooltip>
 
-        <TextTooltip text="Switch to list" v-if="listView === 'grid' && showBody">
+        <TextTooltip text="Switch to list" v-if="listView === 'grid' && showCardBody">
           <Button size="icon" aria-label="Toggle italic" variant="outline" @click="changeListView('list')">
             <LayoutGrid/>
           </Button>
         </TextTooltip>
 
-        <TextTooltip text="Expand" v-if="!showBody">
-          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCard()">
+        <TextTooltip text="Expand" v-if="!showCardBody">
+          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCardBody('tagList', emit)">
             <ChevronDown/>
           </Button>
         </TextTooltip>
 
-        <TextTooltip text="Minimize" v-if="showBody">
-          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCard()">
+        <TextTooltip text="Minimize" v-if="showCardBody">
+          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCardBody('tagList', emit)">
             <ChevronUp/>
           </Button>
         </TextTooltip>
 
       </div>
     </CardHeader>
-    <CardContent v-if="showBody">
+    <CardContent v-if="showCardBody">
       <ScrollArea class="w-full" :class="listHeight">
         <div class="flex flex-col gap-2" v-if="listView === 'list'">
           <div class="bg-muted/30 hover:bg-muted/40 rounded-lg py-2 hover:cursor-pointer"

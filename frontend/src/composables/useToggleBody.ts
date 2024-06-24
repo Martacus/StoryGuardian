@@ -4,9 +4,9 @@ import {StoryModule} from "../../bindings/storyguardian/src/project";
 export function useToggleBody(moduleConfig: StoryModule | undefined) {
     const showCardBody = ref(true);
 
-    function toggleCardBody(emit: any) {
+    function toggleCardBody(module: string, emit: any) {
         showCardBody.value = !showCardBody.value;
-        emit('configChange', 'open', JSON.stringify(showCardBody.value))
+        emit('configChange', module, 'open', JSON.stringify(showCardBody.value))
     }
 
     onMounted(() => {

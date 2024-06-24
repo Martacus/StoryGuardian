@@ -91,13 +91,10 @@ async function saveStoryTitle(title: string) {
   }
 }
 
-function descriptionConfigChange(key: string, value: string) {
-  EditStoryModuleConfig('description', key, value).catch(() => moduleChangeSaveFail);
+function moduleConfigChange(module: string, key: string, value: string) {
+  EditStoryModuleConfig(module, key, value).catch(() => moduleChangeSaveFail);
 }
 
-function entityConfigChange(key: string, value: string) {
-  EditStoryModuleConfig('entityList', key, value).catch(() => moduleChangeSaveFail);
-}
 
 function moduleChangeSaveFail(error: any){
   toast({
@@ -169,16 +166,25 @@ function addStoryModule(module: string){
         :module-config="story.modules['description']"
         :description="story.description"
         @save-description="saveStoryDescription"
-        @config-change="descriptionConfigChange"
+        @config-change="moduleConfigChange"
     />
     <EntityList
         v-if="story"
         :module-config="story.modules['entityList']"
         :story="story"
-        @config-change="entityConfigChange"
+        @config-change="moduleConfigChange"
     />
-    <TagList v-if="story && isUsedModule('tagList')" :tags="story.tags"/>
-    <ImageModule v-if="story && isUsedModule('images')" :story="story" class="col-span-4"/>
+    <TagList
+        v-if="story && isUsedModule('tagList')"
+        :module-config="story.modules['tagList']"
+        :tags="story.tags"
+        @config-change="moduleConfigChange"
+    />
+    <ImageModule
+        v-if="story && isUsedModule('images')"
+        :story="story"
+        class="col-span-4"
+    />
   </DashboardLayout>
 </template>
 

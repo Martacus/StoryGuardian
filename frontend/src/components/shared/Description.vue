@@ -38,7 +38,7 @@ async function save() {
     <CardHeader class="flex flex-row justify-between items-center">
       <CardTitle>Description</CardTitle>
       <div class="flex flex-row space-x-2">
-        <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize(newSize, emit)"/>
+        <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('description', newSize, emit)"/>
         <TextTooltip text="Edit" v-if="showCardBody">
           <Button size="icon" aria-label="Toggle italic" variant="outline"
                   @click="toggleEdit()">
@@ -48,14 +48,14 @@ async function save() {
 
         <TextTooltip text="Minimize" v-if="showCardBody">
           <Button size="icon" aria-label="Toggle italic" variant="outline"
-                  @click="toggleCardBody(emit)">
+                  @click="toggleCardBody('description', emit)">
             <ChevronUp />
           </Button>
         </TextTooltip>
 
         <TextTooltip text="Expand" v-if="!showCardBody">
           <Button size="icon" aria-label="Toggle italic" variant="outline"
-                  @click="toggleCardBody(emit)">
+                  @click="toggleCardBody('description', emit)">
             <ChevronDown />
           </Button>
         </TextTooltip>
