@@ -123,7 +123,7 @@ async function navigateToEntity(id: string){
 </script>
 
 <template>
-  <Card class="bg-muted/30" :class="[ 'col-span-1', 'md:' + columnSize, 'lg:' + columnSize, 'xl:' + columnSize]">
+  <Card class="bg-muted/30 min-w-[22rem]" :class="columnSize">
     <CardHeader class="flex flex-row justify-between items-center">
       <CardTitle> Entities</CardTitle>
       <div class="flex flex-row space-x-2">
