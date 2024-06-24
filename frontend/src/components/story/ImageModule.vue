@@ -92,7 +92,7 @@ function openImageFolder(){
           </TableRow>
         </TableHeader>
         <TableBody>
-          <TableRow v-for="(image, index) in images" @click="openDialogs[index] = true">
+          <TableRow v-for="(image, index) in images" @click="openDialogs[index] = true" class="hover:cursor-pointer">
 
             <!-- Table Data -->
             <TableCell class="font-medium">
