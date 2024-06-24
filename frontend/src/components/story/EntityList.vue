@@ -20,6 +20,7 @@ import {CreateEntity, LoadEntities} from "../../../bindings/storyguardian/src/pr
 import {useToggleBody} from "@/composables/useToggleBody";
 import {useGridSize} from "@/composables/useGridSize";
 import GridSizeSelector from "@/components/shared/GridSizeSelector.vue";
+import VerticalSeperator from "@/components/ui/separator/VerticalSeperator.vue";
 type EntityListViewMode = 'grid' | 'list';
 
 const props = defineProps<{
@@ -126,7 +127,6 @@ async function navigateToEntity(id: string){
     <CardHeader class="flex flex-row justify-between items-center">
       <CardTitle> Entities</CardTitle>
       <div class="flex flex-row space-x-2">
-        <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('entityList', newSize, emit)"/>
         <Dialog v-model:open="dialogOpen" v-if="showCardBody">
           <DialogTrigger>
             <TextTooltip text="Add an entity">
@@ -168,7 +168,8 @@ async function navigateToEntity(id: string){
             </form>
           </DialogContent>
         </Dialog>
-
+        <VerticalSeperator />
+        <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('entityList', newSize, emit)"/>
         <TextTooltip text="Switch to grid" v-if="listView === 'list' && showCardBody">
           <Button size="icon" aria-label="Toggle italic" variant="outline" @click="changeListView('grid')">
             <StretchHorizontal/>

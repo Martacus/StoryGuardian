@@ -14,6 +14,7 @@ import {OpenProjectFolder} from "../../../bindings/storyguardian/src/project/app
 import {useToggleBody} from "@/composables/useToggleBody";
 import {useGridSize} from "@/composables/useGridSize";
 import GridSizeSelector from "@/components/shared/GridSizeSelector.vue";
+import VerticalSeperator from "@/components/ui/separator/VerticalSeperator.vue";
 
 const props = defineProps<{
   story: Story
@@ -63,10 +64,11 @@ function openImageFolder(){
         <Button class="btn btn-primary" aria-label="Toggle italic" variant="outline" @click="openImageFolder()">
           Open folder
         </Button>
-        <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('images', newSize, emit)"/>
         <Button size="icon" aria-label="Toggle italic" variant="outline" @click="retrieveImages()">
           <RefreshCcw/>
         </Button>
+        <VerticalSeperator />
+        <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('images', newSize, emit)"/>
         <TextTooltip text="Expand" v-if="!showCardBody">
           <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCardBody('images', emit)">
             <ChevronDown/>

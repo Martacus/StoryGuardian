@@ -10,6 +10,7 @@ import {StoryModule} from "../../../bindings/storyguardian/src/project";
 import GridSizeSelector from "@/components/shared/GridSizeSelector.vue";
 import {useGridSize} from "@/composables/useGridSize";
 import {useToggleBody} from "@/composables/useToggleBody";
+import VerticalSeperator from "@/components/ui/separator/VerticalSeperator.vue";
 
 const props = defineProps({
   description: String,
@@ -38,14 +39,14 @@ async function save() {
     <CardHeader class="flex flex-row justify-between items-center">
       <CardTitle>Description</CardTitle>
       <div class="flex flex-row space-x-2">
-        <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('description', newSize, emit)"/>
         <TextTooltip text="Edit" v-if="showCardBody">
           <Button size="icon" aria-label="Toggle italic" variant="outline"
                   @click="toggleEdit()">
             <Edit />
           </Button>
         </TextTooltip>
-
+        <VerticalSeperator />
+        <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('description', newSize, emit)"/>
         <TextTooltip text="Minimize" v-if="showCardBody">
           <Button size="icon" aria-label="Toggle italic" variant="outline"
                   @click="toggleCardBody('description', emit)">

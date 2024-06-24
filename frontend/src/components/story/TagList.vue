@@ -18,6 +18,7 @@ import {useToggleBody} from "@/composables/useToggleBody";
 import {useGridSize} from "@/composables/useGridSize";
 import {StoryModule} from "../../../bindings/storyguardian/src/project";
 import GridSizeSelector from "@/components/shared/GridSizeSelector.vue";
+import VerticalSeperator from "@/components/ui/separator/VerticalSeperator.vue";
 
 type ListViewMode = 'grid' | 'list';
 const props = defineProps<{
@@ -101,7 +102,6 @@ onMounted(() => {
     <CardHeader class="flex flex-row justify-between items-center">
       <CardTitle>Tags</CardTitle>
       <div class="flex flex-row space-x-2">
-        <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('tagList', newSize, emit)"/>
         <Dialog v-model:open="dialogOpen" v-if="showCardBody">
           <DialogTrigger>
             <TextTooltip text="Add an entity">
@@ -133,7 +133,8 @@ onMounted(() => {
             </form>
           </DialogContent>
         </Dialog>
-
+        <VerticalSeperator />
+        <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('tagList', newSize, emit)"/>
         <TextTooltip text="Switch to grid" v-if="listView === 'list' && showCardBody">
           <Button size="icon" aria-label="Toggle italic" variant="outline" @click="changeListView('grid')">
             <StretchHorizontal/>
