@@ -26,7 +26,7 @@ import ThemePicker from "@/layouts/components/ThemePicker.vue";
             </nav>
           </div>
         </div>
-        <main class="grid grid-cols-4 auto-rows-min gap-4 p-4 lg:gap-6 lg:p-6 overflow-auto">
+        <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 auto-rows-min auto-cols-min gap-x-2 md:gap-x-4 lg:gap-x-6 gap-y-2 md:gap-y-4 lg:gap-y-6 p-2 md:p-4 lg:p-6 overflow-auto">
           <slot/>
         </main>
       </div>

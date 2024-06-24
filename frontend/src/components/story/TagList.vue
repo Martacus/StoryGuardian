@@ -97,7 +97,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <Card class="bg-muted/30" :class="columnSize">
+  <Card class="bg-muted/30" :class="[ 'col-span-1', 'md:' + columnSize, 'lg:' + columnSize, 'xl:' + columnSize]">
     <CardHeader class="flex flex-row justify-between items-center">
       <CardTitle>Tags</CardTitle>
       <div class="flex flex-row space-x-2">

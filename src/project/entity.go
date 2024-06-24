@@ -11,13 +11,14 @@ import (
 )
 
 type Entity struct {
-	Id          string   `json:"id"`
-	Name        string   `json:"name"`
-	StoryId     string   `json:"storyId"`
-	Description string   `json:"description"`
-	CreatedAt   string   `json:"createdAt"`
-	Tags        []string `json:"tags"`
-	Relations   []string `json:"relations"`
+	Id          string                 `json:"id"`
+	Name        string                 `json:"name"`
+	StoryId     string                 `json:"storyId"`
+	Description string                 `json:"description"`
+	CreatedAt   string                 `json:"createdAt"`
+	Tags        []string               `json:"tags"`
+	Relations   []string               `json:"relations"`
+	Modules     map[string]StoryModule `json:"modules"`
 }
 
 type Relation struct {
@@ -93,6 +94,19 @@ func (e *EntityManager) CreateEntity(entity Entity) (Entity, error) {
 	e.Entities[entity.Id] = &entity
 
 	return entity, nil
+}
+
+func (e *EntityManager) SaveEntity(entityId string) error {
+	entity, err := e.GetEntity(entityId)
+	if err != nil {
+		return fmt.Errorf("failed to get entity: %v", err)
+	}
+
+	if err = fileio.WriteStructToFilePath(entity, e.getEntityFilePath(entityId)); err != nil {
+		return fmt.Errorf("could not save the entity: %v", err)
+	}
+
+	return nil
 }
 
 func (e *EntityManager) SetEntityDescription(entityId string, description string) (string, error) {

@@ -46,6 +46,7 @@ export class Entity {
     "createdAt": string;
     "tags": string[];
     "relations": string[];
+    "modules": { [_: string]: StoryModule };
 
     /** Creates a new Entity instance. */
     constructor($$source: Partial<Entity> = {}) {
@@ -70,6 +71,9 @@ export class Entity {
         if (!("relations" in $$source)) {
             this["relations"] = [];
         }
+        if (!("modules" in $$source)) {
+            this["modules"] = {};
+        }
 
         Object.assign(this, $$source);
     }
@@ -80,12 +84,16 @@ export class Entity {
     static createFrom($$source: any = {}): Entity {
         const $$createField5_0 = $$createType2;
         const $$createField6_0 = $$createType2;
+        const $$createField7_0 = $$createType4;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("tags" in $$parsedSource) {
             $$parsedSource["tags"] = $$createField5_0($$parsedSource["tags"]);
         }
         if ("relations" in $$parsedSource) {
             $$parsedSource["relations"] = $$createField6_0($$parsedSource["relations"]);
+        }
+        if ("modules" in $$parsedSource) {
+            $$parsedSource["modules"] = $$createField7_0($$parsedSource["modules"]);
         }
         return new Entity($$parsedSource as Partial<Entity>);
     }
@@ -263,9 +271,9 @@ export class Story {
      * Creates a new Story instance from a string or object.
      */
     static createFrom($$source: any = {}): Story {
-        const $$createField4_0 = $$createType4;
+        const $$createField4_0 = $$createType6;
         const $$createField5_0 = $$createType2;
-        const $$createField6_0 = $$createType6;
+        const $$createField6_0 = $$createType4;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("entities" in $$parsedSource) {
             $$parsedSource["entities"] = $$createField4_0($$parsedSource["entities"]);
@@ -313,8 +321,8 @@ export class StoryModule {
 const $$createType0 = ProjectDetails.createFrom;
 const $$createType1 = $Create.Map($Create.Any, $$createType0);
 const $$createType2 = $Create.Array($Create.Any);
-const $$createType3 = Entity.createFrom;
-const $$createType4 = $Create.Array($$createType3);
-const $$createType5 = StoryModule.createFrom;
-const $$createType6 = $Create.Map($Create.Any, $$createType5);
+const $$createType3 = StoryModule.createFrom;
+const $$createType4 = $Create.Map($Create.Any, $$createType3);
+const $$createType5 = Entity.createFrom;
+const $$createType6 = $Create.Array($$createType5);
 const $$createType7 = $Create.Map($Create.Any, $Create.Any);

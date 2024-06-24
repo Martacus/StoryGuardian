@@ -125,7 +125,7 @@ function addStoryModule(module: string){
 
 <template>
   <DashboardLayout>
-    <Card class="bg-muted/30 flex flex-row p-2 gap-2 items-center col-span-4" v-if="story">
+    <Card class="bg-muted/30 flex flex-row p-2 gap-2 items-center col-span-1 sm:col-span-1 md:col-span-2 lg:col-span-3 xl:col-span-4" v-if="story">
       <EntityTitle :title="story.name" @save-title="saveStoryTitle" class="w-full"/>
       <div class="flex flex-row justify-end mr-2 gap-2">
         <Dialog v-model:open="addModuleDialogOpened">
@@ -183,7 +183,8 @@ function addStoryModule(module: string){
     <ImageModule
         v-if="story && isUsedModule('images')"
         :story="story"
-        class="col-span-4"
+        :module-config="story.modules['images']"
+        @config-change="moduleConfigChange"
     />
   </DashboardLayout>
 </template>

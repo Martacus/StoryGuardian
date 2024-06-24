@@ -8,19 +8,27 @@ import {onMounted, ref} from "vue";
 import {Button} from "@/components/ui/button";
 import {useToast} from "@/components/ui/toast";
 import {Dialog, DialogContent} from "@/components/ui/dialog";
-import {ImageFile, Story} from "../../../bindings/storyguardian/src/project";
+import {ImageFile, Story, StoryModule} from "../../../bindings/storyguardian/src/project";
 import {GetStoryImages} from "../../../bindings/storyguardian/src/project/storymanager";
 import {OpenProjectFolder} from "../../../bindings/storyguardian/src/project/applicationmanager";
-
-const showBody = ref(true);
-const {toast} = useToast()
-const images = ref<ImageFile[]>([])
-const openDialogs = ref(images.value.map(() => false));
-const imageDialog = ref(false);
+import {useToggleBody} from "@/composables/useToggleBody";
+import {useGridSize} from "@/composables/useGridSize";
+import GridSizeSelector from "@/components/shared/GridSizeSelector.vue";
 
 const props = defineProps<{
   story: Story
+  moduleConfig: StoryModule
 }>();
+const emit = defineEmits(['configChange'])
+
+const {toast} = useToast()
+const images = ref<ImageFile[]>([])
+const openDialogs = ref(images.value.map(() => false));
+
+
+const {showCardBody, toggleCardBody} = useToggleBody(props.moduleConfig);
+const {columnSize, changeGridSize } = useGridSize(props.moduleConfig);
+
 
 onMounted(async () => {
   if (!props.story) {
@@ -42,41 +50,38 @@ async function retrieveImages(){
   }
 }
 
-function toggleCard() {
-  showBody.value = !showBody.value;
-}
-
 function openImageFolder(){
   OpenProjectFolder('images');
 }
 </script>
 
 <template>
-  <Card class="bg-muted/30">
+  <Card class="bg-muted/30" :class="[ 'col-span-1', 'md:' + columnSize, 'lg:' + columnSize, 'xl:' + columnSize]">
     <CardHeader class="flex flex-row justify-between items-center">
       <CardTitle>Images</CardTitle>
       <div class="flex flex-row space-x-2">
         <Button class="btn btn-primary" aria-label="Toggle italic" variant="outline" @click="openImageFolder()">
           Open folder
         </Button>
+        <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('images', newSize, emit)"/>
         <Button size="icon" aria-label="Toggle italic" variant="outline" @click="retrieveImages()">
           <RefreshCcw/>
         </Button>
-        <TextTooltip text="Expand" v-if="!showBody">
-          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCard()">
+        <TextTooltip text="Expand" v-if="!showCardBody">
+          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCardBody('images', emit)">
             <ChevronDown/>
           </Button>
         </TextTooltip>
 
-        <TextTooltip text="Minimize" v-if="showBody">
-          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCard()">
+        <TextTooltip text="Minimize" v-if="showCardBody">
+          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCardBody('images', emit)">
             <ChevronUp/>
           </Button>
         </TextTooltip>
 
       </div>
     </CardHeader>
-    <CardContent v-if="showBody">
+    <CardContent v-if="showCardBody">
       <Table>
         <TableHeader>
           <TableRow>
@@ -96,7 +101,7 @@ function openImageFolder(){
             <TableCell>{{ image.location }}</TableCell>
 
             <!--  Image Dialog  -->
-            <Dialog v-model:open="openDialogs[index]" v-if="showBody">
+            <Dialog v-model:open="openDialogs[index]" v-if="showCardBody">
               <DialogContent>
                 <img :src="'/images/' + image.location" alt="Error loading image"/>
               </DialogContent>
