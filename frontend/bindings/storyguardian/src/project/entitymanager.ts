@@ -41,8 +41,8 @@ export function GetRelation(relationId: string): Promise<$models.Relation> & { c
     return $typingPromise;
 }
 
-export function LoadEntities(projectId: string): Promise<$models.Entity[]> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(2421700187, projectId) as any;
+export function LoadEntities(): Promise<$models.Entity[]> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(2421700187) as any;
     let $typingPromise = $resultPromise.then(($result) => {
         return $$createType3($result);
     }) as any;

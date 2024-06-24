@@ -48,7 +48,7 @@ onMounted(() => {
 
 async function getEntities() {
   try {
-    let data = await LoadEntities(props.story.id);
+    let data = await LoadEntities();
     entities.value = data;
     showEntities.value = data;
     calcListHeight();

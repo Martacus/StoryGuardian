@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import DashboardLayout from "@/layouts/DashboardLayout.vue";
 import {Card} from "@/components/ui/card";
 import {
@@ -22,22 +21,40 @@ import EntityTitle from "@/components/shared/EntityTitle.vue";
 import ImageModule from "@/components/story/ImageModule.vue";
 import {Story} from "../../bindings/storyguardian/src/project";
 import {
+  AddStoryModule,
   EditStoryModuleConfig,
-  GetStory,
+  GetStory, GetStoryModules,
   SetStoryDescription,
   SetStoryTitle
 } from "../../bindings/storyguardian/src/project/storymanager";
 import TagList from "@/components/story/TagList.vue";
+import ModuleSelectItem from "@/components/story/modules/ModuleSelectItem.vue";
 
-const addModuleDialogOpened = ref(false);
-const story = ref<Story>();
 const route = useRoute();
 const {toast} = useToast()
+const addModuleDialogOpened = ref(false);
+const story = ref<Story>();
+const unusedStoryModules = ref<string[]>([])
+
+const isUnused = (moduleName: string) => {
+  return unusedStoryModules.value.includes(moduleName);
+};
+
+const isUsedModule = (moduleName: string) => {
+  if(story.value){
+    return moduleName in story.value?.modules;
+  }
+  return false;
+};
 
 onMounted(async () => {
+  await retrieveStory(false);
+})
+
+async function retrieveStory(refresh: boolean){
   let projectId: string = route.params['id'] as string
   try {
-    const retrievedStory = await GetStory(projectId)
+    const retrievedStory = await GetStory(projectId, refresh)
     if (retrievedStory !== null) {
       story.value = retrievedStory
     }
@@ -47,7 +64,7 @@ onMounted(async () => {
       description: error,
     });
   }
-})
+}
 
 async function saveStoryDescription(descriptionValue: string) {
   if (!story.value) return;
@@ -88,6 +105,25 @@ function moduleChangeSaveFail(error: any){
     description: error,
   });
 }
+
+function refreshUnusedStoryModules(){
+  GetStoryModules(true).then((unusedModules: string[]) => {
+    console.log(unusedModules)
+    unusedStoryModules.value = unusedModules;
+  })
+}
+
+function addStoryModule(module: string){
+  AddStoryModule(module).then(() => {
+    retrieveStory(true);
+  }).catch((error: string) => {
+    toast({
+      title: 'Failed to add module',
+      description: error,
+    });
+  });
+  addModuleDialogOpened.value = false;
+}
 </script>
 
 <template>
@@ -98,7 +134,7 @@ function moduleChangeSaveFail(error: any){
         <Dialog v-model:open="addModuleDialogOpened">
           <DialogTrigger>
             <TextToolTip text="Add a module">
-              <Button class="btn btn-secondary" variant="outline" size="icon">
+              <Button class="btn btn-secondary" variant="outline" size="icon" @click="refreshUnusedStoryModules">
                 <Plus/>
               </Button>
             </TextToolTip>
@@ -109,6 +145,15 @@ function moduleChangeSaveFail(error: any){
             </DialogHeader>
             <DialogDescription>Choose a module to add to your story, you can always remove them later.
             </DialogDescription>
+            <ModuleSelectItem v-if="isUnused('description')">
+              <p>Description</p>
+            </ModuleSelectItem>
+            <ModuleSelectItem v-if="isUnused('images')" @click="addStoryModule('images')">
+              <p>Images</p>
+            </ModuleSelectItem>
+            <ModuleSelectItem v-if="isUnused('tagList')" @click="addStoryModule('tagList')">
+              <p>Tags</p>
+            </ModuleSelectItem>
           </DialogContent>
         </Dialog>
         <TextToolTip text="Story settings">
@@ -132,8 +177,8 @@ function moduleChangeSaveFail(error: any){
         :story="story"
         @config-change="entityConfigChange"
     />
-    <TagList v-if="story" :tags="story.tags"/>
-    <ImageModule v-if="story" :story="story" class="col-span-4"/>
+    <TagList v-if="story && isUsedModule('tagList')" :tags="story.tags"/>
+    <ImageModule v-if="story && isUsedModule('images')" :story="story" class="col-span-4"/>
   </DashboardLayout>
 </template>
 

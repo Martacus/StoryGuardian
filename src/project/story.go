@@ -69,23 +69,24 @@ func (s *StoryManager) NewStory(projectDirectory string) (*Story, error) {
 	return &story, nil
 }
 
-func (s *StoryManager) GetStory(projectId string) (*Story, error) {
-	if s.Story != nil && s.Story.Id == projectId {
+func (s *StoryManager) GetStory(projectId string, refresh bool) (*Story, error) {
+	if !refresh && s.Story != nil && s.Story.Id == projectId {
 		return s.Story, nil
 	}
 
-	for key, projectDetails := range s.ApplicationManager.Config.Projects {
-		if key == projectId {
-			story := Story{}
-			err := fileio.WriteFilePathToStruct(filepath.Join(projectDetails.Location, constants.StoryConfigName), &story)
-			if err != nil {
-				return nil, fmt.Errorf("could not find the story with id: %v | %v", projectId, err)
-			}
-			s.Story = &story
-			return &story, nil
-		}
+	projectDetails, exists := s.ApplicationManager.Config.Projects[projectId]
+	if !exists {
+		return nil, fmt.Errorf("could not find the story with id %v", projectId)
 	}
-	return nil, fmt.Errorf("could not find the story with id %v", projectId)
+
+	story := &Story{}
+	err := fileio.WriteFilePathToStruct(filepath.Join(projectDetails.Location, constants.StoryConfigName), story)
+	if err != nil {
+		return nil, fmt.Errorf("could not find the story with id: %v | %v", projectId, err)
+	}
+
+	s.Story = story
+	return story, nil
 }
 
 func (s *StoryManager) SaveStory() error {

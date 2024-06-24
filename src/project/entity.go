@@ -50,13 +50,8 @@ func NewEntityManager(projectManager *StoryManager) *EntityManager {
 	return &entityManager
 }
 
-func (e *EntityManager) LoadEntities(projectId string) ([]Entity, error) {
-	project, err := e.StoryManager.GetStory(projectId)
-	if err != nil {
-		return nil, err
-	}
-
-	entitiesPath := filepath.Join(project.Location, "entities")
+func (e *EntityManager) LoadEntities() ([]Entity, error) {
+	entitiesPath := filepath.Join(e.StoryManager.Story.Location, "entities")
 	files, err := os.ReadDir(entitiesPath)
 	if err != nil {
 		return nil, fmt.Errorf("could not read entities directory: %v", err)
@@ -164,7 +159,6 @@ func (e *EntityManager) LoadRelationInfo(entityId string, paginationStart int, a
 		})
 	}
 	return relationInfo, nil
-
 }
 
 func (e *EntityManager) CreateRelation(entityId string) (string, error) {

@@ -9,6 +9,11 @@ import {Call as $Call, Create as $Create} from "@wailsio/runtime";
 // @ts-ignore: Unused imports
 import * as $models from "./models.js";
 
+export function AddStoryModule($module: string): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(3262065790, $module) as any;
+    return $resultPromise;
+}
+
 export function CreateTag(tagName: string): Promise<void> & { cancel(): void } {
     let $resultPromise = $Call.ByID(2945885466, tagName) as any;
     return $resultPromise;
@@ -19,8 +24,8 @@ export function EditStoryModuleConfig($module: string, config: string, value: st
     return $resultPromise;
 }
 
-export function GetStory(projectId: string): Promise<$models.Story | null> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(180270295, projectId) as any;
+export function GetStory(projectId: string, refresh: boolean): Promise<$models.Story | null> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(180270295, projectId, refresh) as any;
     let $typingPromise = $resultPromise.then(($result) => {
         return $$createType1($result);
     }) as any;
@@ -32,6 +37,15 @@ export function GetStoryImages(): Promise<$models.ImageFile[]> & { cancel(): voi
     let $resultPromise = $Call.ByID(619858253) as any;
     let $typingPromise = $resultPromise.then(($result) => {
         return $$createType3($result);
+    }) as any;
+    $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
+    return $typingPromise;
+}
+
+export function GetStoryModules(unusedModulesOnly: boolean): Promise<string[]> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(3606125984, unusedModulesOnly) as any;
+    let $typingPromise = $resultPromise.then(($result) => {
+        return $$createType4($result);
     }) as any;
     $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
     return $typingPromise;
@@ -66,3 +80,4 @@ const $$createType0 = $models.Story.createFrom;
 const $$createType1 = $Create.Nullable($$createType0);
 const $$createType2 = $models.ImageFile.createFrom;
 const $$createType3 = $Create.Array($$createType2);
+const $$createType4 = $Create.Array($Create.Any);
