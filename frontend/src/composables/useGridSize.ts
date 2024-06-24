@@ -1,5 +1,5 @@
 import {onMounted, ref} from 'vue';
-import {StoryModule} from "../../bindings/storyguardian/internal/project";
+import {StoryModule} from "../../bindings/storyguardian/src/project";
 
 export function useGridSize(moduleConfig: StoryModule | undefined) {
     const columnSize = ref('col-span-4');

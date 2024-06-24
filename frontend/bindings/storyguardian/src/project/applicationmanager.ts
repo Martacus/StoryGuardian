@@ -10,12 +10,12 @@ import {Call as $Call, Create as $Create} from "@wailsio/runtime";
 import * as $models from "./models.js";
 
 export function CreateProject(): Promise<string> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(2344215071) as any;
+    let $resultPromise = $Call.ByID(1071473426) as any;
     return $resultPromise;
 }
 
 export function GetConfig(): Promise<$models.ApplicationConfig> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(2266153792) as any;
+    let $resultPromise = $Call.ByID(190472377) as any;
     let $typingPromise = $resultPromise.then(($result) => {
         return $$createType0($result);
     }) as any;
@@ -24,12 +24,12 @@ export function GetConfig(): Promise<$models.ApplicationConfig> & { cancel(): vo
 }
 
 export function OpenProject(projectId: string): Promise<void> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(1437862451, projectId) as any;
+    let $resultPromise = $Call.ByID(3122778702, projectId) as any;
     return $resultPromise;
 }
 
 export function OpenProjectFolder(folder: string): Promise<void> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(2539773143, folder) as any;
+    let $resultPromise = $Call.ByID(700617598, folder) as any;
     return $resultPromise;
 }
 

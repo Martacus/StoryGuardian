@@ -20,13 +20,13 @@ import EntityList from "@/components/story/EntityList.vue";
 import {useToast} from "@/components/ui/toast";
 import EntityTitle from "@/components/shared/EntityTitle.vue";
 import ImageModule from "@/components/story/ImageModule.vue";
-import {Story} from "../../bindings/storyguardian/internal/project";
+import {Story} from "../../bindings/storyguardian/src/project";
 import {
   EditStoryModuleConfig,
   GetStory,
   SetStoryDescription,
   SetStoryTitle
-} from "../../bindings/storyguardian/internal/project/storymanager";
+} from "../../bindings/storyguardian/src/project/storymanager";
 import TagList from "@/components/story/TagList.vue";
 
 const addModuleDialogOpened = ref(false);

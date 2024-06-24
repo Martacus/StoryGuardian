@@ -10,17 +10,17 @@ import {Call as $Call, Create as $Create} from "@wailsio/runtime";
 import * as $models from "./models.js";
 
 export function CreateTag(tagName: string): Promise<void> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(798792175, tagName) as any;
+    let $resultPromise = $Call.ByID(2945885466, tagName) as any;
     return $resultPromise;
 }
 
 export function EditStoryModuleConfig($module: string, config: string, value: string): Promise<void> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(1912382016, $module, config, value) as any;
+    let $resultPromise = $Call.ByID(3576513881, $module, config, value) as any;
     return $resultPromise;
 }
 
 export function GetStory(projectId: string): Promise<$models.Story | null> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(941168768, projectId) as any;
+    let $resultPromise = $Call.ByID(180270295, projectId) as any;
     let $typingPromise = $resultPromise.then(($result) => {
         return $$createType1($result);
     }) as any;
@@ -29,7 +29,7 @@ export function GetStory(projectId: string): Promise<$models.Story | null> & { c
 }
 
 export function GetStoryImages(): Promise<$models.ImageFile[]> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(4053663178) as any;
+    let $resultPromise = $Call.ByID(619858253) as any;
     let $typingPromise = $resultPromise.then(($result) => {
         return $$createType3($result);
     }) as any;
@@ -38,7 +38,7 @@ export function GetStoryImages(): Promise<$models.ImageFile[]> & { cancel(): voi
 }
 
 export function NewStory(projectDirectory: string): Promise<$models.Story | null> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(1310826610, projectDirectory) as any;
+    let $resultPromise = $Call.ByID(2808099189, projectDirectory) as any;
     let $typingPromise = $resultPromise.then(($result) => {
         return $$createType1($result);
     }) as any;
@@ -47,17 +47,17 @@ export function NewStory(projectDirectory: string): Promise<$models.Story | null
 }
 
 export function SaveStory(): Promise<void> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(2504230633) as any;
+    let $resultPromise = $Call.ByID(3515724504) as any;
     return $resultPromise;
 }
 
 export function SetStoryDescription(description: string): Promise<string> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(1384865094, description) as any;
+    let $resultPromise = $Call.ByID(3596101199, description) as any;
     return $resultPromise;
 }
 
 export function SetStoryTitle(name: string): Promise<void> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(1996276650, name) as any;
+    let $resultPromise = $Call.ByID(2387590379, name) as any;
     return $resultPromise;
 }
 

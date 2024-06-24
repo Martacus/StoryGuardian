@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"storyguardian/internal/project"
+	"storyguardian/src/project"
 )
 
 // Wails uses Go's `embed` package to embed the frontend files into the binary.

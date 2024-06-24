@@ -8,9 +8,9 @@ import {onMounted, ref} from "vue";
 import {Button} from "@/components/ui/button";
 import {useToast} from "@/components/ui/toast";
 import {Dialog, DialogContent} from "@/components/ui/dialog";
-import {ImageFile, Story} from "../../../bindings/storyguardian/internal/project";
-import {GetStoryImages} from "../../../bindings/storyguardian/internal/project/storymanager";
-import {OpenProjectFolder} from "../../../bindings/storyguardian/internal/project/applicationmanager";
+import {ImageFile, Story} from "../../../bindings/storyguardian/src/project";
+import {GetStoryImages} from "../../../bindings/storyguardian/src/project/storymanager";
+import {OpenProjectFolder} from "../../../bindings/storyguardian/src/project/applicationmanager";
 
 const showBody = ref(true);
 const {toast} = useToast()

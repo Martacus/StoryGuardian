@@ -5,7 +5,7 @@ import {Button} from "@/components/ui/button";
 import EntityTitle from "@/components/shared/EntityTitle.vue";
 import {ArrowLeft, Plus, Settings} from "lucide-vue-next";
 import DashboardLayout from "@/layouts/DashboardLayout.vue";
-import {Relation} from "../../bindings/storyguardian/internal/project";
+import {Relation} from "../../bindings/storyguardian/src/project";
 import {useRoute, useRouter} from "vue-router";
 import {
   Dialog,
@@ -23,7 +23,7 @@ import {
   GetRelation,
   SetRelationDescription,
   SetRelationName
-} from "../../bindings/storyguardian/internal/project/entitymanager";
+} from "../../bindings/storyguardian/src/project/entitymanager";
 
 const router = useRouter();
 const route = useRoute();

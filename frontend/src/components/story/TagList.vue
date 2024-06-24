@@ -13,7 +13,7 @@ import {FormControl, FormItem, FormLabel, FormMessage} from "@/components/ui/for
 import {Input} from "@/components/ui/input";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import {useRouter} from "vue-router";
-import {CreateTag} from "../../../bindings/storyguardian/internal/project/storymanager";
+import {CreateTag} from "../../../bindings/storyguardian/src/project/storymanager";
 
 type ListViewMode = 'grid' | 'list';
 

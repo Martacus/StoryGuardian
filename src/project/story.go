@@ -5,8 +5,8 @@ import (
 	"github.com/google/uuid"
 	"os"
 	"path/filepath"
-	"storyguardian/internal/constants"
-	"storyguardian/internal/fileio"
+	"storyguardian/src/constants"
+	"storyguardian/src/fileio"
 )
 
 type Story struct {

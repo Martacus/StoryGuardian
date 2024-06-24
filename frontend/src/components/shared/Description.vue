@@ -6,7 +6,7 @@ import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
 import TipTap from "@/components/shared/TipTap.vue";
 import {ref} from "vue";
 import {Button} from "@/components/ui/button";
-import {StoryModule} from "../../../bindings/storyguardian/internal/project";
+import {StoryModule} from "../../../bindings/storyguardian/src/project";
 import GridSizeSelector from "@/components/shared/GridSizeSelector.vue";
 import {useGridSize} from "@/composables/useGridSize";
 import {useToggleBody} from "@/composables/useToggleBody";

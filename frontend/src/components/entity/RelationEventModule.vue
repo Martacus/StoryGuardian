@@ -6,8 +6,8 @@
 <!--import {ChevronDown, ChevronUp, Plus, Trash2} from "lucide-vue-next";-->
 <!--import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";-->
 <!--import {onMounted, ref} from "vue";-->
-<!--import {Relation} from "../../../bindings/storyguardian/internal/project";-->
-<!--import {CreateRelation} from "../../../bindings/storyguardian/internal/project/entitymanager";-->
+<!--import {Relation} from "../../../bindings/storyguardian/src/project";-->
+<!--import {CreateRelation} from "../../../bindings/storyguardian/src/project/entitymanager";-->
 <!--import {useToast} from "@/components/ui/toast";-->
 <!--import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";-->
 <!--import {Field, useForm} from "vee-validate";-->

@@ -6,8 +6,8 @@ import (
 	"github.com/adrg/xdg"
 	"os"
 	"path/filepath"
-	"storyguardian/internal/constants"
-	"storyguardian/internal/fileio"
+	"storyguardian/src/constants"
+	"storyguardian/src/fileio"
 )
 
 const (

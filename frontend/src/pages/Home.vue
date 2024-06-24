@@ -6,9 +6,9 @@ import {Button} from "@/components/ui/button";
 import {Separator} from "@/components/ui/separator";
 import {useRouter} from "vue-router";
 import {useToast} from "@/components/ui/toast";
-import {ApplicationConfig} from "../../bindings/storyguardian/internal/project";
-import {CreateProject, GetConfig, OpenProject} from "../../bindings/storyguardian/internal/project/applicationmanager";
-import {NewStory} from "../../bindings/storyguardian/internal/project/storymanager";
+import {ApplicationConfig} from "../../bindings/storyguardian/src/project";
+import {CreateProject, GetConfig, OpenProject} from "../../bindings/storyguardian/src/project/applicationmanager";
+import {NewStory} from "../../bindings/storyguardian/src/project/storymanager";
 
 const {toast} = useToast()
 const config = ref<ApplicationConfig>();
