@@ -9,10 +9,11 @@ const (
 	EntityListStoryModuleID   = "entityList"
 	TagListEntityModuleID     = "tagList"
 	DescriptionEntityModuleID = "description"
+	RelationsEntityModuleID   = "relations"
 )
 
 var availableStoryModules = []string{DescriptionStoryModuleID, EntityListStoryModuleID, TagListStoryModuleID, ImageStoryModuleID}
-var availableEntityModules = []string{DescriptionEntityModuleID, TagListEntityModuleID}
+var availableEntityModules = []string{DescriptionEntityModuleID, TagListEntityModuleID, RelationsEntityModuleID}
 
 func (s *StoryManager) GetStoryModules(unusedModulesOnly bool) []string {
 	if !unusedModulesOnly {
@@ -26,6 +27,31 @@ func (s *StoryManager) GetStoryModules(unusedModulesOnly bool) []string {
 		}
 	}
 	return unusedStories
+}
+
+func (s *StoryManager) AddStoryModule(module string) error {
+	switch module {
+	case TagListStoryModuleID:
+		if err := addStoryTagsModule(s); err != nil {
+			return err
+		}
+		break
+	case ImageStoryModuleID:
+		if err := addStoryImagesModule(s); err != nil {
+			return err
+		}
+		break
+	}
+
+	return nil
+}
+
+func (s *StoryManager) EditStoryModuleConfig(module string, config string, value string) error {
+	s.Story.Modules[module].Configuration[config] = value
+	if err := s.SaveStory(); err != nil {
+		return fmt.Errorf("could not save module configuration edit: %v", err)
+	}
+	return nil
 }
 
 func (e *EntityManager) GetEntityModules(entityId string, unusedModulesOnly bool) []string {
@@ -47,23 +73,6 @@ func (e *EntityManager) GetEntityModules(entityId string, unusedModulesOnly bool
 	return unusedEntityModules
 }
 
-func (s *StoryManager) AddStoryModule(module string) error {
-	switch module {
-	case TagListStoryModuleID:
-		if err := addStoryTagsModule(s); err != nil {
-			return err
-		}
-		break
-	case ImageStoryModuleID:
-		if err := addStoryImagesModule(s); err != nil {
-			return err
-		}
-		break
-	}
-
-	return nil
-}
-
 func (e *EntityManager) AddEntityModule(entityId string, module string) error {
 	entity, err := e.GetEntity(entityId)
 	if err != nil {
@@ -78,6 +87,20 @@ func (e *EntityManager) AddEntityModule(entityId string, module string) error {
 		break
 	}
 
+	return nil
+}
+
+func (e *EntityManager) EditEntityModuleConfig(entityId, module string, config string, value string) error {
+	entity, err := e.GetEntity(entityId)
+	if err != nil {
+		return fmt.Errorf("could not edit entity module config: %v", err)
+	}
+
+	entity.Modules[module].Configuration[config] = value
+
+	if err := e.SaveEntity(*entity); err != nil {
+		return fmt.Errorf("could not edit entity module config: %v", err)
+	}
 	return nil
 }
 

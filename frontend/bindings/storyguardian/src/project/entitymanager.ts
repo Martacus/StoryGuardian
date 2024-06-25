@@ -28,6 +28,11 @@ export function CreateRelation(entityId: string): Promise<string> & { cancel(): 
     return $resultPromise;
 }
 
+export function EditEntityModuleConfig(entityId: string, $module: string, config: string, value: string): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(3627222189, entityId, $module, config, value) as any;
+    return $resultPromise;
+}
+
 export function GetEntity(entityId: string): Promise<$models.Entity | null> & { cancel(): void } {
     let $resultPromise = $Call.ByID(2607049459, entityId) as any;
     let $typingPromise = $resultPromise.then(($result) => {

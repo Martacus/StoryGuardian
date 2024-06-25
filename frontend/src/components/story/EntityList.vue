@@ -3,7 +3,7 @@ import {ChevronDown, ChevronUp, LayoutGrid, Plus, StretchHorizontal} from 'lucid
 import {toTypedSchema} from '@vee-validate/zod';
 import {z} from 'zod';
 import {Field, useForm} from 'vee-validate';
-import {onMounted, ref} from "vue";
+import {onMounted, onUnmounted, onUpdated, ref, watch} from "vue";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
@@ -30,12 +30,15 @@ const props = defineProps<{
 const emit = defineEmits(['configChange'])
 
 const {toast} = useToast()
+const router = useRouter()
 
 const entities = ref<Entity[]>([]);
 const showEntities = ref<Entity[]>([]);
 const dialogOpen = ref(false);
-const listView = ref<EntityListViewMode>('list') 
-const router = useRouter()
+const listView = ref<EntityListViewMode>('list')
+const scrollAreaRef = ref<any>(null);
+const contentRef = ref<any>(null);
+const isScrollable = ref(false);
 
 const listHeight = ref<string>('h-0')
 
@@ -43,8 +46,11 @@ const listHeight = ref<string>('h-0')
 const {showCardBody, toggleCardBody} = useToggleBody(props.moduleConfig)
 const {columnSize, changeGridSize } = useGridSize(props.moduleConfig)
 
-onMounted(() => {
-  getEntities();
+onMounted(async () => {
+  await getEntities();
+
+  checkScrollable();
+  window.addEventListener('resize', checkScrollable);
 })
 
 async function getEntities() {
@@ -120,6 +126,29 @@ function calcListHeight() {
 async function navigateToEntity(id: string){
   await router.push('/entity/' + id)
 }
+
+const checkScrollable = () => {
+  if (scrollAreaRef.value && contentRef.value) {
+    const scrollAreaEl = scrollAreaRef.value.$el; // Get the DOM element of the ScrollArea component
+    isScrollable.value = contentRef.value.scrollHeight > scrollAreaEl.clientHeight;
+  }
+};
+
+onUpdated(() => {
+  checkScrollable();
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkScrollable);
+});
+
+watch(
+    () => [scrollAreaRef.value, contentRef.value],
+    () => {
+      checkScrollable();
+    },
+    { immediate: true }
+);
 </script>
 
 <template>
@@ -197,10 +226,10 @@ async function navigateToEntity(id: string){
       </div>
     </CardHeader>
     <CardContent v-if="showCardBody">
-      <ScrollArea class="w-full" :class="listHeight">
-        <div id="single-entity-list" class="flex flex-col gap-2" v-if="listView === 'list'">
+      <ScrollArea :class="listHeight" type="auto" ref="scrollAreaRef">
+        <div id="single-entity-list" class="flex flex-col gap-2" :class="{'mr-4': isScrollable}" v-if="listView === 'list'" ref="contentRef">
           <!-- Entities -->
-          <div :to="'/entity/' + entity.id" class=" bg-muted/30 hover:bg-muted/40 rounded-lg py-2 hover:cursor-pointer"
+          <div class=" bg-muted/30 hover:bg-muted/40 rounded-lg py-2 hover:cursor-pointer"
                @click="navigateToEntity(entity.id)"
                v-for="entity in showEntities">
             <p class="px-4 text-center">
@@ -213,7 +242,7 @@ async function navigateToEntity(id: string){
           </p>
         </div>
         <div id="single-entity-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2"
-             v-if="listView === 'grid'">
+             v-if="listView === 'grid'" ref="contentRef">
           <!-- Entities -->
           <div class=" bg-muted/30 hover:bg-muted/40 rounded-lg py-2 hover:cursor-pointer"
                @click="navigateToEntity(entity.id)"

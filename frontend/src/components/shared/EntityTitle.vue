@@ -7,9 +7,9 @@ import { Input } from "@/components/ui/input";
 const editTitle = ref(false);
 const emit = defineEmits(['saveTitle']);
 
-const props = defineProps({
+const props = defineProps<{
   title: String
-});
+}>();
 
 const localTitle = ref(props.title);
 

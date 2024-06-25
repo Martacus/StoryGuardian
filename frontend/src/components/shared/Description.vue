@@ -12,10 +12,11 @@ import {useGridSize} from "@/composables/useGridSize";
 import {useToggleBody} from "@/composables/useToggleBody";
 import VerticalSeperator from "@/components/ui/separator/VerticalSeperator.vue";
 
-const props = defineProps({
+const props = defineProps<{
   description: String,
   moduleConfig: StoryModule
-})
+}>()
+
 const emit = defineEmits(['saveDescription', 'configChange'])
 
 const storyDescriptionEditor = ref();

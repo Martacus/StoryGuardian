@@ -12,9 +12,9 @@ import {ToggleGroup, ToggleGroupItem} from "@/components/ui/toggle-group";
 const editor = ref<Editor>();
 const selectedStyles = ref([]);
 
-const props = defineProps({
+const props = defineProps<{
   content: String
-})
+}>()
 
 onMounted(() => {
   editor.value = new Editor({

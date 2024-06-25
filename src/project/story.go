@@ -152,14 +152,6 @@ func (s *StoryManager) CreateTag(tagName string) error {
 	return nil
 }
 
-func (s *StoryManager) EditStoryModuleConfig(module string, config string, value string) error {
-	s.Story.Modules[module].Configuration[config] = value
-	if err := s.SaveStory(); err != nil {
-		return fmt.Errorf("could not save module configuration edit: %v", err)
-	}
-	return nil
-}
-
 func addStoryModules(moduleMap map[string]StoryModule) map[string]StoryModule {
 	moduleMap["description"] = StoryModule{
 		Name: "Description",

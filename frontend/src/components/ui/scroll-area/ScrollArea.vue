@@ -16,6 +16,7 @@ const delegatedProps = computed(() => {
 
   return delegated
 })
+
 </script>
 
 <template>

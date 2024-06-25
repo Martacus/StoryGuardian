@@ -6,7 +6,7 @@ import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {ChevronDown, ChevronUp, Plus, Trash2} from "lucide-vue-next";
 import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
 import {onMounted, ref} from "vue";
-import {Entity, RelationInfo} from "../../../bindings/storyguardian/src/project";
+import {Entity, RelationInfo, StoryModule} from "../../../bindings/storyguardian/src/project";
 import {CreateRelation, LoadRelationInfo} from "../../../bindings/storyguardian/src/project/entitymanager";
 import {useToast} from "@/components/ui/toast";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
@@ -17,20 +17,23 @@ import {Input} from "@/components/ui/input";
 import {toTypedSchema} from "@vee-validate/zod";
 import {z} from "zod";
 import {useRouter} from "vue-router";
+import {useToggleBody} from "@/composables/useToggleBody";
+import {useGridSize} from "@/composables/useGridSize";
+import GridSizeSelector from "@/components/shared/GridSizeSelector.vue";
+import VerticalSeperator from "@/components/ui/separator/VerticalSeperator.vue";
+
+const props = defineProps<{
+  entity: Entity,
+  moduleConfig: StoryModule
+}>();
+const emit = defineEmits(['configChange'])
 
 const {toast} = useToast();
 const router = useRouter();
+const {showCardBody, toggleCardBody} = useToggleBody(props.moduleConfig)
+const {columnSize, changeGridSize } = useGridSize(props.moduleConfig)
 
 const dialogOpen = ref(false);
-const showBody = ref(true);
-
-function toggleCard() {
-  showBody.value = !showBody.value;
-}
-
-const props = defineProps<{
-  entity: Entity
-}>();
 
 const relations = ref<RelationInfo[]>([]);
 
@@ -81,29 +84,31 @@ function openRelation(relationId: string){
 </script>
 
 <template>
-  <Card class="bg-muted/30 col-span-2">
+  <Card class="bg-muted/30 min-w-[22rem]" :class="columnSize">
     <CardHeader class="flex flex-row justify-between items-center">
       <CardTitle>Relations</CardTitle>
       <div class="flex flex-row space-x-2">
-        <TextTooltip text="Add relation" v-if="showBody">
+        <TextTooltip text="Add relation" v-if="showCardBody">
           <Button size="icon" aria-label="Toggle italic" variant="outline" @click="createRelation()">
             <Plus/>
           </Button>
         </TextTooltip>
-        <TextTooltip text="Minimize" v-if="showBody">
-          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCard()">
+        <VerticalSeperator />
+        <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('relations', newSize, emit)"/>
+        <TextTooltip text="Minimize" v-if="showCardBody">
+          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCardBody('relations', emit)">
             <ChevronUp/>
           </Button>
         </TextTooltip>
-        <TextTooltip text="Minimize" v-if="!showBody">
-          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCard()">
+        <TextTooltip text="Minimize" v-if="!showCardBody">
+          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCardBody('relations', emit)">
             <ChevronDown/>
           </Button>
         </TextTooltip>
 
       </div>
     </CardHeader>
-    <CardContent v-if="showBody">
+    <CardContent v-if="showCardBody">
       <Table>
         <TableHeader>
           <TableRow>

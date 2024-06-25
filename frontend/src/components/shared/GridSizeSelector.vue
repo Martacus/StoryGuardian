@@ -4,10 +4,11 @@ import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
 import {Square, Columns2, Columns3, Columns4} from "lucide-vue-next";
 import {Button} from "@/components/ui/button";
 import {onMounted, ref} from "vue";
+import {Popover, PopoverTrigger, PopoverContent} from "@/components/ui/popover";
 
-const props = defineProps({
+const props = defineProps<{
   columnSize: String
-})
+}>()
 
 
 const emit = defineEmits(['updateGridSize']);
@@ -28,18 +29,28 @@ function updateGridSize(newSize: string) {
 
 <template>
   <TextTooltip text="Switch column width">
-    <Button size="icon" aria-label="Toggle italic" variant="outline" @click="updateGridSize('2')" v-if="localColumnSize === '1'">
-      <Square/>
-    </Button>
-    <Button size="icon" aria-label="Toggle italic" variant="outline" @click="updateGridSize('3')"  v-if="localColumnSize === '2'">
-      <Columns2/>
-    </Button>
-    <Button size="icon" aria-label="Toggle italic" variant="outline" @click="updateGridSize('4')" v-if="localColumnSize === '3'">
-      <Columns3/>
-    </Button>
-    <Button size="icon" aria-label="Toggle italic" variant="outline" @click="updateGridSize('1')" v-if="localColumnSize === '4'">
-      <Columns4/>
-    </Button>
+    <Popover>
+      <PopoverTrigger>
+        <Button size="icon" aria-label="Toggle italic" variant="outline">
+          <Columns2/>
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent side="top" align="center" class="flex flex-1 gap-2 justify-center">
+        <Button size="icon" aria-label="Toggle italic" variant="outline" @click="updateGridSize('1')" >
+          <Square/>
+        </Button>
+        <Button size="icon" aria-label="Toggle italic" variant="outline" @click="updateGridSize('2')" >
+          <Columns2/>
+        </Button>
+        <Button size="icon" aria-label="Toggle italic" variant="outline" @click="updateGridSize('3')" >
+          <Columns3/>
+        </Button>
+        <Button size="icon" aria-label="Toggle italic" variant="outline" @click="updateGridSize('4')" >
+          <Columns4/>
+        </Button>
+      </PopoverContent>
+    </Popover>
+
   </TextTooltip>
 </template>
 

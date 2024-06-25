@@ -16,7 +16,7 @@ import {Button} from "@/components/ui/button";
 import {onMounted, ref} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {
-  AddEntityModule,
+  AddEntityModule, EditEntityModuleConfig,
   GetEntity, GetEntityModules, RefreshEntity,
   SetEntityDescription,
   SetEntityName
@@ -110,6 +110,15 @@ function refreshUnusedEntityModules(){
     unusedModules.value = unusedModulesList;
   })
 }
+
+function moduleConfigChange(module: string, key: string, value: string) {
+  EditEntityModuleConfig(entityId, module, key, value).catch((error: string) => {
+    toast({
+      title: 'Failed to save module config change',
+      description: error,
+    });
+  });
+}
 </script>
 
 <template>
@@ -148,8 +157,19 @@ function refreshUnusedEntityModules(){
       </CardHeader>
     </Card>
 
-    <Description v-if="entity" :description="entity.description" @save-description="saveDescription"/>
-    <RelationModule v-if="entity" :entity="entity"/>
+    <Description
+        v-if="entity"
+        :module-config="entity.modules['description']"
+        :description="entity.description"
+        @save-description="saveDescription"
+        @config-change="moduleConfigChange"
+    />
+    <RelationModule
+        v-if="entity"
+        :entity="entity"
+        :module-config="entity.modules['relations']"
+        @config-change="moduleConfigChange"
+    />
     <div v-if="entity && isUsedModule('tagList')">
       Tags
     </div>
