@@ -64,6 +64,8 @@ async function retrieveStory(refresh: boolean){
       description: error,
     });
   }
+
+  console.log(story.value?.tags)
 }
 
 async function saveStoryDescription(descriptionValue: string) {

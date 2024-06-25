@@ -122,7 +122,7 @@ func addEntityTagsModule(entity *Entity, manager *EntityManager) error {
 	}
 
 	entity.Modules[TagListEntityModuleID] = newTagListModule
-	if err := manager.SaveEntity(entity.Id); err != nil {
+	if err := manager.SaveEntity(*entity); err != nil {
 		return fmt.Errorf("unable to add tag module to entity: %v", err)
 	}
 

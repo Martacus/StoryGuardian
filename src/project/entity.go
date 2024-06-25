@@ -83,6 +83,18 @@ func (e *EntityManager) GetEntity(entityId string) (*Entity, error) {
 	return entity, nil
 }
 
+func (e *EntityManager) RefreshEntity(entityId string) (*Entity, error) {
+	entitiesPath := filepath.Join(e.StoryManager.Story.Location, "entities")
+	var newEntity Entity
+	if err := fileio.WriteFilePathToStruct(filepath.Join(entitiesPath, entityId+".json"), &newEntity); err != nil {
+		return nil, fmt.Errorf("could not load entity: %v", err)
+	}
+
+	e.Entities[newEntity.Id] = &newEntity
+
+	return &newEntity, nil
+}
+
 func (e *EntityManager) CreateEntity(entity Entity) (Entity, error) {
 	entity.CreatedAt = time.Now().String()
 
@@ -96,13 +108,21 @@ func (e *EntityManager) CreateEntity(entity Entity) (Entity, error) {
 	return entity, nil
 }
 
-func (e *EntityManager) SaveEntity(entityId string) error {
+func (e *EntityManager) SaveEntityById(entityId string) error {
 	entity, err := e.GetEntity(entityId)
 	if err != nil {
 		return fmt.Errorf("failed to get entity: %v", err)
 	}
 
 	if err = fileio.WriteStructToFilePath(entity, e.getEntityFilePath(entityId)); err != nil {
+		return fmt.Errorf("could not save the entity: %v", err)
+	}
+
+	return nil
+}
+
+func (e *EntityManager) SaveEntity(entity Entity) error {
+	if err := fileio.WriteStructToFilePath(entity, e.getEntityFilePath(entity.Id)); err != nil {
 		return fmt.Errorf("could not save the entity: %v", err)
 	}
 

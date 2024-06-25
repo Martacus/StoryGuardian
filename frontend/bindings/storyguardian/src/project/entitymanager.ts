@@ -73,8 +73,22 @@ export function LoadRelationInfo(entityId: string, paginationStart: number, amou
     return $typingPromise;
 }
 
-export function SaveEntity(entityId: string): Promise<void> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(2482894830, entityId) as any;
+export function RefreshEntity(entityId: string): Promise<$models.Entity | null> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(2957541216, entityId) as any;
+    let $typingPromise = $resultPromise.then(($result) => {
+        return $$createType1($result);
+    }) as any;
+    $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
+    return $typingPromise;
+}
+
+export function SaveEntity(entity: $models.Entity): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(2482894830, entity) as any;
+    return $resultPromise;
+}
+
+export function SaveEntityById(entityId: string): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(1539417706, entityId) as any;
     return $resultPromise;
 }
 
