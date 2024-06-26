@@ -20,6 +20,8 @@ import {StoryModule} from "../../../bindings/storyguardian/src/project";
 import GridSizeSelector from "@/components/shared/GridSizeSelector.vue";
 import VerticalSeperator from "@/components/ui/separator/VerticalSeperator.vue";
 import {useItemGridLayout} from "@/composables/useItemGridLayout";
+import {useItemFilter} from "@/composables/useItemFilter";
+import ItemSearch from "@/components/shared/ItemSearch.vue";
 
 const props = defineProps<{
   tags: string[],
@@ -27,14 +29,20 @@ const props = defineProps<{
 }>();
 const emit = defineEmits(['configChange'])
 
+const dialogOpen = ref(false);
+const router = useRouter();
+const listHeight = ref<string>('h-0');
+const tagList = ref<string[]>([]);
+
 const {toast} = useToast();
 const {showCardBody, toggleCardBody} = useToggleBody(props.moduleConfig);
 const {columnSize, changeGridSize } = useGridSize(props.moduleConfig);
 const {itemView, changeItemView} = useItemGridLayout(props.moduleConfig);
+const {searchInput, searchResult} = useItemFilter(tagList, (tag, filter) => {
+  return tag.toLowerCase().includes(filter.toLowerCase());
+});
 
-const dialogOpen = ref(false);
-const router = useRouter();
-const listHeight = ref<string>('h-0');
+
 
 //Form
 const formSchema = toTypedSchema(z.object({
@@ -48,7 +56,7 @@ const {handleSubmit} = useForm({
 const onSubmit = handleSubmit(async (values) => {
   try {
     await CreateTag(values.tag)
-    props.tags.push(values.tag)
+    tagList.value.push(values.tag)
     //Push tag to story object
 
     calcListHeight();
@@ -68,16 +76,16 @@ const onSubmit = handleSubmit(async (values) => {
 
 function calcListHeight() {
   if (itemView.value === 'list') {
-    if (props.tags.length > 8) {
+    if (searchResult.value.length > 8) {
       listHeight.value = 'h-96';
     } else {
-      listHeight.value = 'h-' + Math.max(props.tags.length, 1) * 12;
+      listHeight.value = 'h-' + Math.max(searchResult.value.length, 1) * 12;
     }
   } else {
-    if (props.tags.length > 24) {
+    if (searchResult.value.length > 24) {
       listHeight.value = 'h-96';
     } else {
-      listHeight.value = 'h-' + Math.max(props.tags.length, 3) / 3 * 12;
+      listHeight.value = 'h-' + Math.max(searchResult.value.length, 3) / 3 * 12;
     }
   }
 }
@@ -87,6 +95,8 @@ async function navigateToTag(id: string){
 }
 
 onMounted(() => {
+  tagList.value = props.tags
+  searchResult.value = props.tags
   calcListHeight();
 })
 </script>
@@ -95,6 +105,7 @@ onMounted(() => {
   <Card class="bg-muted/30 min-w-[22rem]" :class="columnSize">
     <CardHeader class="flex flex-row justify-between items-center">
       <CardTitle>Tags</CardTitle>
+      <ItemSearch v-model:search-input="searchInput"/>
       <div class="flex flex-row space-x-2">
         <Dialog v-model:open="dialogOpen" v-if="showCardBody">
           <DialogTrigger>
@@ -160,12 +171,12 @@ onMounted(() => {
         <div class="flex flex-col gap-2" v-if="itemView === 'list'">
           <div class="bg-muted/30 hover:bg-muted/40 rounded-lg py-2 hover:cursor-pointer"
                @click="navigateToTag(tag)"
-               v-for="tag in tags">
+               v-for="tag in searchResult">
             <p class="px-4 text-center">
               {{ tag }}
             </p>
           </div>
-          <p v-if="tags.length <= 0">
+          <p v-if="searchResult.length <= 0">
             No Tags have been found.
           </p>
         </div>
@@ -173,12 +184,12 @@ onMounted(() => {
              v-if="itemView === 'grid'">
           <div class=" bg-muted/30 hover:bg-muted/40 rounded-lg py-2 hover:cursor-pointer"
                @click="navigateToTag(tag)"
-               v-for="tag in tags">
+               v-for="tag in searchResult">
             <p class="px-4 text-center">
               {{ tag }}
             </p>
           </div>
-          <p v-if="tags.length <= 0">
+          <p v-if="searchResult.length <= 0">
             No Tags have been found.
           </p>
         </div>

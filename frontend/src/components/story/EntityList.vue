@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ChevronDown, ChevronUp, LayoutGrid, Plus, Search, StretchHorizontal} from 'lucide-vue-next';
+import {ChevronDown, ChevronUp, LayoutGrid, Plus, StretchHorizontal} from 'lucide-vue-next';
 import {toTypedSchema} from '@vee-validate/zod';
 import {z} from 'zod';
 import {Field, useForm} from 'vee-validate';
@@ -22,6 +22,8 @@ import {useGridSize} from "@/composables/useGridSize";
 import GridSizeSelector from "@/components/shared/GridSizeSelector.vue";
 import VerticalSeperator from "@/components/ui/separator/VerticalSeperator.vue";
 import {useItemGridLayout} from "@/composables/useItemGridLayout";
+import {useItemFilter} from "@/composables/useItemFilter";
+import ItemSearch from "@/components/shared/ItemSearch.vue";
 
 
 const props = defineProps<{
@@ -34,19 +36,18 @@ const {toast} = useToast()
 const router = useRouter()
 
 const entities = ref<Entity[]>([]);
-const showEntities = ref<Entity[]>([]);
 const dialogOpen = ref(false);
 const scrollAreaRef = ref<any>(null);
 const contentRef = ref<any>(null);
 const isScrollable = ref(false);
-const searchInput = ref('')
-
 const listHeight = ref<string>('h-0')
-
 
 const {showCardBody, toggleCardBody} = useToggleBody(props.moduleConfig)
 const {columnSize, changeGridSize} = useGridSize(props.moduleConfig)
 const {itemView, changeItemView} = useItemGridLayout(props.moduleConfig);
+const {searchInput, searchResult} = useItemFilter(entities, (entity, filter) => {
+  return entity.name.toLowerCase().includes(filter.toLowerCase());
+});
 
 onMounted(async () => {
   await getEntities();
@@ -59,7 +60,7 @@ async function getEntities() {
   try {
     let data = await LoadEntities();
     entities.value = data;
-    showEntities.value = data;
+    searchResult.value = data;
     calcListHeight();
   } catch (error: any) {
     toast({
@@ -145,27 +146,13 @@ watch(
     },
     {immediate: true}
 );
-
-watch(searchInput, async (newInput) => {
-  showEntities.value = entities.value.filter((e: Entity) => {
-    return e.name.toLowerCase().includes(newInput.toLowerCase());
-  })
-})
 </script>
 
 <template>
   <Card class="bg-muted/30 min-w-[22rem]" :class="columnSize">
     <CardHeader class="flex flex-row justify-between items-center">
       <CardTitle> Entities</CardTitle>
-      <div class="relative">
-        <Search class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"/>
-        <Input
-            type="search"
-            placeholder="Search entities..."
-            class="pl-8"
-            v-model="searchInput"
-        />
-      </div>
+      <ItemSearch v-model:search-input="searchInput"/>
       <div class="flex flex-row space-x-2">
 
         <!--    Add Entity    -->
@@ -251,13 +238,13 @@ watch(searchInput, async (newInput) => {
           <!-- Entities -->
           <div class=" bg-muted/30 hover:bg-muted/40 rounded-lg py-2 hover:cursor-pointer"
                @click="navigateToEntity(entity.id)"
-               v-for="entity in showEntities">
+               v-for="entity in searchResult">
             <p class="px-4 text-center">
               {{ entity.name }}
             </p>
           </div>
           <!-- No entities -->
-          <p v-if="showEntities.length <= 0">
+          <p v-if="searchResult.length <= 0">
             No Entities have been found.
           </p>
         </div>
@@ -266,13 +253,13 @@ watch(searchInput, async (newInput) => {
           <!-- Entities -->
           <div class=" bg-muted/30 hover:bg-muted/40 rounded-lg py-2 hover:cursor-pointer"
                @click="navigateToEntity(entity.id)"
-               v-for="entity in showEntities">
+               v-for="entity in searchResult">
             <p class="px-4 text-center">
               {{ entity.name }}
             </p>
           </div>
           <!-- No entities -->
-          <p v-if="showEntities.length <= 0">
+          <p v-if="searchResult.length <= 0">
             No Entities have been found.
           </p>
         </div>
