@@ -3,6 +3,7 @@ import Home from './pages/Home.vue'
 import Dashboard from "@/pages/Dashboard.vue";
 import EntityPage from "@/pages/EntityPage.vue";
 import RelationPage from "@/pages/RelationPage.vue";
+import EntityCollectionPage from "@/pages/EntityCollectionPage.vue";
 
 const routes = [
     {
@@ -11,7 +12,7 @@ const routes = [
         component: Home,
     },
     {
-        path: '/dashboard/:id',
+        path: '/dashboard',
         name: 'Dashboard',
         component: Dashboard,
     },
@@ -24,6 +25,11 @@ const routes = [
         path: '/relation/:id',
         name: 'Relation',
         component: RelationPage,
+    },
+    {
+        path: '/entities',
+        name: 'Entities',
+        component: EntityCollectionPage,
     }
 ];
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ChevronDown, ChevronUp, LayoutGrid, Plus, StretchHorizontal} from 'lucide-vue-next';
+import {ChevronDown, ChevronUp, LayoutGrid, Plus, StretchHorizontal, Search} from 'lucide-vue-next';
 import {toTypedSchema} from '@vee-validate/zod';
 import {z} from 'zod';
 import {Field, useForm} from 'vee-validate';
@@ -21,6 +21,7 @@ import {useToggleBody} from "@/composables/useToggleBody";
 import {useGridSize} from "@/composables/useGridSize";
 import GridSizeSelector from "@/components/shared/GridSizeSelector.vue";
 import VerticalSeperator from "@/components/ui/separator/VerticalSeperator.vue";
+
 type EntityListViewMode = 'grid' | 'list';
 
 const props = defineProps<{
@@ -39,12 +40,13 @@ const listView = ref<EntityListViewMode>('list')
 const scrollAreaRef = ref<any>(null);
 const contentRef = ref<any>(null);
 const isScrollable = ref(false);
+const searchInput = ref('')
 
 const listHeight = ref<string>('h-0')
 
 
 const {showCardBody, toggleCardBody} = useToggleBody(props.moduleConfig)
-const {columnSize, changeGridSize } = useGridSize(props.moduleConfig)
+const {columnSize, changeGridSize} = useGridSize(props.moduleConfig)
 
 onMounted(async () => {
   await getEntities();
@@ -105,7 +107,7 @@ const onSubmit = handleSubmit(async (values) => {
 function changeListView(view: EntityListViewMode) {
   listView.value = view;
   calcListHeight();
-} 
+}
 
 function calcListHeight() {
   if (listView.value === 'list') {
@@ -123,7 +125,7 @@ function calcListHeight() {
   }
 }
 
-async function navigateToEntity(id: string){
+async function navigateToEntity(id: string) {
   await router.push('/entity/' + id)
 }
 
@@ -147,15 +149,32 @@ watch(
     () => {
       checkScrollable();
     },
-    { immediate: true }
+    {immediate: true}
 );
+
+watch(searchInput, async (newInput) => {
+  showEntities.value = entities.value.filter((e: Entity) => {
+    return e.name.toLowerCase().includes(newInput.toLowerCase());
+  })
+})
 </script>
 
 <template>
   <Card class="bg-muted/30 min-w-[22rem]" :class="columnSize">
     <CardHeader class="flex flex-row justify-between items-center">
       <CardTitle> Entities</CardTitle>
+      <div class="relative">
+        <Search class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+        <Input
+            type="search"
+            placeholder="Search entities..."
+            class="pl-8"
+            v-model="searchInput"
+        />
+      </div>
       <div class="flex flex-row space-x-2">
+
+        <!--    Add Entity    -->
         <Dialog v-model:open="dialogOpen" v-if="showCardBody">
           <DialogTrigger>
             <TextTooltip text="Add an entity">
@@ -197,8 +216,9 @@ watch(
             </form>
           </DialogContent>
         </Dialog>
-        <VerticalSeperator />
-        <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('entityList', newSize, emit)"/>
+        <VerticalSeperator/>
+        <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']"
+                          @update-grid-size="(newSize) => changeGridSize('entityList', newSize, emit)"/>
         <TextTooltip text="Switch to grid" v-if="listView === 'list' && showCardBody">
           <Button size="icon" aria-label="Toggle italic" variant="outline" @click="changeListView('grid')">
             <StretchHorizontal/>
@@ -227,7 +247,8 @@ watch(
     </CardHeader>
     <CardContent v-if="showCardBody">
       <ScrollArea :class="listHeight" type="auto" ref="scrollAreaRef">
-        <div id="single-entity-list" class="flex flex-col gap-2" :class="{'mr-4': isScrollable}" v-if="listView === 'list'" ref="contentRef">
+        <div id="single-entity-list" class="flex flex-col gap-2" :class="{'mr-4': isScrollable}"
+             v-if="listView === 'list'" ref="contentRef">
           <!-- Entities -->
           <div class=" bg-muted/30 hover:bg-muted/40 rounded-lg py-2 hover:cursor-pointer"
                @click="navigateToEntity(entity.id)"

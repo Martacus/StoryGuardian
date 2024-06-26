@@ -10,7 +10,6 @@ import {
   DialogTitle,
   DialogTrigger
 } from "@/components/ui/dialog";
-import {Card, CardHeader} from "@/components/ui/card";
 import {Plus, Settings, ArrowLeft} from "lucide-vue-next";
 import {Button} from "@/components/ui/button";
 import {onMounted, ref} from "vue";
@@ -27,6 +26,7 @@ import Description from "@/components/shared/Description.vue";
 import {useToast} from "@/components/ui/toast";
 import RelationModule from "@/components/entity/RelationModule.vue";
 import ModuleSelectItem from "@/components/story/modules/ModuleSelectItem.vue";
+import PageHeaderCard from "@/components/shared/PageHeaderCard.vue";
 
 const route = useRoute();
 const router = useRouter()
@@ -123,39 +123,37 @@ function moduleConfigChange(module: string, key: string, value: string) {
 
 <template>
   <DashboardLayout>
-    <Card class="bg-muted/30 col-span-4" v-if="entity">
-      <CardHeader class="flex flex-row items-center justify-between py-4">
-        <Button class="btn btn-secondary" variant="outline" size="icon" @click="router.back()">
-          <ArrowLeft />
-        </Button>
-        <EntityTitle :title="entity.name" @save-title="saveStoryTitle" class="flex flex-1 justify-center"/>
-        <div class="flex flex-row gap-2">
-          <Dialog v-model:open="addModuleDialogOpened">
-            <DialogTrigger>
-              <TextToolTip text="Add a module">
-                <Button class="btn btn-secondary" variant="outline" size="icon" @click="refreshUnusedEntityModules">
-                  <Plus/>
-                </Button>
-              </TextToolTip>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Select a module</DialogTitle>
-              </DialogHeader>
-              <DialogDescription>Choose a module to add to your entity, you can always remove them.</DialogDescription>
-              <ModuleSelectItem v-if="isUnused('tagList')" @click="addEntityModule('tagList')">
-                <p>Tags</p>
-              </ModuleSelectItem>
-            </DialogContent>
-          </Dialog>
-          <TextToolTip text="Story settings">
-            <Button class="btn btn-secondary" variant="outline" size="icon">
-              <Settings/>
-            </Button>
-          </TextToolTip>
-        </div>
-      </CardHeader>
-    </Card>
+    <PageHeaderCard v-if="entity">
+      <Button class="btn btn-secondary" variant="outline" size="icon" @click="router.back()">
+        <ArrowLeft />
+      </Button>
+      <EntityTitle :title="entity.name" @save-title="saveStoryTitle" class="flex flex-1 justify-center"/>
+      <div class="flex flex-row gap-2">
+        <Dialog v-model:open="addModuleDialogOpened">
+          <DialogTrigger>
+            <TextToolTip text="Add a module">
+              <Button class="btn btn-secondary" variant="outline" size="icon" @click="refreshUnusedEntityModules">
+                <Plus/>
+              </Button>
+            </TextToolTip>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Select a module</DialogTitle>
+            </DialogHeader>
+            <DialogDescription>Choose a module to add to your entity, you can always remove them.</DialogDescription>
+            <ModuleSelectItem v-if="isUnused('tagList')" @click="addEntityModule('tagList')">
+              <p>Tags</p>
+            </ModuleSelectItem>
+          </DialogContent>
+        </Dialog>
+        <TextToolTip text="Story settings">
+          <Button class="btn btn-secondary" variant="outline" size="icon">
+            <Settings/>
+          </Button>
+        </TextToolTip>
+      </div>
+    </PageHeaderCard>
 
     <Description
         v-if="entity"

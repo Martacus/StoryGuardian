@@ -89,6 +89,14 @@ func (s *StoryManager) GetStory(projectId string, refresh bool) (*Story, error) 
 	return story, nil
 }
 
+func (s *StoryManager) GetOpenStory() (*Story, error) {
+	if s.Story == nil {
+		return s.GetStory(s.ApplicationManager.Config.OpenProject.Id, true)
+	}
+
+	return s.Story, nil
+}
+
 func (s *StoryManager) SaveStory() error {
 	if err := fileio.WriteStructToFilePath(s.Story, filepath.Join(s.Story.Location, constants.StoryConfigName)); err != nil {
 		return fmt.Errorf("could not save story to file system: %v", err)

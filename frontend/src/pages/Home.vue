@@ -30,7 +30,7 @@ function createProject(){
 async function openProject(id: string){
   try{
     await OpenProject(id);
-    await router.push('/dashboard/' + id)
+    await router.push('/dashboard')
   } catch(error: any){
     toast({
       title: 'Uh oh! Something went wrong.',

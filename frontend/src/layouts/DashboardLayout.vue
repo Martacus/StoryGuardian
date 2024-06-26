@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import {FolderOpenDot } from 'lucide-vue-next'
+import {FolderOpenDot,ShieldHalf, Tag, Map, History, LayoutDashboard   } from 'lucide-vue-next'
 import ThemePicker from "@/layouts/components/ThemePicker.vue";
+import MainMenuButton from "@/components/menu/MainMenuButton.vue";
+import {useRouter} from "vue-router";
 
+const router = useRouter();
 </script>
 
 <template>
@@ -16,13 +19,31 @@ import ThemePicker from "@/layouts/components/ThemePicker.vue";
         <!--  Menu  -->
         <div class="border-r bg-muted/40 flex flex-col">
           <div class="flex-1 overflow-auto">
-            <nav class="grid items-start px-2 text-sm font-medium lg:px-4 pt-8">
-              <a href="/dashboard">
-                <div class="flex items-center gap-3 rounded-lg px-3 py-2 text-primary transition-all hover:text-primary bg-muted">
-                  <FolderOpenDot class="h-4 w-4"/>
-                  Stories
-                </div>
-              </a>
+            <nav class="grid items-start px-2 text-sm font-medium lg:px-4 pt-8 gap-1">
+              <MainMenuButton @click="router.push('/')">
+                <FolderOpenDot class="h-4 w-4"/>
+                Stories
+              </MainMenuButton>
+              <MainMenuButton @click="router.push('/dashboard')">
+                <LayoutDashboard  class="h-4 w-4"/>
+                Dashboard
+              </MainMenuButton>
+              <MainMenuButton  @click="router.push('/entities')">
+                <ShieldHalf  class="h-4 w-4"/>
+                Entities
+              </MainMenuButton>
+              <MainMenuButton  @click="router.push('/')">
+                <Tag class="h-4 w-4"/>
+                Tags
+              </MainMenuButton>
+              <MainMenuButton  @click="router.push('/')">
+                <Map class="h-4 w-4"/>
+                Maps
+              </MainMenuButton>
+              <MainMenuButton  @click="router.push('/')">
+                <History  class="h-4 w-4"/>
+                Timelines
+              </MainMenuButton>
             </nav>
           </div>
         </div>

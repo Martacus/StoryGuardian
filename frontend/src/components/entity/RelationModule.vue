@@ -79,6 +79,7 @@ async function createRelation(){
 }
 
 function openRelation(relationId: string){
+  console.log('ehgggg')
  router.push("/relation/" + relationId);
 }
 </script>
@@ -126,7 +127,7 @@ function openRelation(relationId: string){
             <TableCell>{{ relation.toName }}</TableCell>
             <TableCell class="text-right">
               <TextTooltip text="Delete">
-                <Button size="icon" aria-label="Toggle italic" variant="outline" @click="router.push('/relation/create')">
+                <Button size="icon" aria-label="Toggle italic" variant="outline" @click.stop="console.log('eee')">
                   <Trash2/>
                 </Button>
               </TextTooltip>

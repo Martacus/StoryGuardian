@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import DashboardLayout from "@/layouts/DashboardLayout.vue";
-import {Card} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -22,13 +21,14 @@ import ImageModule from "@/components/story/ImageModule.vue";
 import {Story} from "../../bindings/storyguardian/src/project";
 import {
   AddStoryModule,
-  EditStoryModuleConfig,
+  EditStoryModuleConfig, GetOpenStory,
   GetStory, GetStoryModules,
   SetStoryDescription,
   SetStoryTitle
 } from "../../bindings/storyguardian/src/project/storymanager";
 import TagList from "@/components/story/TagList.vue";
 import ModuleSelectItem from "@/components/story/modules/ModuleSelectItem.vue";
+import PageHeaderCard from "@/components/shared/PageHeaderCard.vue";
 
 const route = useRoute();
 const {toast} = useToast()
@@ -48,13 +48,25 @@ const isUsedModule = (moduleName: string) => {
 };
 
 onMounted(async () => {
-  await retrieveStory(false);
+  try {
+  const retrievedStory = await GetOpenStory();
+  if (retrievedStory !== null) {
+    story.value = retrievedStory
+  }
+} catch (error: any) {
+  toast({
+    title: 'Failed init story',
+    description: error,
+  });
+}
+
 })
 
 async function retrieveStory(refresh: boolean){
-  let projectId: string = route.params['id'] as string
+  if(!story.value) return;
+
   try {
-    const retrievedStory = await GetStory(projectId, refresh)
+    const retrievedStory = await GetStory(story.value?.id, refresh)
     if (retrievedStory !== null) {
       story.value = retrievedStory
     }
@@ -124,8 +136,8 @@ function addStoryModule(module: string){
 
 <template>
   <DashboardLayout>
-    <Card class="bg-muted/30 flex flex-row p-2 gap-2 items-center col-span-1 sm:col-span-1 md:col-span-2 lg:col-span-3 xl:col-span-4" v-if="story">
-      <EntityTitle :title="story.name" @save-title="saveStoryTitle" class="w-full"/>
+    <PageHeaderCard v-if="story">
+      <EntityTitle :title="story.name" @save-title="saveStoryTitle" class="flex flex-1 justify-center"/>
       <div class="flex flex-row justify-end mr-2 gap-2">
         <Dialog v-model:open="addModuleDialogOpened">
           <DialogTrigger>
@@ -158,7 +170,7 @@ function addStoryModule(module: string){
           </Button>
         </TextToolTip>
       </div>
-    </Card>
+    </PageHeaderCard>
 
     <Description
         v-if="story"

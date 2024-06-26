@@ -1,6 +1,5 @@
 <script setup lang="ts">
 
-import {Card, CardHeader} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import EntityTitle from "@/components/shared/EntityTitle.vue";
 import {ArrowLeft, Plus, Settings} from "lucide-vue-next";
@@ -24,6 +23,7 @@ import {
   SetRelationDescription,
   SetRelationName
 } from "../../bindings/storyguardian/src/project/entitymanager";
+import PageHeaderCard from "@/components/shared/PageHeaderCard.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -65,41 +65,44 @@ async function saveDescription(descriptionValue: string) {
 
 <template>
   <DashboardLayout>
-    <Card class="bg-muted/30 col-span-4" v-if="relation">
-      <CardHeader class="flex flex-row items-center justify-between py-4">
-        <Button class="btn btn-secondary" variant="outline" size="icon" @click="router.back()">
-          <ArrowLeft/>
-        </Button>
-        <div class="flex flex-1 justify-center">
-          <p class="text-2xl leading-loose ml-2">Relation - </p> <EntityTitle :title="relation.name" @save-title="saveRelationTitle" />
-        </div>
-        <div class="flex flex-row gap-2">
-          <Dialog v-model:open="addModuleDialogOpened">
-            <DialogTrigger>
-              <TextToolTip text="Add a module">
-                <Button class="btn btn-secondary" variant="outline" size="icon">
-                  <Plus/>
-                </Button>
-              </TextToolTip>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Select a module</DialogTitle>
-              </DialogHeader>
-              <DialogDescription>Choose a module to add to your relation, you can always remove them.
-              </DialogDescription>
-            </DialogContent>
-          </Dialog>
-          <TextToolTip text="Story settings">
-            <Button class="btn btn-secondary" variant="outline" size="icon">
-              <Settings/>
-            </Button>
-          </TextToolTip>
-        </div>
-      </CardHeader>
-    </Card>
+    <PageHeaderCard v-if="relation">
+      <Button class="btn btn-secondary" variant="outline" size="icon" @click="router.back()">
+        <ArrowLeft/>
+      </Button>
+      <div class="flex flex-1 justify-center">
+        <p class="text-2xl leading-loose ml-2">Relation - </p> <EntityTitle :title="relation.name" @save-title="saveRelationTitle" />
+      </div>
+      <div class="flex flex-row gap-2">
+        <Dialog v-model:open="addModuleDialogOpened">
+          <DialogTrigger>
+            <TextToolTip text="Add a module">
+              <Button class="btn btn-secondary" variant="outline" size="icon">
+                <Plus/>
+              </Button>
+            </TextToolTip>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Select a module</DialogTitle>
+            </DialogHeader>
+            <DialogDescription>Choose a module to add to your relation, you can always remove them.
+            </DialogDescription>
+          </DialogContent>
+        </Dialog>
+        <TextToolTip text="Story settings">
+          <Button class="btn btn-secondary" variant="outline" size="icon">
+            <Settings/>
+          </Button>
+        </TextToolTip>
+      </div>
+    </PageHeaderCard>
 
-    <Description v-if="relation" :description="relation.description" @save-description="saveDescription"/>
+    <Description
+        v-if="relation"
+        :description="relation.description"
+        @save-description="saveDescription"
+        :module-config="null"
+    />
   </DashboardLayout>
 </template>
 

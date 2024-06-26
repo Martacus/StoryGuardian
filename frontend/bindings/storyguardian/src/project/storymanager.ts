@@ -24,6 +24,15 @@ export function EditStoryModuleConfig($module: string, config: string, value: st
     return $resultPromise;
 }
 
+export function GetOpenStory(): Promise<$models.Story | null> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(2563610799) as any;
+    let $typingPromise = $resultPromise.then(($result) => {
+        return $$createType1($result);
+    }) as any;
+    $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
+    return $typingPromise;
+}
+
 export function GetStory(projectId: string, refresh: boolean): Promise<$models.Story | null> & { cancel(): void } {
     let $resultPromise = $Call.ByID(180270295, projectId, refresh) as any;
     let $typingPromise = $resultPromise.then(($result) => {
