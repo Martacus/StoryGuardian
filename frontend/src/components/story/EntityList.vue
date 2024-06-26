@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ChevronDown, ChevronUp, LayoutGrid, Plus, StretchHorizontal, Search} from 'lucide-vue-next';
+import {ChevronDown, ChevronUp, LayoutGrid, Plus, Search, StretchHorizontal} from 'lucide-vue-next';
 import {toTypedSchema} from '@vee-validate/zod';
 import {z} from 'zod';
 import {Field, useForm} from 'vee-validate';
@@ -21,8 +21,8 @@ import {useToggleBody} from "@/composables/useToggleBody";
 import {useGridSize} from "@/composables/useGridSize";
 import GridSizeSelector from "@/components/shared/GridSizeSelector.vue";
 import VerticalSeperator from "@/components/ui/separator/VerticalSeperator.vue";
+import {useItemGridLayout} from "@/composables/useItemGridLayout";
 
-type EntityListViewMode = 'grid' | 'list';
 
 const props = defineProps<{
   story: Story
@@ -36,7 +36,6 @@ const router = useRouter()
 const entities = ref<Entity[]>([]);
 const showEntities = ref<Entity[]>([]);
 const dialogOpen = ref(false);
-const listView = ref<EntityListViewMode>('list')
 const scrollAreaRef = ref<any>(null);
 const contentRef = ref<any>(null);
 const isScrollable = ref(false);
@@ -47,6 +46,7 @@ const listHeight = ref<string>('h-0')
 
 const {showCardBody, toggleCardBody} = useToggleBody(props.moduleConfig)
 const {columnSize, changeGridSize} = useGridSize(props.moduleConfig)
+const {itemView, changeItemView} = useItemGridLayout(props.moduleConfig);
 
 onMounted(async () => {
   await getEntities();
@@ -103,14 +103,8 @@ const onSubmit = handleSubmit(async (values) => {
   }
 })
 
-//View
-function changeListView(view: EntityListViewMode) {
-  listView.value = view;
-  calcListHeight();
-}
-
 function calcListHeight() {
-  if (listView.value === 'list') {
+  if (itemView.value === 'list') {
     if (entities.value.length > 8) {
       listHeight.value = 'h-96';
     } else {
@@ -164,7 +158,7 @@ watch(searchInput, async (newInput) => {
     <CardHeader class="flex flex-row justify-between items-center">
       <CardTitle> Entities</CardTitle>
       <div class="relative">
-        <Search class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+        <Search class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"/>
         <Input
             type="search"
             placeholder="Search entities..."
@@ -217,16 +211,21 @@ watch(searchInput, async (newInput) => {
           </DialogContent>
         </Dialog>
         <VerticalSeperator/>
-        <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']"
-                          @update-grid-size="(newSize) => changeGridSize('entityList', newSize, emit)"/>
-        <TextTooltip text="Switch to grid" v-if="listView === 'list' && showCardBody">
-          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="changeListView('grid')">
+        <GridSizeSelector
+            v-if="moduleConfig"
+            :column-size="moduleConfig.configuration['columnSize']"
+            @update-grid-size="(newSize) => changeGridSize('entityList', newSize, emit)"
+        />
+        <TextTooltip text="Switch to grid" v-if="itemView === 'list' && showCardBody">
+          <Button size="icon" aria-label="Toggle italic" variant="outline"
+              @click="changeItemView('entityList', 'grid', emit)" >
             <StretchHorizontal/>
           </Button>
         </TextTooltip>
 
-        <TextTooltip text="Switch to list" v-if="listView === 'grid' && showCardBody">
-          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="changeListView('list')">
+        <TextTooltip text="Switch to list" v-if="itemView === 'grid' && showCardBody">
+          <Button size="icon" aria-label="Toggle italic" variant="outline"
+                  @click="changeItemView('entityList', 'list', emit)">
             <LayoutGrid/>
           </Button>
         </TextTooltip>
@@ -248,7 +247,7 @@ watch(searchInput, async (newInput) => {
     <CardContent v-if="showCardBody">
       <ScrollArea :class="listHeight" type="auto" ref="scrollAreaRef">
         <div id="single-entity-list" class="flex flex-col gap-2" :class="{'mr-4': isScrollable}"
-             v-if="listView === 'list'" ref="contentRef">
+             v-if="itemView === 'list'" ref="contentRef">
           <!-- Entities -->
           <div class=" bg-muted/30 hover:bg-muted/40 rounded-lg py-2 hover:cursor-pointer"
                @click="navigateToEntity(entity.id)"
@@ -263,7 +262,7 @@ watch(searchInput, async (newInput) => {
           </p>
         </div>
         <div id="single-entity-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2"
-             v-if="listView === 'grid'" ref="contentRef">
+             v-if="itemView === 'grid'" ref="contentRef">
           <!-- Entities -->
           <div class=" bg-muted/30 hover:bg-muted/40 rounded-lg py-2 hover:cursor-pointer"
                @click="navigateToEntity(entity.id)"

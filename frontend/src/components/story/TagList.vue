@@ -19,8 +19,8 @@ import {useGridSize} from "@/composables/useGridSize";
 import {StoryModule} from "../../../bindings/storyguardian/src/project";
 import GridSizeSelector from "@/components/shared/GridSizeSelector.vue";
 import VerticalSeperator from "@/components/ui/separator/VerticalSeperator.vue";
+import {useItemGridLayout} from "@/composables/useItemGridLayout";
 
-type ListViewMode = 'grid' | 'list';
 const props = defineProps<{
   tags: string[],
   moduleConfig: StoryModule
@@ -30,9 +30,9 @@ const emit = defineEmits(['configChange'])
 const {toast} = useToast();
 const {showCardBody, toggleCardBody} = useToggleBody(props.moduleConfig);
 const {columnSize, changeGridSize } = useGridSize(props.moduleConfig);
+const {itemView, changeItemView} = useItemGridLayout(props.moduleConfig);
 
 const dialogOpen = ref(false);
-const listView = ref<ListViewMode>('list');
 const router = useRouter();
 const listHeight = ref<string>('h-0');
 
@@ -66,14 +66,8 @@ const onSubmit = handleSubmit(async (values) => {
   }
 })
 
-//View
-function changeListView(view: ListViewMode) {
-  listView.value = view;
-  calcListHeight();
-}
-
 function calcListHeight() {
-  if (listView.value === 'list') {
+  if (itemView.value === 'list') {
     if (props.tags.length > 8) {
       listHeight.value = 'h-96';
     } else {
@@ -135,14 +129,14 @@ onMounted(() => {
         </Dialog>
         <VerticalSeperator />
         <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('tagList', newSize, emit)"/>
-        <TextTooltip text="Switch to grid" v-if="listView === 'list' && showCardBody">
-          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="changeListView('grid')">
+        <TextTooltip text="Switch to grid" v-if="itemView === 'list' && showCardBody">
+          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="changeItemView('tagList', 'grid', emit)">
             <StretchHorizontal/>
           </Button>
         </TextTooltip>
 
-        <TextTooltip text="Switch to list" v-if="listView === 'grid' && showCardBody">
-          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="changeListView('list')">
+        <TextTooltip text="Switch to list" v-if="itemView === 'grid' && showCardBody">
+          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="changeItemView('tagList', 'grid', emit)">
             <LayoutGrid/>
           </Button>
         </TextTooltip>
@@ -163,7 +157,7 @@ onMounted(() => {
     </CardHeader>
     <CardContent v-if="showCardBody">
       <ScrollArea class="w-full" :class="listHeight">
-        <div class="flex flex-col gap-2" v-if="listView === 'list'">
+        <div class="flex flex-col gap-2" v-if="itemView === 'list'">
           <div class="bg-muted/30 hover:bg-muted/40 rounded-lg py-2 hover:cursor-pointer"
                @click="navigateToTag(tag)"
                v-for="tag in tags">
@@ -176,7 +170,7 @@ onMounted(() => {
           </p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2"
-             v-if="listView === 'grid'">
+             v-if="itemView === 'grid'">
           <div class=" bg-muted/30 hover:bg-muted/40 rounded-lg py-2 hover:cursor-pointer"
                @click="navigateToTag(tag)"
                v-for="tag in tags">
