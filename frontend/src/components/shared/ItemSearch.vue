@@ -5,7 +5,8 @@ import {Search} from "lucide-vue-next";
 import {useVModel} from "@vueuse/core";
 
 const props = defineProps<{
-  searchInput: string
+  searchInput: string,
+  placeholder: string
 }>()
 
 // const searchInput = ref('')
@@ -30,7 +31,7 @@ const searchInput = useVModel(props, 'searchInput', emits, {
     <Search class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"/>
     <Input
         type="search"
-        placeholder="Search entities..."
+        :placeholder="placeholder"
         class="pl-8"
         v-model="searchInput"
     />

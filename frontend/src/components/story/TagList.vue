@@ -105,12 +105,12 @@ onMounted(() => {
   <Card class="bg-muted/30 min-w-[22rem]" :class="columnSize">
     <CardHeader class="flex flex-row justify-between items-center">
       <CardTitle>Tags</CardTitle>
-      <ItemSearch v-model:search-input="searchInput"/>
+      <ItemSearch v-model:search-input="searchInput" placeholder="Search tags..."/>
       <div class="flex flex-row space-x-2">
         <Dialog v-model:open="dialogOpen" v-if="showCardBody">
           <DialogTrigger>
             <TextTooltip text="Add an entity">
-              <Button size="icon" aria-label="Toggle italic" variant="outline" @click="">
+              <Button size="icon" variant="outline" @click="">
                 <Plus/>
               </Button>
             </TextTooltip>
@@ -141,25 +141,25 @@ onMounted(() => {
         <VerticalSeperator />
         <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('tagList', newSize, emit)"/>
         <TextTooltip text="Switch to grid" v-if="itemView === 'list' && showCardBody">
-          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="changeItemView('tagList', 'grid', emit)">
+          <Button size="icon" variant="outline" @click="changeItemView('tagList', 'grid', emit)">
             <StretchHorizontal/>
           </Button>
         </TextTooltip>
 
         <TextTooltip text="Switch to list" v-if="itemView === 'grid' && showCardBody">
-          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="changeItemView('tagList', 'grid', emit)">
+          <Button size="icon" variant="outline" @click="changeItemView('tagList', 'grid', emit)">
             <LayoutGrid/>
           </Button>
         </TextTooltip>
 
         <TextTooltip text="Expand" v-if="!showCardBody">
-          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCardBody('tagList', emit)">
+          <Button size="icon" variant="outline" @click="toggleCardBody('tagList', emit)">
             <ChevronDown/>
           </Button>
         </TextTooltip>
 
         <TextTooltip text="Minimize" v-if="showCardBody">
-          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCardBody('tagList', emit)">
+          <Button size="icon" variant="outline" @click="toggleCardBody('tagList', emit)">
             <ChevronUp/>
           </Button>
         </TextTooltip>

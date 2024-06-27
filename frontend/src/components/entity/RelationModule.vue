@@ -21,6 +21,7 @@ import {useToggleBody} from "@/composables/useToggleBody";
 import {useGridSize} from "@/composables/useGridSize";
 import GridSizeSelector from "@/components/shared/GridSizeSelector.vue";
 import VerticalSeperator from "@/components/ui/separator/VerticalSeperator.vue";
+import IconButton from "@/components/ui/button/IconButton.vue";
 
 const props = defineProps<{
   entity: Entity,
@@ -90,21 +91,21 @@ function openRelation(relationId: string){
       <CardTitle>Relations</CardTitle>
       <div class="flex flex-row space-x-2">
         <TextTooltip text="Add relation" v-if="showCardBody">
-          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="createRelation()">
+          <IconButton @click="createRelation()">
             <Plus/>
-          </Button>
+          </IconButton>
         </TextTooltip>
         <VerticalSeperator />
         <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('relations', newSize, emit)"/>
         <TextTooltip text="Minimize" v-if="showCardBody">
-          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCardBody('relations', emit)">
+          <IconButton @click="toggleCardBody('relations', emit)">
             <ChevronUp/>
-          </Button>
+          </IconButton>
         </TextTooltip>
-        <TextTooltip text="Minimize" v-if="!showCardBody">
-          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCardBody('relations', emit)">
+        <TextTooltip text="Expand" v-if="!showCardBody">
+          <IconButton @click="toggleCardBody('relations', emit)">
             <ChevronDown/>
-          </Button>
+          </IconButton>
         </TextTooltip>
 
       </div>
@@ -127,9 +128,9 @@ function openRelation(relationId: string){
             <TableCell>{{ relation.toName }}</TableCell>
             <TableCell class="text-right">
               <TextTooltip text="Delete">
-                <Button size="icon" aria-label="Toggle italic" variant="outline" @click.stop="console.log('eee')">
+                <IconButton @click.stop="console.log('eee')">
                   <Trash2/>
-                </Button>
+                </IconButton>
               </TextTooltip>
             </TableCell>
           </TableRow>

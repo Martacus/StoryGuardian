@@ -31,21 +31,21 @@ function updateGridSize(newSize: string) {
   <TextTooltip text="Switch column width">
     <Popover>
       <PopoverTrigger>
-        <Button size="icon" aria-label="Toggle italic" variant="outline">
+        <Button size="icon" variant="outline">
           <Columns2/>
         </Button>
       </PopoverTrigger>
       <PopoverContent side="top" align="center" class="flex flex-1 gap-2 justify-center">
-        <Button size="icon" aria-label="Toggle italic" variant="outline" @click="updateGridSize('1')" >
+        <Button size="icon" variant="outline" @click="updateGridSize('1')" >
           <Square/>
         </Button>
-        <Button size="icon" aria-label="Toggle italic" variant="outline" @click="updateGridSize('2')" >
+        <Button size="icon" variant="outline" @click="updateGridSize('2')" >
           <Columns2/>
         </Button>
-        <Button size="icon" aria-label="Toggle italic" variant="outline" @click="updateGridSize('3')" >
+        <Button size="icon" variant="outline" @click="updateGridSize('3')" >
           <Columns3/>
         </Button>
-        <Button size="icon" aria-label="Toggle italic" variant="outline" @click="updateGridSize('4')" >
+        <Button size="icon" variant="outline" @click="updateGridSize('4')" >
           <Columns4/>
         </Button>
       </PopoverContent>

@@ -61,22 +61,22 @@ function openImageFolder(){
     <CardHeader class="flex flex-row justify-between items-center">
       <CardTitle>Images</CardTitle>
       <div class="flex flex-row space-x-2">
-        <Button class="btn btn-primary" aria-label="Toggle italic" variant="outline" @click="openImageFolder()">
+        <Button class="btn btn-primary" variant="outline" @click="openImageFolder()">
           Open folder
         </Button>
-        <Button size="icon" aria-label="Toggle italic" variant="outline" @click="retrieveImages()">
+        <Button size="icon" variant="outline" @click="retrieveImages()">
           <RefreshCcw/>
         </Button>
         <VerticalSeperator />
         <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('images', newSize, emit)"/>
         <TextTooltip text="Expand" v-if="!showCardBody">
-          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCardBody('images', emit)">
+          <Button size="icon" variant="outline" @click="toggleCardBody('images', emit)">
             <ChevronDown/>
           </Button>
         </TextTooltip>
 
         <TextTooltip text="Minimize" v-if="showCardBody">
-          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCardBody('images', emit)">
+          <Button size="icon" variant="outline" @click="toggleCardBody('images', emit)">
             <ChevronUp/>
           </Button>
         </TextTooltip>

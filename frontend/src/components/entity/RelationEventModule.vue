@@ -86,17 +86,17 @@
 <!--      <CardTitle>Relations</CardTitle>-->
 <!--      <div class="flex flex-row space-x-2">-->
 <!--        <TextTooltip text="Add relation" v-if="showBody">-->
-<!--          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="createRelation()">-->
+<!--          <Button size="icon" variant="outline" @click="createRelation()">-->
 <!--            <Plus/>-->
 <!--          </Button>-->
 <!--        </TextTooltip>-->
 <!--        <TextTooltip text="Minimize" v-if="showBody">-->
-<!--          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCard()">-->
+<!--          <Button size="icon" variant="outline" @click="toggleCard()">-->
 <!--            <ChevronUp/>-->
 <!--          </Button>-->
 <!--        </TextTooltip>-->
 <!--        <TextTooltip text="Minimize" v-if="!showBody">-->
-<!--          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCard()">-->
+<!--          <Button size="icon" variant="outline" @click="toggleCard()">-->
 <!--            <ChevronDown/>-->
 <!--          </Button>-->
 <!--        </TextTooltip>-->
@@ -121,7 +121,7 @@
 <!--            <TableCell>{{ relation.toName }}</TableCell>-->
 <!--            <TableCell class="text-right">-->
 <!--              <TextTooltip text="Delete">-->
-<!--                <Button size="icon" aria-label="Toggle italic" variant="outline" @click="router.push('/relation/create')">-->
+<!--                <Button size="icon" variant="outline" @click="router.push('/relation/create')">-->
 <!--                  <Trash2/>-->
 <!--                </Button>-->
 <!--              </TextTooltip>-->

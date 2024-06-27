@@ -1,6 +1,5 @@
 <script setup lang="ts">
 
-import {Button} from "@/components/ui/button";
 import EntityTitle from "@/components/shared/EntityTitle.vue";
 import {ArrowLeft, Plus, Settings} from "lucide-vue-next";
 import DashboardLayout from "@/layouts/DashboardLayout.vue";
@@ -24,6 +23,7 @@ import {
   SetRelationName
 } from "../../bindings/storyguardian/src/project/entitymanager";
 import PageHeaderCard from "@/components/shared/PageHeaderCard.vue";
+import IconButton from "@/components/ui/button/IconButton.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -66,9 +66,9 @@ async function saveDescription(descriptionValue: string) {
 <template>
   <DashboardLayout>
     <PageHeaderCard v-if="relation">
-      <Button class="btn btn-secondary" variant="outline" size="icon" @click="router.back()">
+      <IconButton size="icon" @click="router.back()">
         <ArrowLeft/>
-      </Button>
+      </IconButton>
       <div class="flex flex-1 justify-center">
         <p class="text-2xl leading-loose ml-2">Relation - </p> <EntityTitle :title="relation.name" @save-title="saveRelationTitle" />
       </div>
@@ -76,9 +76,9 @@ async function saveDescription(descriptionValue: string) {
         <Dialog v-model:open="addModuleDialogOpened">
           <DialogTrigger>
             <TextToolTip text="Add a module">
-              <Button class="btn btn-secondary" variant="outline" size="icon">
+              <IconButton>
                 <Plus/>
-              </Button>
+              </IconButton>
             </TextToolTip>
           </DialogTrigger>
           <DialogContent>
@@ -90,9 +90,9 @@ async function saveDescription(descriptionValue: string) {
           </DialogContent>
         </Dialog>
         <TextToolTip text="Story settings">
-          <Button class="btn btn-secondary" variant="outline" size="icon">
+          <IconButton>
             <Settings/>
-          </Button>
+          </IconButton>
         </TextToolTip>
       </div>
     </PageHeaderCard>

@@ -152,14 +152,14 @@ watch(
   <Card class="bg-muted/30 min-w-[22rem]" :class="columnSize">
     <CardHeader class="flex flex-row justify-between items-center">
       <CardTitle> Entities</CardTitle>
-      <ItemSearch v-model:search-input="searchInput"/>
+      <ItemSearch v-model:search-input="searchInput" placeholder="Search entities..."/>
       <div class="flex flex-row space-x-2">
 
         <!--    Add Entity    -->
         <Dialog v-model:open="dialogOpen" v-if="showCardBody">
           <DialogTrigger>
             <TextTooltip text="Add an entity">
-              <Button size="icon" aria-label="Toggle italic" variant="outline" @click="">
+              <Button size="icon" variant="outline" @click="">
                 <Plus/>
               </Button>
             </TextTooltip>
@@ -204,27 +204,27 @@ watch(
             @update-grid-size="(newSize) => changeGridSize('entityList', newSize, emit)"
         />
         <TextTooltip text="Switch to grid" v-if="itemView === 'list' && showCardBody">
-          <Button size="icon" aria-label="Toggle italic" variant="outline"
+          <Button size="icon" variant="outline"
               @click="changeItemView('entityList', 'grid', emit)" >
             <StretchHorizontal/>
           </Button>
         </TextTooltip>
 
         <TextTooltip text="Switch to list" v-if="itemView === 'grid' && showCardBody">
-          <Button size="icon" aria-label="Toggle italic" variant="outline"
+          <Button size="icon" variant="outline"
                   @click="changeItemView('entityList', 'list', emit)">
             <LayoutGrid/>
           </Button>
         </TextTooltip>
 
         <TextTooltip text="Expand" v-if="!showCardBody">
-          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCardBody('entityList', emit)">
+          <Button size="icon" variant="outline" @click="toggleCardBody('entityList', emit)">
             <ChevronDown/>
           </Button>
         </TextTooltip>
 
         <TextTooltip text="Minimize" v-if="showCardBody">
-          <Button size="icon" aria-label="Toggle italic" variant="outline" @click="toggleCardBody('entityList', emit)">
+          <Button size="icon" variant="outline" @click="toggleCardBody('entityList', emit)">
             <ChevronUp/>
           </Button>
         </TextTooltip>
