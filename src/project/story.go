@@ -90,11 +90,10 @@ func (s *StoryManager) GetStory(projectId string, refresh bool) (*Story, error) 
 }
 
 func (s *StoryManager) GetOpenStory() (*Story, error) {
-	if s.Story == nil {
-		return s.GetStory(s.ApplicationManager.Config.OpenProject.Id, true)
+	if s.Story != nil && s.Story.Id == s.ApplicationManager.Config.OpenProject.Id {
+		return s.Story, nil
 	}
-
-	return s.Story, nil
+	return s.GetStory(s.ApplicationManager.Config.OpenProject.Id, true)
 }
 
 func (s *StoryManager) SaveStory() error {
