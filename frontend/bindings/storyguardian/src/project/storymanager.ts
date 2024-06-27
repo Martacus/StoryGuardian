@@ -60,6 +60,15 @@ export function GetStoryModules(unusedModulesOnly: boolean): Promise<string[]> &
     return $typingPromise;
 }
 
+export function GetStoryTags(): Promise<string[]> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(2508802762) as any;
+    let $typingPromise = $resultPromise.then(($result) => {
+        return $$createType4($result);
+    }) as any;
+    $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
+    return $typingPromise;
+}
+
 export function NewStory(projectDirectory: string): Promise<$models.Story | null> & { cancel(): void } {
     let $resultPromise = $Call.ByID(2808099189, projectDirectory) as any;
     let $typingPromise = $resultPromise.then(($result) => {

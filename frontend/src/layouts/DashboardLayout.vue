@@ -32,15 +32,15 @@ const router = useRouter();
                 <ShieldHalf  class="h-4 w-4"/>
                 Entities
               </MainMenuButton>
-              <MainMenuButton  @click="router.push('/')">
+              <MainMenuButton  @click="router.push('/tags')">
                 <Tag class="h-4 w-4"/>
                 Tags
               </MainMenuButton>
-              <MainMenuButton  @click="router.push('/')">
+              <MainMenuButton  @click="router.push('/dashboard')">
                 <Map class="h-4 w-4"/>
                 Maps
               </MainMenuButton>
-              <MainMenuButton  @click="router.push('/')">
+              <MainMenuButton  @click="router.push('/dashboard')">
                 <History  class="h-4 w-4"/>
                 Timelines
               </MainMenuButton>

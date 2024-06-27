@@ -160,6 +160,10 @@ func (s *StoryManager) CreateTag(tagName string) error {
 	return nil
 }
 
+func (s *StoryManager) GetStoryTags() []string {
+	return s.Story.Tags
+}
+
 func addStoryModules(moduleMap map[string]StoryModule) map[string]StoryModule {
 	moduleMap["description"] = StoryModule{
 		Name: "Description",

@@ -91,10 +91,6 @@ function calcListHeight() {
   }
 }
 
-async function navigateToTag(id: string){
-
-}
-
 onMounted(() => {
   tagList.value = props.tags
   searchResult.value = props.tags
@@ -110,7 +106,7 @@ onMounted(() => {
       <div class="flex flex-row space-x-2">
         <Dialog v-model:open="dialogOpen" v-if="showCardBody">
           <DialogTrigger>
-            <TextTooltip text="Add an entity">
+            <TextTooltip text="Add a tag">
               <IconButton @click="">
                 <Plus/>
               </IconButton>
@@ -171,7 +167,7 @@ onMounted(() => {
       <ScrollArea class="w-full" :class="listHeight">
         <div class="flex flex-col gap-2" v-if="itemView === 'list'">
           <div class="bg-muted/30 hover:bg-muted/40 rounded-lg py-2 hover:cursor-pointer"
-               @click="navigateToTag(tag)"
+               @click=""
                v-for="tag in searchResult">
             <p class="px-4 text-center">
               {{ tag }}
@@ -184,7 +180,7 @@ onMounted(() => {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2"
              v-if="itemView === 'grid'">
           <div class=" bg-muted/30 hover:bg-muted/40 rounded-lg py-2 hover:cursor-pointer"
-               @click="navigateToTag(tag)"
+               @click=""
                v-for="tag in searchResult">
             <p class="px-4 text-center">
               {{ tag }}

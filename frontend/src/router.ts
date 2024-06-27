@@ -4,6 +4,7 @@ import Dashboard from "@/pages/Dashboard.vue";
 import EntityPage from "@/pages/EntityPage.vue";
 import RelationPage from "@/pages/RelationPage.vue";
 import EntityCollectionPage from "@/pages/EntityCollectionPage.vue";
+import TagCollectionPage from "@/pages/TagCollectionPage.vue";
 
 const routes = [
     {
@@ -30,6 +31,11 @@ const routes = [
         path: '/entities',
         name: 'Entities',
         component: EntityCollectionPage,
+    },
+    {
+        path: '/tags',
+        name: 'Tags',
+        component: TagCollectionPage,
     }
 ];
 

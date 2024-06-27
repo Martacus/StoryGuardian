@@ -11,7 +11,6 @@ import {
 import TextToolTip from "@/components/ui/tooltip/TextTooltip.vue";
 import {Plus, Settings} from 'lucide-vue-next';
 import {onMounted, ref} from "vue";
-import {Button} from "@/components/ui/button";
 import {useRoute} from "vue-router";
 import Description from "@/components/shared/Description.vue";
 import EntityList from "@/components/story/EntityList.vue";
@@ -29,6 +28,7 @@ import {
 import TagList from "@/components/story/TagList.vue";
 import ModuleSelectItem from "@/components/story/modules/ModuleSelectItem.vue";
 import PageHeaderCard from "@/components/shared/PageHeaderCard.vue";
+import IconButton from "@/components/ui/button/IconButton.vue";
 
 const route = useRoute();
 const {toast} = useToast()
@@ -142,9 +142,9 @@ function addStoryModule(module: string){
         <Dialog v-model:open="addModuleDialogOpened">
           <DialogTrigger>
             <TextToolTip text="Add a module">
-              <Button class="btn btn-secondary" variant="outline" size="icon" @click="refreshUnusedStoryModules">
+              <IconButton @click="refreshUnusedStoryModules">
                 <Plus/>
-              </Button>
+              </IconButton>
             </TextToolTip>
           </DialogTrigger>
           <DialogContent>
@@ -165,9 +165,9 @@ function addStoryModule(module: string){
           </DialogContent>
         </Dialog>
         <TextToolTip text="Story settings">
-          <Button class="btn btn-secondary" variant="outline" size="icon">
+          <IconButton>
             <Settings/>
-          </Button>
+          </IconButton>
         </TextToolTip>
       </div>
     </PageHeaderCard>

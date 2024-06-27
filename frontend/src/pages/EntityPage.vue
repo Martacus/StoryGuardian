@@ -11,7 +11,6 @@ import {
   DialogTrigger
 } from "@/components/ui/dialog";
 import {Plus, Settings, ArrowLeft} from "lucide-vue-next";
-import {Button} from "@/components/ui/button";
 import {onMounted, ref} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {
@@ -27,6 +26,7 @@ import {useToast} from "@/components/ui/toast";
 import RelationModule from "@/components/entity/RelationModule.vue";
 import ModuleSelectItem from "@/components/story/modules/ModuleSelectItem.vue";
 import PageHeaderCard from "@/components/shared/PageHeaderCard.vue";
+import IconButton from "@/components/ui/button/IconButton.vue";
 
 const route = useRoute();
 const router = useRouter()
@@ -124,17 +124,17 @@ function moduleConfigChange(module: string, key: string, value: string) {
 <template>
   <DashboardLayout>
     <PageHeaderCard v-if="entity">
-      <Button class="btn btn-secondary" variant="outline" size="icon" @click="router.back()">
+      <IconButton @click="router.back()">
         <ArrowLeft />
-      </Button>
+      </IconButton>
       <EntityTitle :title="entity.name" @save-title="saveStoryTitle" class="flex flex-1 justify-center"/>
       <div class="flex flex-row gap-2">
         <Dialog v-model:open="addModuleDialogOpened">
           <DialogTrigger>
             <TextToolTip text="Add a module">
-              <Button class="btn btn-secondary" variant="outline" size="icon" @click="refreshUnusedEntityModules">
+              <IconButton @click="refreshUnusedEntityModules">
                 <Plus/>
-              </Button>
+              </IconButton>
             </TextToolTip>
           </DialogTrigger>
           <DialogContent>
@@ -148,9 +148,9 @@ function moduleConfigChange(module: string, key: string, value: string) {
           </DialogContent>
         </Dialog>
         <TextToolTip text="Story settings">
-          <Button class="btn btn-secondary" variant="outline" size="icon">
+          <IconButton>
             <Settings/>
-          </Button>
+          </IconButton>
         </TextToolTip>
       </div>
     </PageHeaderCard>

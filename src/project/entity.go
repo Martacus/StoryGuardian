@@ -96,7 +96,8 @@ func (e *EntityManager) RefreshEntity(entityId string) (*Entity, error) {
 }
 
 func (e *EntityManager) CreateEntity(entity Entity) (Entity, error) {
-	entity.CreatedAt = time.Now().String()
+	layout := "2006-01-02 15:04:05"
+	entity.CreatedAt = time.Now().Format(layout)
 
 	filePath := e.getEntityFilePath(entity.Id)
 	if err := fileio.WriteStructToFilePath(entity, filePath); err != nil {
@@ -170,6 +171,9 @@ func (r *Relation) getOther(entityId string) string {
 }
 
 func (e *EntityManager) LoadRelationInfo(entityId string, paginationStart int, amount int) ([]RelationInfo, error) {
+	_ = paginationStart
+	_ = amount
+
 	entity, err := e.GetEntity(entityId)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get entity: %v", err)
