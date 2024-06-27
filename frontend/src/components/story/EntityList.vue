@@ -24,6 +24,7 @@ import VerticalSeperator from "@/components/ui/separator/VerticalSeperator.vue";
 import {useItemGridLayout} from "@/composables/useItemGridLayout";
 import {useItemFilter} from "@/composables/useItemFilter";
 import ItemSearch from "@/components/shared/ItemSearch.vue";
+import IconButton from "@/components/ui/button/IconButton.vue";
 
 
 const props = defineProps<{
@@ -159,9 +160,9 @@ watch(
         <Dialog v-model:open="dialogOpen" v-if="showCardBody">
           <DialogTrigger>
             <TextTooltip text="Add an entity">
-              <Button size="icon" variant="outline" @click="">
+              <IconButton @click="">
                 <Plus/>
-              </Button>
+              </IconButton>
             </TextTooltip>
           </DialogTrigger>
           <DialogContent>
@@ -204,29 +205,29 @@ watch(
             @update-grid-size="(newSize) => changeGridSize('entityList', newSize, emit)"
         />
         <TextTooltip text="Switch to grid" v-if="itemView === 'list' && showCardBody">
-          <Button size="icon" variant="outline"
+          <IconButton
               @click="changeItemView('entityList', 'grid', emit)" >
             <StretchHorizontal/>
-          </Button>
+          </IconButton>
         </TextTooltip>
 
         <TextTooltip text="Switch to list" v-if="itemView === 'grid' && showCardBody">
-          <Button size="icon" variant="outline"
+          <IconButton
                   @click="changeItemView('entityList', 'list', emit)">
             <LayoutGrid/>
-          </Button>
+          </IconButton>
         </TextTooltip>
 
         <TextTooltip text="Expand" v-if="!showCardBody">
-          <Button size="icon" variant="outline" @click="toggleCardBody('entityList', emit)">
+          <IconButton @click="toggleCardBody('entityList', emit)">
             <ChevronDown/>
-          </Button>
+          </IconButton>
         </TextTooltip>
 
         <TextTooltip text="Minimize" v-if="showCardBody">
-          <Button size="icon" variant="outline" @click="toggleCardBody('entityList', emit)">
+          <IconButton @click="toggleCardBody('entityList', emit)">
             <ChevronUp/>
-          </Button>
+          </IconButton>
         </TextTooltip>
 
       </div>

@@ -15,6 +15,7 @@ import {useToggleBody} from "@/composables/useToggleBody";
 import {useGridSize} from "@/composables/useGridSize";
 import GridSizeSelector from "@/components/shared/GridSizeSelector.vue";
 import VerticalSeperator from "@/components/ui/separator/VerticalSeperator.vue";
+import IconButton from "@/components/ui/button/IconButton.vue";
 
 const props = defineProps<{
   story: Story
@@ -64,21 +65,21 @@ function openImageFolder(){
         <Button class="btn btn-primary" variant="outline" @click="openImageFolder()">
           Open folder
         </Button>
-        <Button size="icon" variant="outline" @click="retrieveImages()">
+        <IconButton @click="retrieveImages()">
           <RefreshCcw/>
-        </Button>
+        </IconButton>
         <VerticalSeperator />
         <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('images', newSize, emit)"/>
         <TextTooltip text="Expand" v-if="!showCardBody">
-          <Button size="icon" variant="outline" @click="toggleCardBody('images', emit)">
+          <IconButton @click="toggleCardBody('images', emit)">
             <ChevronDown/>
-          </Button>
+          </IconButton>
         </TextTooltip>
 
         <TextTooltip text="Minimize" v-if="showCardBody">
-          <Button size="icon" variant="outline" @click="toggleCardBody('images', emit)">
+          <IconButton @click="toggleCardBody('images', emit)">
             <ChevronUp/>
-          </Button>
+          </IconButton>
         </TextTooltip>
 
       </div>

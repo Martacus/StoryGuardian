@@ -22,6 +22,7 @@ import VerticalSeperator from "@/components/ui/separator/VerticalSeperator.vue";
 import {useItemGridLayout} from "@/composables/useItemGridLayout";
 import {useItemFilter} from "@/composables/useItemFilter";
 import ItemSearch from "@/components/shared/ItemSearch.vue";
+import IconButton from "@/components/ui/button/IconButton.vue";
 
 const props = defineProps<{
   tags: string[],
@@ -110,9 +111,9 @@ onMounted(() => {
         <Dialog v-model:open="dialogOpen" v-if="showCardBody">
           <DialogTrigger>
             <TextTooltip text="Add an entity">
-              <Button size="icon" variant="outline" @click="">
+              <IconButton @click="">
                 <Plus/>
-              </Button>
+              </IconButton>
             </TextTooltip>
           </DialogTrigger>
           <DialogContent>
@@ -141,27 +142,27 @@ onMounted(() => {
         <VerticalSeperator />
         <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('tagList', newSize, emit)"/>
         <TextTooltip text="Switch to grid" v-if="itemView === 'list' && showCardBody">
-          <Button size="icon" variant="outline" @click="changeItemView('tagList', 'grid', emit)">
+          <IconButton @click="changeItemView('tagList', 'grid', emit)">
             <StretchHorizontal/>
-          </Button>
+          </IconButton>
         </TextTooltip>
 
         <TextTooltip text="Switch to list" v-if="itemView === 'grid' && showCardBody">
-          <Button size="icon" variant="outline" @click="changeItemView('tagList', 'grid', emit)">
+          <IconButton @click="changeItemView('tagList', 'grid', emit)">
             <LayoutGrid/>
-          </Button>
+          </IconButton>
         </TextTooltip>
 
         <TextTooltip text="Expand" v-if="!showCardBody">
-          <Button size="icon" variant="outline" @click="toggleCardBody('tagList', emit)">
+          <IconButton @click="toggleCardBody('tagList', emit)">
             <ChevronDown/>
-          </Button>
+          </IconButton>
         </TextTooltip>
 
         <TextTooltip text="Minimize" v-if="showCardBody">
-          <Button size="icon" variant="outline" @click="toggleCardBody('tagList', emit)">
+          <IconButton @click="toggleCardBody('tagList', emit)">
             <ChevronUp/>
-          </Button>
+          </IconButton>
         </TextTooltip>
 
       </div>

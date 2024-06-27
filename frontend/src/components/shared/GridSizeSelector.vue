@@ -2,9 +2,9 @@
 
 import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
 import {Square, Columns2, Columns3, Columns4} from "lucide-vue-next";
-import {Button} from "@/components/ui/button";
 import {onMounted, ref} from "vue";
 import {Popover, PopoverTrigger, PopoverContent} from "@/components/ui/popover";
+import IconButton from "@/components/ui/button/IconButton.vue";
 
 const props = defineProps<{
   columnSize: String
@@ -31,23 +31,23 @@ function updateGridSize(newSize: string) {
   <TextTooltip text="Switch column width">
     <Popover>
       <PopoverTrigger>
-        <Button size="icon" variant="outline">
+        <IconButton>
           <Columns2/>
-        </Button>
+        </IconButton>
       </PopoverTrigger>
       <PopoverContent side="top" align="center" class="flex flex-1 gap-2 justify-center">
-        <Button size="icon" variant="outline" @click="updateGridSize('1')" >
+        <IconButton @click="updateGridSize('1')" >
           <Square/>
-        </Button>
-        <Button size="icon" variant="outline" @click="updateGridSize('2')" >
+        </IconButton>
+        <IconButton @click="updateGridSize('2')" >
           <Columns2/>
-        </Button>
-        <Button size="icon" variant="outline" @click="updateGridSize('3')" >
+        </IconButton>
+        <IconButton @click="updateGridSize('3')" >
           <Columns3/>
-        </Button>
-        <Button size="icon" variant="outline" @click="updateGridSize('4')" >
+        </IconButton>
+        <IconButton @click="updateGridSize('4')" >
           <Columns4/>
-        </Button>
+        </IconButton>
       </PopoverContent>
     </Popover>
 

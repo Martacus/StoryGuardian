@@ -11,6 +11,7 @@ import GridSizeSelector from "@/components/shared/GridSizeSelector.vue";
 import {useGridSize} from "@/composables/useGridSize";
 import {useToggleBody} from "@/composables/useToggleBody";
 import VerticalSeperator from "@/components/ui/separator/VerticalSeperator.vue";
+import IconButton from "@/components/ui/button/IconButton.vue";
 
 const props = defineProps<{
   description: String,
@@ -41,25 +42,25 @@ async function save() {
       <CardTitle>Description</CardTitle>
       <div class="flex flex-row space-x-2">
         <TextTooltip text="Edit" v-if="showCardBody">
-          <Button size="icon" variant="outline"
+          <IconButton
                   @click="toggleEdit()">
             <Edit />
-          </Button>
+          </IconButton>
         </TextTooltip>
         <VerticalSeperator />
         <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('description', newSize, emit)"/>
         <TextTooltip text="Minimize" v-if="showCardBody">
-          <Button size="icon" variant="outline"
+          <IconButton
                   @click="toggleCardBody('description', emit)">
             <ChevronUp />
-          </Button>
+          </IconButton>
         </TextTooltip>
 
         <TextTooltip text="Expand" v-if="!showCardBody">
-          <Button size="icon" variant="outline"
+          <IconButton
                   @click="toggleCardBody('description', emit)">
             <ChevronDown />
-          </Button>
+          </IconButton>
         </TextTooltip>
       </div>
 
