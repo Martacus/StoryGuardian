@@ -3,14 +3,12 @@
 import { Edit } from 'lucide-vue-next';
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
-import TipTap from "@/components/shared/TipTap.vue";
 import {ref} from "vue";
-import {Button} from "@/components/ui/button";
 import {StoryModule} from "../../../bindings/storyguardian/src/project";
 import GridSizeSelector from "@/components/shared/button/GridSizeSelector.vue";
 import {useGridSize} from "@/composables/useGridSize";
 import {useToggleBody} from "@/composables/useToggleBody";
-import VerticalSeparator from "@/components/ui/separator/VerticalSeparator.vue";
+import VerticalSeperator from "@/components/ui/separator/VerticalSeparator.vue";
 import IconButton from "@/components/ui/button/IconButton.vue";
 import CardBodyToggler from "@/components/shared/button/CardBodyToggler.vue";
 
@@ -44,22 +42,18 @@ async function save() {
       <div class="flex flex-row space-x-2">
         <TextTooltip text="Edit" v-if="showCardBody">
           <IconButton
-                  @click="toggleEdit()">
+              @click="toggleEdit()">
             <Edit />
           </IconButton>
         </TextTooltip>
-        <VerticalSeparator />
+        <VerticalSeperator />
         <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('description', newSize, emit)"/>
-        <CardBodyToggler :show-card-body="showCardBody"  @toggle="toggleCardBody('description', emit)"/>
+       <CardBodyToggler :show-card-body="showCardBody"  @toggle="toggleCardBody('relationInfo', emit)"/>
       </div>
 
     </CardHeader>
     <CardContent v-if="showCardBody">
-      <div v-html="description" v-if="!isEditing"></div>
-      <div v-if="isEditing" class="flex flex-col items-center">
-        <TipTap v-bind:content="description" ref="storyDescriptionEditor"></TipTap>
-        <Button class="btn btn-primary mt-2 max-w-40" @click="save()">Save Description</Button>
-      </div>
+
     </CardContent>
   </Card>
 </template>

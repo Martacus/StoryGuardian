@@ -3,7 +3,7 @@
 import {Button} from "@/components/ui/button";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import {ChevronDown, ChevronUp, Plus, Trash2} from "lucide-vue-next";
+import {Plus, Trash2} from "lucide-vue-next";
 import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
 import {onMounted, ref} from "vue";
 import {Entity, RelationInfo, StoryModule} from "../../../bindings/storyguardian/src/project";
@@ -19,9 +19,10 @@ import {z} from "zod";
 import {useRouter} from "vue-router";
 import {useToggleBody} from "@/composables/useToggleBody";
 import {useGridSize} from "@/composables/useGridSize";
-import GridSizeSelector from "@/components/shared/GridSizeSelector.vue";
-import VerticalSeperator from "@/components/ui/separator/VerticalSeperator.vue";
+import GridSizeSelector from "@/components/shared/button/GridSizeSelector.vue";
+import VerticalSeperator from "@/components/ui/separator/VerticalSeparator.vue";
 import IconButton from "@/components/ui/button/IconButton.vue";
+import CardBodyToggler from "@/components/shared/button/CardBodyToggler.vue";
 
 const props = defineProps<{
   entity: Entity,
@@ -97,16 +98,7 @@ function openRelation(relationId: string){
         </TextTooltip>
         <VerticalSeperator />
         <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('relations', newSize, emit)"/>
-        <TextTooltip text="Minimize" v-if="showCardBody">
-          <IconButton @click="toggleCardBody('relations', emit)">
-            <ChevronUp/>
-          </IconButton>
-        </TextTooltip>
-        <TextTooltip text="Expand" v-if="!showCardBody">
-          <IconButton @click="toggleCardBody('relations', emit)">
-            <ChevronDown/>
-          </IconButton>
-        </TextTooltip>
+        <CardBodyToggler :show-card-body="showCardBody"  @toggle="toggleCardBody('relations', emit)"/>
 
       </div>
     </CardHeader>

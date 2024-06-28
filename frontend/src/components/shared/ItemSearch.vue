@@ -9,12 +9,6 @@ const props = defineProps<{
   placeholder: string
 }>()
 
-// const searchInput = ref('')
-//
-// watch(searchInput, (newValue) => {
-//   props.searchInputRef.value = newValue
-// })
-
 const emits = defineEmits<{
   (e: 'update:searchInput', payload: string | number): void
 }>()

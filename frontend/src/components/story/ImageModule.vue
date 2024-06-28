@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from '@/components/ui/table'
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
 
-import {ChevronDown, ChevronUp, RefreshCcw} from 'lucide-vue-next';
+import {RefreshCcw} from 'lucide-vue-next';
 import {onMounted, ref} from "vue";
 import {Button} from "@/components/ui/button";
 import {useToast} from "@/components/ui/toast";
@@ -13,9 +12,10 @@ import {GetStoryImages} from "../../../bindings/storyguardian/src/project/storym
 import {OpenProjectFolder} from "../../../bindings/storyguardian/src/project/applicationmanager";
 import {useToggleBody} from "@/composables/useToggleBody";
 import {useGridSize} from "@/composables/useGridSize";
-import GridSizeSelector from "@/components/shared/GridSizeSelector.vue";
-import VerticalSeperator from "@/components/ui/separator/VerticalSeperator.vue";
+import GridSizeSelector from "@/components/shared/button/GridSizeSelector.vue";
+import VerticalSeperator from "@/components/ui/separator/VerticalSeparator.vue";
 import IconButton from "@/components/ui/button/IconButton.vue";
+import CardBodyToggler from "@/components/shared/button/CardBodyToggler.vue";
 
 const props = defineProps<{
   story: Story
@@ -70,17 +70,7 @@ function openImageFolder(){
         </IconButton>
         <VerticalSeperator />
         <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('images', newSize, emit)"/>
-        <TextTooltip text="Expand" v-if="!showCardBody">
-          <IconButton @click="toggleCardBody('images', emit)">
-            <ChevronDown/>
-          </IconButton>
-        </TextTooltip>
-
-        <TextTooltip text="Minimize" v-if="showCardBody">
-          <IconButton @click="toggleCardBody('images', emit)">
-            <ChevronUp/>
-          </IconButton>
-        </TextTooltip>
+        <CardBodyToggler :show-card-body="showCardBody"  @toggle="toggleCardBody('images', emit)"/>
 
       </div>
     </CardHeader>

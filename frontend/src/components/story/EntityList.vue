@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ChevronDown, ChevronUp, LayoutGrid, Plus, StretchHorizontal} from 'lucide-vue-next';
+import {Plus} from 'lucide-vue-next';
 import {toTypedSchema} from '@vee-validate/zod';
 import {z} from 'zod';
 import {Field, useForm} from 'vee-validate';
@@ -19,12 +19,14 @@ import {Entity, Story, StoryModule} from "../../../bindings/storyguardian/src/pr
 import {CreateEntity, LoadEntities} from "../../../bindings/storyguardian/src/project/entitymanager";
 import {useToggleBody} from "@/composables/useToggleBody";
 import {useGridSize} from "@/composables/useGridSize";
-import GridSizeSelector from "@/components/shared/GridSizeSelector.vue";
-import VerticalSeperator from "@/components/ui/separator/VerticalSeperator.vue";
+import GridSizeSelector from "@/components/shared/button/GridSizeSelector.vue";
+import VerticalSeperator from "@/components/ui/separator/VerticalSeparator.vue";
 import {useItemGridLayout} from "@/composables/useItemGridLayout";
 import {useItemFilter} from "@/composables/useItemFilter";
 import ItemSearch from "@/components/shared/ItemSearch.vue";
 import IconButton from "@/components/ui/button/IconButton.vue";
+import CardBodyToggler from "@/components/shared/button/CardBodyToggler.vue";
+import ItemViewSelector from "@/components/shared/button/ItemViewSelector.vue";
 
 
 const props = defineProps<{
@@ -62,12 +64,28 @@ async function getEntities() {
     let data = await LoadEntities();
     entities.value = data;
     searchResult.value = data;
-    calcListHeight();
+    refreshViewLength();
   } catch (error: any) {
     toast({
       title: 'Uh oh! Something went wrong.',
       description: error.message,
     });
+  }
+}
+
+function refreshViewLength(){
+  if (itemView.value === 'list') {
+    if (searchResult.value.length > 8) {
+      listHeight.value = 'h-96';
+    } else {
+      listHeight.value = 'h-' + entities.value.length * 12;
+    }
+  } else {
+    if (searchResult.value.length > 24) {
+      listHeight.value = 'h-96';
+    } else {
+      listHeight.value = 'h-' + Math.max(entities.value.length, 3) / 3 * 12;
+    }
   }
 }
 
@@ -90,7 +108,6 @@ const onSubmit = handleSubmit(async (values) => {
     } as Entity);
 
     entities.value.push(entity);
-    calcListHeight();
     toast({
       title: 'Success',
       description: 'Entity successfully created.',
@@ -104,22 +121,6 @@ const onSubmit = handleSubmit(async (values) => {
     });
   }
 })
-
-function calcListHeight() {
-  if (itemView.value === 'list') {
-    if (entities.value.length > 8) {
-      listHeight.value = 'h-96';
-    } else {
-      listHeight.value = 'h-' + entities.value.length * 12;
-    }
-  } else {
-    if (entities.value.length > 24) {
-      listHeight.value = 'h-96';
-    } else {
-      listHeight.value = 'h-' + Math.max(entities.value.length, 3) / 3 * 12;
-    }
-  }
-}
 
 async function navigateToEntity(id: string) {
   await router.push('/entity/' + id)
@@ -147,6 +148,10 @@ watch(
     },
     {immediate: true}
 );
+
+watch(itemView, () => {
+  refreshViewLength();
+})
 </script>
 
 <template>
@@ -198,37 +203,23 @@ watch(
             </form>
           </DialogContent>
         </Dialog>
+
         <VerticalSeperator/>
+
         <GridSizeSelector
             v-if="moduleConfig"
             :column-size="moduleConfig.configuration['columnSize']"
             @update-grid-size="(newSize) => changeGridSize('entityList', newSize, emit)"
         />
-        <TextTooltip text="Switch to grid" v-if="itemView === 'list' && showCardBody">
-          <IconButton
-              @click="changeItemView('entityList', 'grid', emit)" >
-            <StretchHorizontal/>
-          </IconButton>
-        </TextTooltip>
-
-        <TextTooltip text="Switch to list" v-if="itemView === 'grid' && showCardBody">
-          <IconButton
-                  @click="changeItemView('entityList', 'list', emit)">
-            <LayoutGrid/>
-          </IconButton>
-        </TextTooltip>
-
-        <TextTooltip text="Expand" v-if="!showCardBody">
-          <IconButton @click="toggleCardBody('entityList', emit)">
-            <ChevronDown/>
-          </IconButton>
-        </TextTooltip>
-
-        <TextTooltip text="Minimize" v-if="showCardBody">
-          <IconButton @click="toggleCardBody('entityList', emit)">
-            <ChevronUp/>
-          </IconButton>
-        </TextTooltip>
+        <ItemViewSelector
+            :item-view="itemView"
+            :show-card-body="showCardBody"
+            @toggle="(payload) => changeItemView('entityList', payload, emit)"
+        />
+        <CardBodyToggler
+            :show-card-body="showCardBody"
+            @toggle="toggleCardBody('entityList', emit)"
+        />
 
       </div>
     </CardHeader>

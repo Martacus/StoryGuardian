@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ChevronDown, ChevronUp, LayoutGrid, Plus, StretchHorizontal} from 'lucide-vue-next';
+import {Plus} from 'lucide-vue-next';
 import {toTypedSchema} from '@vee-validate/zod';
 import {z} from 'zod';
 import {Field, useForm} from 'vee-validate';
@@ -17,12 +17,14 @@ import {CreateTag} from "../../../bindings/storyguardian/src/project/storymanage
 import {useToggleBody} from "@/composables/useToggleBody";
 import {useGridSize} from "@/composables/useGridSize";
 import {StoryModule} from "../../../bindings/storyguardian/src/project";
-import GridSizeSelector from "@/components/shared/GridSizeSelector.vue";
-import VerticalSeperator from "@/components/ui/separator/VerticalSeperator.vue";
+import GridSizeSelector from "@/components/shared/button/GridSizeSelector.vue";
+import VerticalSeperator from "@/components/ui/separator/VerticalSeparator.vue";
 import {useItemGridLayout} from "@/composables/useItemGridLayout";
 import {useItemFilter} from "@/composables/useItemFilter";
 import ItemSearch from "@/components/shared/ItemSearch.vue";
 import IconButton from "@/components/ui/button/IconButton.vue";
+import CardBodyToggler from "@/components/shared/button/CardBodyToggler.vue";
+import ItemViewSelector from "@/components/shared/button/ItemViewSelector.vue";
 
 const props = defineProps<{
   tags: string[],
@@ -136,30 +138,20 @@ onMounted(() => {
           </DialogContent>
         </Dialog>
         <VerticalSeperator />
-        <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('tagList', newSize, emit)"/>
-        <TextTooltip text="Switch to grid" v-if="itemView === 'list' && showCardBody">
-          <IconButton @click="changeItemView('tagList', 'grid', emit)">
-            <StretchHorizontal/>
-          </IconButton>
-        </TextTooltip>
-
-        <TextTooltip text="Switch to list" v-if="itemView === 'grid' && showCardBody">
-          <IconButton @click="changeItemView('tagList', 'grid', emit)">
-            <LayoutGrid/>
-          </IconButton>
-        </TextTooltip>
-
-        <TextTooltip text="Expand" v-if="!showCardBody">
-          <IconButton @click="toggleCardBody('tagList', emit)">
-            <ChevronDown/>
-          </IconButton>
-        </TextTooltip>
-
-        <TextTooltip text="Minimize" v-if="showCardBody">
-          <IconButton @click="toggleCardBody('tagList', emit)">
-            <ChevronUp/>
-          </IconButton>
-        </TextTooltip>
+        <GridSizeSelector
+            v-if="moduleConfig"
+            :column-size="moduleConfig.configuration['columnSize']"
+            @update-grid-size="(newSize) => changeGridSize('tagList', newSize, emit)"
+        />
+        <ItemViewSelector
+            :item-view="itemView"
+            :show-card-body="showCardBody"
+            @toggle="(payload) => changeItemView('tagList', payload, emit)"
+        />
+        <CardBodyToggler
+            :show-card-body="showCardBody"
+            @toggle="toggleCardBody('tagList', emit)"
+        />
 
       </div>
     </CardHeader>
