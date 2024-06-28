@@ -3,10 +3,12 @@
 
 import * as ApplicationManager from "./applicationmanager.js";
 import * as EntityManager from "./entitymanager.js";
+import * as RelationManager from "./relationmanager.js";
 import * as StoryManager from "./storymanager.js";
 export {
     ApplicationManager,
     EntityManager,
+    RelationManager,
     StoryManager
 };
 

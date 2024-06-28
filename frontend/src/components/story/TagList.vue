@@ -39,12 +39,11 @@ const tagList = ref<string[]>([]);
 
 const {toast} = useToast();
 const {showCardBody, toggleCardBody} = useToggleBody(props.moduleConfig);
-const {columnSize, changeGridSize } = useGridSize(props.moduleConfig);
+const {columnSize, changeGridSize} = useGridSize(props.moduleConfig);
 const {itemView, changeItemView} = useItemGridLayout(props.moduleConfig);
 const {searchInput, searchResult} = useItemFilter(tagList, (tag, filter) => {
   return tag.toLowerCase().includes(filter.toLowerCase());
 });
-
 
 
 //Form
@@ -104,7 +103,7 @@ onMounted(() => {
   <Card class="bg-muted/30 min-w-[22rem]" :class="columnSize">
     <CardHeader class="flex flex-row justify-between items-center">
       <CardTitle>Tags</CardTitle>
-      <ItemSearch v-model:search-input="searchInput" placeholder="Search tags..."/>
+      <ItemSearch v-if="showCardBody" v-model:search-input="searchInput" placeholder="Search tags..."/>
       <div class="flex flex-row space-x-2">
         <Dialog v-model:open="dialogOpen" v-if="showCardBody">
           <DialogTrigger>
@@ -137,7 +136,7 @@ onMounted(() => {
             </form>
           </DialogContent>
         </Dialog>
-        <VerticalSeperator />
+        <VerticalSeperator/>
         <GridSizeSelector
             v-if="moduleConfig"
             :column-size="moduleConfig.configuration['columnSize']"

@@ -2,7 +2,6 @@ package project
 
 import (
 	"fmt"
-	"github.com/google/uuid"
 	"os"
 	"path/filepath"
 	"storyguardian/src/constants"
@@ -19,19 +18,6 @@ type Entity struct {
 	Tags        []string               `json:"tags"`
 	Relations   []string               `json:"relations"`
 	Modules     map[string]StoryModule `json:"modules"`
-}
-
-type Relation struct {
-	Id          string `json:"id"`
-	Name        string `json:"name"`
-	EntityOne   string `json:"entityOne"`
-	EntityTwo   string `json:"entityTwo"`
-	Description string `json:"description"`
-}
-
-type RelationInfo struct {
-	Relation
-	ToName string `json:"toName"`
 }
 
 type EntityManager struct {
@@ -160,111 +146,4 @@ func (e *EntityManager) SetEntityName(entityId string, name string) (string, err
 
 func (e *EntityManager) getEntityFilePath(entityID string) string {
 	return filepath.Join(e.StoryManager.Story.Location, constants.EntityFolderName, entityID+".json")
-}
-
-// Relations
-func (r *Relation) getOther(entityId string) string {
-	if r.EntityOne == entityId {
-		return r.EntityTwo
-	}
-	return r.EntityOne
-}
-
-func (e *EntityManager) LoadRelationInfo(entityId string, paginationStart int, amount int) ([]RelationInfo, error) {
-	_ = paginationStart
-	_ = amount
-
-	entity, err := e.GetEntity(entityId)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get entity: %v", err)
-	}
-
-	var relationInfo []RelationInfo
-	for _, relationId := range entity.Relations {
-		relation := Relation{}
-		if err := fileio.WriteFilePathToStruct(e.getRelationPath(relationId), &relation); err != nil {
-			return nil, fmt.Errorf("failed to write relation to struct: %v", err)
-		}
-
-		relatedEntity, err := e.GetEntity(relation.getOther(entityId))
-		if err != nil {
-			return nil, fmt.Errorf("failed to get entity: %v", err)
-		}
-
-		relationInfo = append(relationInfo, RelationInfo{
-			ToName:   relatedEntity.Name,
-			Relation: relation,
-		})
-	}
-	return relationInfo, nil
-}
-
-func (e *EntityManager) CreateRelation(entityId string) (string, error) {
-	entity, err := e.GetEntity(entityId)
-	if err != nil {
-		return "", fmt.Errorf("failed to get entity: %v", err)
-	}
-
-	relation := Relation{
-		Id:          uuid.New().String(),
-		EntityOne:   entityId,
-		EntityTwo:   "e01e7ce9-36e1-4943-af20-6da01f77038a",
-		Name:        "Placeholder",
-		Description: "Placeholder",
-	}
-
-	//Write the relation to the system
-	filePath := e.getRelationPath(relation.Id)
-	if err := fileio.WriteStructToFilePath(relation, filePath); err != nil {
-		return "", fmt.Errorf("could save new relation to file: %v", err)
-	}
-
-	//Write the relation id to the entity
-	entity.Relations = append(entity.Relations, relation.Id)
-	if err = fileio.WriteStructToFilePath(entity, e.getEntityFilePath(entityId)); err != nil {
-		return "", fmt.Errorf("could not save entity with new relation: %v", err)
-	}
-
-	return relation.Id, nil
-}
-
-func (e *EntityManager) getRelationPath(relationId string) string {
-	return filepath.Join(e.StoryManager.Story.Location, constants.RelationsFolderName, relationId+".json")
-}
-
-func (e *EntityManager) GetRelation(relationId string) (Relation, error) {
-	var relation Relation
-	if err := fileio.WriteFilePathToStruct(e.getRelationPath(relationId), &relation); err != nil {
-		return relation, fmt.Errorf("could retrieve relation: %v", err)
-	}
-
-	return relation, nil
-}
-
-func (e *EntityManager) SetRelationDescription(relationId string, description string) (string, error) {
-	relation, err := e.GetRelation(relationId)
-	if err != nil {
-		return "", fmt.Errorf("failed to get relation: %v", err)
-	}
-
-	relation.Description = description
-	if err = fileio.WriteStructToFilePath(relation, e.getRelationPath(relationId)); err != nil {
-		return "", fmt.Errorf("could not save the relation description change: %v", err)
-	}
-
-	return description, nil
-}
-
-func (e *EntityManager) SetRelationName(relationId string, name string) (string, error) {
-	relation, err := e.GetRelation(relationId)
-	if err != nil {
-		return "", fmt.Errorf("failed to get relation: %v", err)
-	}
-
-	relation.Name = name
-	if err = fileio.WriteStructToFilePath(relation, e.getRelationPath(relationId)); err != nil {
-		return "", fmt.Errorf("could not save the relation description change: %v", err)
-	}
-
-	return name, nil
 }

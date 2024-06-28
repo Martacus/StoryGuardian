@@ -158,7 +158,7 @@ watch(itemView, () => {
   <Card class="bg-muted/30 min-w-[22rem]" :class="columnSize">
     <CardHeader class="flex flex-row justify-between items-center">
       <CardTitle> Entities</CardTitle>
-      <ItemSearch v-model:search-input="searchInput" placeholder="Search entities..."/>
+      <ItemSearch v-if="showCardBody" v-model:search-input="searchInput" placeholder="Search entities..."/>
       <div class="flex flex-row space-x-2">
 
         <!--    Add Entity    -->

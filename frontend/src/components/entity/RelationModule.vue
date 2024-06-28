@@ -7,7 +7,6 @@ import {Plus, Trash2} from "lucide-vue-next";
 import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
 import {onMounted, ref} from "vue";
 import {Entity, RelationInfo, StoryModule} from "../../../bindings/storyguardian/src/project";
-import {CreateRelation, LoadRelationInfo} from "../../../bindings/storyguardian/src/project/entitymanager";
 import {useToast} from "@/components/ui/toast";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Field, useForm} from "vee-validate";
@@ -23,6 +22,7 @@ import GridSizeSelector from "@/components/shared/button/GridSizeSelector.vue";
 import VerticalSeperator from "@/components/ui/separator/VerticalSeparator.vue";
 import IconButton from "@/components/ui/button/IconButton.vue";
 import CardBodyToggler from "@/components/shared/button/CardBodyToggler.vue";
+import {CreateRelation, LoadRelationInfo} from "../../../bindings/storyguardian/src/project/relationmanager";
 
 const props = defineProps<{
   entity: Entity,
@@ -81,7 +81,6 @@ async function createRelation(){
 }
 
 function openRelation(relationId: string){
-  console.log('ehgggg')
  router.push("/relation/" + relationId);
 }
 </script>

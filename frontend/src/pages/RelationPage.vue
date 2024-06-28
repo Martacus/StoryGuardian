@@ -17,13 +17,14 @@ import Description from "@/components/shared/Description.vue";
 import TextToolTip from "@/components/ui/tooltip/TextTooltip.vue";
 import {onMounted, ref} from "vue";
 import {useToast} from "@/components/ui/toast";
+import PageHeaderCard from "@/components/shared/PageHeaderCard.vue";
+import IconButton from "@/components/ui/button/IconButton.vue";
+import RelationInfo from "@/components/relation/RelationInfo.vue";
 import {
   GetRelation,
   SetRelationDescription,
   SetRelationName
-} from "../../bindings/storyguardian/src/project/entitymanager";
-import PageHeaderCard from "@/components/shared/PageHeaderCard.vue";
-import IconButton from "@/components/ui/button/IconButton.vue";
+} from "../../bindings/storyguardian/src/project/relationmanager";
 
 const router = useRouter();
 const route = useRoute();
@@ -103,6 +104,7 @@ async function saveDescription(descriptionValue: string) {
         @save-description="saveDescription"
         :module-config="null"
     />
+    <RelationInfo module-config=""/>
   </DashboardLayout>
 </template>
 

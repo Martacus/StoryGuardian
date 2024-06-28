@@ -13,7 +13,6 @@ import IconButton from "@/components/ui/button/IconButton.vue";
 import CardBodyToggler from "@/components/shared/button/CardBodyToggler.vue";
 
 const props = defineProps<{
-  description: String,
   moduleConfig: StoryModule
 }>()
 
@@ -38,7 +37,7 @@ async function save() {
 <template>
   <Card class="bg-muted/30 min-w-[22rem]" :class="columnSize">
     <CardHeader class="flex flex-row justify-between items-center">
-      <CardTitle>Description</CardTitle>
+      <CardTitle>Information</CardTitle>
       <div class="flex flex-row space-x-2">
         <TextTooltip text="Edit" v-if="showCardBody">
           <IconButton
@@ -48,7 +47,7 @@ async function save() {
         </TextTooltip>
         <VerticalSeperator />
         <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('description', newSize, emit)"/>
-       <CardBodyToggler :show-card-body="showCardBody"  @toggle="toggleCardBody('relationInfo', emit)"/>
+        <CardBodyToggler :show-card-body="showCardBody"  @toggle="toggleCardBody('relationInfo', emit)"/>
       </div>
 
     </CardHeader>

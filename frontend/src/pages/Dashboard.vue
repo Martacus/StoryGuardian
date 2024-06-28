@@ -11,7 +11,6 @@ import {
 import TextToolTip from "@/components/ui/tooltip/TextTooltip.vue";
 import {Plus, Settings} from 'lucide-vue-next';
 import {onMounted, ref} from "vue";
-import {useRoute} from "vue-router";
 import Description from "@/components/shared/Description.vue";
 import EntityList from "@/components/story/EntityList.vue";
 import {useToast} from "@/components/ui/toast";
@@ -29,8 +28,8 @@ import TagList from "@/components/story/TagList.vue";
 import ModuleSelectItem from "@/components/story/modules/ModuleSelectItem.vue";
 import PageHeaderCard from "@/components/shared/PageHeaderCard.vue";
 import IconButton from "@/components/ui/button/IconButton.vue";
+import {LoadRelations} from "../../bindings/storyguardian/src/project/relationmanager";
 
-const route = useRoute();
 const {toast} = useToast()
 const addModuleDialogOpened = ref(false);
 const story = ref<Story>();
@@ -50,6 +49,7 @@ const isUsedModule = (moduleName: string) => {
 onMounted(async () => {
   try {
   const retrievedStory = await GetOpenStory();
+  LoadRelations()
   if (retrievedStory !== null) {
     story.value = retrievedStory
   }

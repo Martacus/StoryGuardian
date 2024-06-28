@@ -10,10 +10,12 @@ const (
 	TagListEntityModuleID     = "tagList"
 	DescriptionEntityModuleID = "description"
 	RelationsEntityModuleID   = "relations"
+	RelationInfoModuleID      = "relationInfo"
 )
 
 var availableStoryModules = []string{DescriptionStoryModuleID, EntityListStoryModuleID, TagListStoryModuleID, ImageStoryModuleID}
 var availableEntityModules = []string{DescriptionEntityModuleID, TagListEntityModuleID, RelationsEntityModuleID}
+var availableRelationModules = []string{DescriptionEntityModuleID, RelationInfoModuleID}
 
 func (s *StoryManager) GetStoryModules(unusedModulesOnly bool) []string {
 	if !unusedModulesOnly {
@@ -103,6 +105,56 @@ func (e *EntityManager) EditEntityModuleConfig(entityId, module string, config s
 	}
 	return nil
 }
+
+//func (e *EntityManager) GetEntityModules(entityId string, unusedModulesOnly bool) []string {
+//	entity, err := e.GetEntity(entityId)
+//	if err != nil {
+//		return make([]string, 0)
+//	}
+//
+//	if !unusedModulesOnly {
+//		return availableEntityModules
+//	}
+//
+//	var unusedEntityModules []string
+//	for _, module := range availableEntityModules {
+//		if _, ok := entity.Modules[module]; !ok {
+//			unusedEntityModules = append(unusedEntityModules, module)
+//		}
+//	}
+//	return unusedEntityModules
+//}
+//
+//func (e *EntityManager) AddEntityModule(entityId string, module string) error {
+//	entity, err := e.GetEntity(entityId)
+//	if err != nil {
+//		return fmt.Errorf("could not add module to entity: %v", err)
+//	}
+//
+//	switch module {
+//	case TagListEntityModuleID:
+//		if err := addEntityTagsModule(entity, e); err != nil {
+//			return err
+//		}
+//		break
+//	}
+//
+//	return nil
+//}
+//
+//func (e *EntityManager) EditEntityModuleConfig(entityId, module string, config string, value string) error {
+//	entity, err := e.GetEntity(entityId)
+//	if err != nil {
+//		return fmt.Errorf("could not edit entity module config: %v", err)
+//	}
+//
+//	entity.Modules[module].Configuration[config] = value
+//
+//	if err := e.SaveEntity(*entity); err != nil {
+//		return fmt.Errorf("could not edit entity module config: %v", err)
+//	}
+//	return nil
+//}
 
 func addStoryImagesModule(manager *StoryManager) error {
 	newImageModule := StoryModule{
