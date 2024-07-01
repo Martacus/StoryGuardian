@@ -21,6 +21,7 @@ import PageHeaderCard from "@/components/shared/PageHeaderCard.vue";
 import IconButton from "@/components/ui/button/IconButton.vue";
 import RelationInfo from "@/components/relation/RelationInfo.vue";
 import {
+  EditRelationModuleConfig,
   GetRelation,
   SetRelationDescription,
   SetRelationName
@@ -31,11 +32,16 @@ const route = useRoute();
 const {toast} = useToast();
 
 const relation = ref<Relation>();
+const relationId = ref('');
 const addModuleDialogOpened = ref(false)
 
 onMounted(async () => {
   let relationid: string = route.params['id'] as string
-  relation.value = await GetRelation(relationid)
+  let gotRelation = await GetRelation(relationid)
+  if(gotRelation){
+    relation.value = gotRelation
+    relationId.value = gotRelation.id
+  }
 });
 
 async function saveRelationTitle(title: string) {
@@ -61,6 +67,15 @@ async function saveDescription(descriptionValue: string) {
       description: error,
     });
   }
+}
+
+function moduleConfigChange(module: string, key: string, value: string) {
+  EditRelationModuleConfig(relationId.value, module, key, value).catch((error: string) => {
+    toast({
+      title: 'Failed to save module config change',
+      description: error,
+    });
+  });
 }
 </script>
 
@@ -102,9 +117,14 @@ async function saveDescription(descriptionValue: string) {
         v-if="relation"
         :description="relation.description"
         @save-description="saveDescription"
-        :module-config="null"
+        :module-config="relation.modules['description']"
+        @config-change="moduleConfigChange"
     />
-    <RelationInfo module-config=""/>
+    <RelationInfo
+        v-if="relation"
+        :module-config="relation.modules['relationInfo']"
+        @config-change="moduleConfigChange"
+    />
   </DashboardLayout>
 </template>
 

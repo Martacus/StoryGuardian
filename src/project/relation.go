@@ -10,11 +10,12 @@ import (
 )
 
 type Relation struct {
-	Id          string `json:"id"`
-	Name        string `json:"name"`
-	EntityOne   string `json:"entityOne"`
-	EntityTwo   string `json:"entityTwo"`
-	Description string `json:"description"`
+	Id          string                 `json:"id"`
+	Name        string                 `json:"name"`
+	EntityOne   string                 `json:"entityOne"`
+	EntityTwo   string                 `json:"entityTwo"`
+	Description string                 `json:"description"`
+	Modules     map[string]StoryModule `json:"modules"`
 }
 
 type RelationInfo struct {
@@ -84,7 +85,16 @@ func (r *RelationManager) LoadRelationInfo(entityId string, paginationStart int,
 			return nil, fmt.Errorf("failed to load relation info: %v", err)
 		}
 
-		relatedEntity, err := r.EntityManager.GetEntity(relation.getOther(entityId))
+		if relation.EntityTwo == "" {
+			relationInfo = append(relationInfo, RelationInfo{
+				ToName:   "-Empty-",
+				Relation: *relation,
+			})
+			return relationInfo, nil
+		}
+
+		var relatedEntity *Entity
+		relatedEntity, err = r.EntityManager.GetEntity(relation.getOther(entityId))
 		if err != nil {
 			return nil, fmt.Errorf("failed to load relation info: %v", err)
 		}
@@ -104,12 +114,30 @@ func (r *RelationManager) CreateRelation(entityId string) (string, error) {
 		return "", fmt.Errorf("failed to create relation: %v", err)
 	}
 
+	infoModule := StoryModule{
+		Name: RelationInfoModuleID,
+		Configuration: map[string]string{
+			"columnSize": "4",
+		},
+	}
+
+	descModule := StoryModule{
+		Name: DescriptionModuleID,
+		Configuration: map[string]string{
+			"columnSize": "4",
+		},
+	}
+
 	relation := Relation{
 		Id:          uuid.New().String(),
 		EntityOne:   entityId,
-		EntityTwo:   "e01e7ce9-36e1-4943-af20-6da01f77038a",
+		EntityTwo:   "",
 		Name:        "Placeholder",
 		Description: "Placeholder",
+		Modules: map[string]StoryModule{
+			RelationInfoModuleID: infoModule,
+			DescriptionModuleID:  descModule,
+		},
 	}
 
 	//Write the relation to the system
@@ -133,10 +161,10 @@ func (r *RelationManager) getRelationPath(relationId string) string {
 	return filepath.Join(r.EntityManager.StoryManager.Story.Location, constants.RelationsFolderName, relationId+".json")
 }
 
-func (r *RelationManager) GetRelation(relationId string) (Relation, error) {
-	var relation Relation
-	if err := fileio.WriteFilePathToStruct(r.getRelationPath(relationId), &relation); err != nil {
-		return relation, fmt.Errorf("could retrieve relation: %v", err)
+func (r *RelationManager) GetRelation(relationId string) (*Relation, error) {
+	relation, ok := r.Relations[relationId]
+	if !ok {
+		return nil, fmt.Errorf("could retrieve relation: %v", relationId)
 	}
 
 	return relation, nil
@@ -145,12 +173,12 @@ func (r *RelationManager) GetRelation(relationId string) (Relation, error) {
 func (r *RelationManager) SetRelationDescription(relationId string, description string) (string, error) {
 	relation, ok := r.Relations[relationId]
 	if !ok {
-		return "", fmt.Errorf("relation not found")
+		return "", fmt.Errorf("could not set description: relation not found")
 	}
 
 	relation.Description = description
-	if err := fileio.WriteStructToFilePath(relation, r.getRelationPath(relationId)); err != nil {
-		return "", fmt.Errorf("could not save the relation description change: %v", err)
+	if err := r.SaveRelation(*relation); err != nil {
+		return "", fmt.Errorf("could not set description: %v", err)
 	}
 
 	return description, nil
@@ -159,13 +187,21 @@ func (r *RelationManager) SetRelationDescription(relationId string, description 
 func (r *RelationManager) SetRelationName(relationId string, name string) (string, error) {
 	relation, ok := r.Relations[relationId]
 	if !ok {
-		return "", fmt.Errorf("relation not found")
+		return "", fmt.Errorf("could not set relation name: relation not found")
 	}
 
 	relation.Name = name
-	if err := fileio.WriteStructToFilePath(relation, r.getRelationPath(relationId)); err != nil {
-		return "", fmt.Errorf("could not save the relation description change: %v", err)
+	if err := r.SaveRelation(*relation); err != nil {
+		return "", fmt.Errorf("could not set relation name: %v", err)
 	}
 
 	return name, nil
+}
+
+func (r *RelationManager) SaveRelation(relation Relation) error {
+	if err := fileio.WriteStructToFilePath(relation, r.getRelationPath(relation.Id)); err != nil {
+		return fmt.Errorf("could not save the relation to file system: %v", err)
+	}
+
+	return nil
 }

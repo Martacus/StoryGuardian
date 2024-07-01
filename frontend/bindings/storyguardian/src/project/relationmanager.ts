@@ -9,15 +9,34 @@ import {Call as $Call, Create as $Create} from "@wailsio/runtime";
 // @ts-ignore: Unused imports
 import * as $models from "./models.js";
 
+export function AddRelationModule(relationId: string, $module: string): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(4140209462, relationId, $module) as any;
+    return $resultPromise;
+}
+
 export function CreateRelation(entityId: string): Promise<string> & { cancel(): void } {
     let $resultPromise = $Call.ByID(3415959287, entityId) as any;
     return $resultPromise;
 }
 
-export function GetRelation(relationId: string): Promise<$models.Relation> & { cancel(): void } {
+export function EditRelationModuleConfig(relationId: string, $module: string, config: string, value: string): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(3946188197, relationId, $module, config, value) as any;
+    return $resultPromise;
+}
+
+export function GetRelation(relationId: string): Promise<$models.Relation | null> & { cancel(): void } {
     let $resultPromise = $Call.ByID(34754189, relationId) as any;
     let $typingPromise = $resultPromise.then(($result) => {
-        return $$createType0($result);
+        return $$createType1($result);
+    }) as any;
+    $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
+    return $typingPromise;
+}
+
+export function GetRelationModules(relationid: string, unusedModulesOnly: boolean): Promise<string[]> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(1261186738, relationid, unusedModulesOnly) as any;
+    let $typingPromise = $resultPromise.then(($result) => {
+        return $$createType2($result);
     }) as any;
     $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
     return $typingPromise;
@@ -26,7 +45,7 @@ export function GetRelation(relationId: string): Promise<$models.Relation> & { c
 export function LoadRelationInfo(entityId: string, paginationStart: number, amount: number): Promise<$models.RelationInfo[]> & { cancel(): void } {
     let $resultPromise = $Call.ByID(815291267, entityId, paginationStart, amount) as any;
     let $typingPromise = $resultPromise.then(($result) => {
-        return $$createType2($result);
+        return $$createType4($result);
     }) as any;
     $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
     return $typingPromise;
@@ -34,6 +53,11 @@ export function LoadRelationInfo(entityId: string, paginationStart: number, amou
 
 export function LoadRelations(): Promise<void> & { cancel(): void } {
     let $resultPromise = $Call.ByID(3169623388) as any;
+    return $resultPromise;
+}
+
+export function SaveRelation(relation: $models.Relation): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(2129402810, relation) as any;
     return $resultPromise;
 }
 
@@ -49,5 +73,7 @@ export function SetRelationName(relationId: string, name: string): Promise<strin
 
 // Private type creation functions
 const $$createType0 = $models.Relation.createFrom;
-const $$createType1 = $models.RelationInfo.createFrom;
-const $$createType2 = $Create.Array($$createType1);
+const $$createType1 = $Create.Nullable($$createType0);
+const $$createType2 = $Create.Array($Create.Any);
+const $$createType3 = $models.RelationInfo.createFrom;
+const $$createType4 = $Create.Array($$createType3);

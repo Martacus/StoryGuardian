@@ -159,6 +159,7 @@ export class Relation {
     "entityOne": string;
     "entityTwo": string;
     "description": string;
+    "modules": { [_: string]: StoryModule };
 
     /** Creates a new Relation instance. */
     constructor($$source: Partial<Relation> = {}) {
@@ -177,6 +178,9 @@ export class Relation {
         if (!("description" in $$source)) {
             this["description"] = "";
         }
+        if (!("modules" in $$source)) {
+            this["modules"] = {};
+        }
 
         Object.assign(this, $$source);
     }
@@ -185,7 +189,11 @@ export class Relation {
      * Creates a new Relation instance from a string or object.
      */
     static createFrom($$source: any = {}): Relation {
+        const $$createField5_0 = $$createType4;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("modules" in $$parsedSource) {
+            $$parsedSource["modules"] = $$createField5_0($$parsedSource["modules"]);
+        }
         return new Relation($$parsedSource as Partial<Relation>);
     }
 }
@@ -196,6 +204,7 @@ export class RelationInfo {
     "entityOne": string;
     "entityTwo": string;
     "description": string;
+    "modules": { [_: string]: StoryModule };
     "toName": string;
 
     /** Creates a new RelationInfo instance. */
@@ -215,6 +224,9 @@ export class RelationInfo {
         if (!("description" in $$source)) {
             this["description"] = "";
         }
+        if (!("modules" in $$source)) {
+            this["modules"] = {};
+        }
         if (!("toName" in $$source)) {
             this["toName"] = "";
         }
@@ -226,7 +238,11 @@ export class RelationInfo {
      * Creates a new RelationInfo instance from a string or object.
      */
     static createFrom($$source: any = {}): RelationInfo {
+        const $$createField5_0 = $$createType4;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("modules" in $$parsedSource) {
+            $$parsedSource["modules"] = $$createField5_0($$parsedSource["modules"]);
+        }
         return new RelationInfo($$parsedSource as Partial<RelationInfo>);
     }
 }

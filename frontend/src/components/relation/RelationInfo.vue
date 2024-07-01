@@ -1,37 +1,23 @@
 <script setup lang="ts">
 
-import { Edit } from 'lucide-vue-next';
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
-import {ref} from "vue";
 import {StoryModule} from "../../../bindings/storyguardian/src/project";
 import GridSizeSelector from "@/components/shared/button/GridSizeSelector.vue";
 import {useGridSize} from "@/composables/useGridSize";
 import {useToggleBody} from "@/composables/useToggleBody";
 import VerticalSeperator from "@/components/ui/separator/VerticalSeparator.vue";
-import IconButton from "@/components/ui/button/IconButton.vue";
 import CardBodyToggler from "@/components/shared/button/CardBodyToggler.vue";
 
 const props = defineProps<{
   moduleConfig: StoryModule
 }>()
 
-const emit = defineEmits(['saveDescription', 'configChange'])
+const emit = defineEmits(['configChange'])
 
-const storyDescriptionEditor = ref();
-const isEditing = ref(false);
 
 const {showCardBody, toggleCardBody} = useToggleBody(props.moduleConfig)
 const {columnSize, changeGridSize } = useGridSize(props.moduleConfig)
 
-function toggleEdit() {
-  isEditing.value = !isEditing.value;
-}
-
-async function save() {
-  emit('saveDescription', storyDescriptionEditor.value?.getHTML());
-  toggleEdit();
-}
 </script>
 
 <template>
@@ -39,12 +25,6 @@ async function save() {
     <CardHeader class="flex flex-row justify-between items-center">
       <CardTitle>Information</CardTitle>
       <div class="flex flex-row space-x-2">
-        <TextTooltip text="Edit" v-if="showCardBody">
-          <IconButton
-              @click="toggleEdit()">
-            <Edit />
-          </IconButton>
-        </TextTooltip>
         <VerticalSeperator />
         <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('description', newSize, emit)"/>
         <CardBodyToggler :show-card-body="showCardBody"  @toggle="toggleCardBody('relationInfo', emit)"/>
