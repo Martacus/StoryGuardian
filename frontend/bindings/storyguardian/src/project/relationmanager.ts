@@ -9,8 +9,8 @@ import {Call as $Call, Create as $Create} from "@wailsio/runtime";
 // @ts-ignore: Unused imports
 import * as $models from "./models.js";
 
-export function AddRelationModule(relationId: string, $module: string): Promise<void> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(4140209462, relationId, $module) as any;
+export function AddRelationModule(relationID: string, $module: string): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(4140209462, relationID, $module) as any;
     return $resultPromise;
 }
 
@@ -19,8 +19,8 @@ export function CreateRelation(entityId: string): Promise<string> & { cancel(): 
     return $resultPromise;
 }
 
-export function EditRelationModuleConfig(relationId: string, $module: string, config: string, value: string): Promise<void> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(3946188197, relationId, $module, config, value) as any;
+export function EditRelationModuleConfig(relationID: string, $module: string, config: string, value: string): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(3946188197, relationID, $module, config, value) as any;
     return $resultPromise;
 }
 
@@ -33,8 +33,8 @@ export function GetRelation(relationId: string): Promise<$models.Relation | null
     return $typingPromise;
 }
 
-export function GetRelationModules(relationid: string, unusedModulesOnly: boolean): Promise<string[]> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(1261186738, relationid, unusedModulesOnly) as any;
+export function GetRelationModules(relationID: string, unusedModulesOnly: boolean): Promise<string[]> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(1261186738, relationID, unusedModulesOnly) as any;
     let $typingPromise = $resultPromise.then(($result) => {
         return $$createType2($result);
     }) as any;

@@ -1,6 +1,8 @@
 package project
 
-import "fmt"
+import (
+	"fmt"
+)
 
 const (
 	ImageStoryModuleID      = "images"
@@ -11,42 +13,31 @@ const (
 	RelationInfoModuleID    = "relationInfo"
 )
 
-var availableStoryModules = []string{DescriptionModuleID, EntityListStoryModuleID, TagListModuleID, ImageStoryModuleID}
-var availableEntityModules = []string{DescriptionModuleID, TagListModuleID, RelationsEntityModuleID}
-var availableRelationModules = []string{DescriptionModuleID, RelationInfoModuleID}
+var (
+	availableStoryModules    = []string{DescriptionModuleID, EntityListStoryModuleID, TagListModuleID, ImageStoryModuleID}
+	availableEntityModules   = []string{DescriptionModuleID, TagListModuleID, RelationsEntityModuleID}
+	availableRelationModules = []string{DescriptionModuleID, RelationInfoModuleID}
+)
 
 func (s *StoryManager) GetStoryModules(unusedModulesOnly bool) []string {
-	if !unusedModulesOnly {
-		return availableStoryModules
-	}
-
-	var unusedStories []string
-	for _, module := range availableStoryModules {
-		if _, ok := s.Story.Modules[module]; !ok {
-			unusedStories = append(unusedStories, module)
-		}
-	}
-	return unusedStories
+	return getUnusedModules(unusedModulesOnly, availableStoryModules, s.Story.Modules)
 }
 
 func (s *StoryManager) AddStoryModule(module string) error {
 	switch module {
 	case TagListModuleID:
-		if err := addStoryTagsModule(s); err != nil {
-			return err
-		}
-		break
+		return addStoryTagsModule(s)
 	case ImageStoryModuleID:
-		if err := addStoryImagesModule(s); err != nil {
-			return err
-		}
-		break
+		return addStoryImagesModule(s)
+	default:
+		return fmt.Errorf("unknown story module: %s", module)
 	}
-
-	return nil
 }
 
-func (s *StoryManager) EditStoryModuleConfig(module string, config string, value string) error {
+func (s *StoryManager) EditStoryModuleConfig(module, config, value string) error {
+	if _, exists := s.Story.Modules[module]; !exists {
+		return fmt.Errorf("story module %s does not exist", module)
+	}
 	s.Story.Modules[module].Configuration[config] = value
 	if err := s.SaveStory(); err != nil {
 		return fmt.Errorf("could not save module configuration edit: %v", err)
@@ -54,77 +45,53 @@ func (s *StoryManager) EditStoryModuleConfig(module string, config string, value
 	return nil
 }
 
-func (e *EntityManager) GetEntityModules(entityId string, unusedModulesOnly bool) []string {
-	entity, err := e.GetEntity(entityId)
+func (e *EntityManager) GetEntityModules(entityID string, unusedModulesOnly bool) []string {
+	entity, err := e.GetEntity(entityID)
 	if err != nil {
-		return make([]string, 0)
+		return []string{}
 	}
-
-	if !unusedModulesOnly {
-		return availableEntityModules
-	}
-
-	var unusedEntityModules []string
-	for _, module := range availableEntityModules {
-		if _, ok := entity.Modules[module]; !ok {
-			unusedEntityModules = append(unusedEntityModules, module)
-		}
-	}
-	return unusedEntityModules
+	return getUnusedModules(unusedModulesOnly, availableEntityModules, entity.Modules)
 }
 
-func (e *EntityManager) AddEntityModule(entityId string, module string) error {
-	entity, err := e.GetEntity(entityId)
+func (e *EntityManager) AddEntityModule(entityID, module string) error {
+	entity, err := e.GetEntity(entityID)
 	if err != nil {
 		return fmt.Errorf("could not add module to entity: %v", err)
 	}
 
 	switch module {
 	case TagListModuleID:
-		if err := addEntityTagsModule(entity, e); err != nil {
-			return err
-		}
-		break
+		return addEntityTagsModule(entity, e)
+	default:
+		return fmt.Errorf("unknown entity module: %s", module)
 	}
-
-	return nil
 }
 
-func (e *EntityManager) EditEntityModuleConfig(entityId, module string, config string, value string) error {
-	entity, err := e.GetEntity(entityId)
+func (e *EntityManager) EditEntityModuleConfig(entityID, module, config, value string) error {
+	entity, err := e.GetEntity(entityID)
 	if err != nil {
 		return fmt.Errorf("could not edit entity module config: %v", err)
 	}
-
+	if _, exists := entity.Modules[module]; !exists {
+		return fmt.Errorf("entity module %s does not exist", module)
+	}
 	entity.Modules[module].Configuration[config] = value
-
 	if err := e.SaveEntity(*entity); err != nil {
-		return fmt.Errorf("could not edit entity module config: %v", err)
+		return fmt.Errorf("could not save entity module configuration: %v", err)
 	}
 	return nil
 }
 
-func (r *RelationManager) GetRelationModules(relationid string, unusedModulesOnly bool) []string {
-	relation, err := r.GetRelation(relationid)
+func (r *RelationManager) GetRelationModules(relationID string, unusedModulesOnly bool) []string {
+	relation, err := r.GetRelation(relationID)
 	if err != nil {
-		return make([]string, 0)
+		return []string{}
 	}
-
-	if !unusedModulesOnly {
-		return availableRelationModules
-	}
-
-	var unusedModules []string
-	for _, module := range availableRelationModules {
-		if _, ok := relation.Modules[module]; !ok {
-			unusedModules = append(unusedModules, module)
-		}
-	}
-	return unusedModules
+	return getUnusedModules(unusedModulesOnly, availableRelationModules, relation.Modules)
 }
 
-func (r *RelationManager) AddRelationModule(relationId string, module string) error {
-	relation, err := r.GetRelation(relationId)
+func (r *RelationManager) AddRelationModule(relationID, module string) error {
+	relation, err := r.GetRelation(relationID)
 	if err != nil {
 		return fmt.Errorf("could not add module to relation: %v", err)
 	}
@@ -132,22 +99,36 @@ func (r *RelationManager) AddRelationModule(relationId string, module string) er
 	switch module {
 
 	}
-
-	return nil
+	return fmt.Errorf("unknown relation module: %s", module)
 }
 
-func (r *RelationManager) EditRelationModuleConfig(relationId, module string, config string, value string) error {
-	relation, err := r.GetRelation(relationId)
+func (r *RelationManager) EditRelationModuleConfig(relationID, module, config, value string) error {
+	relation, err := r.GetRelation(relationID)
 	if err != nil {
 		return fmt.Errorf("could not edit relation module config: %v", err)
 	}
-
+	if _, exists := relation.Modules[module]; !exists {
+		return fmt.Errorf("relation module %s does not exist", module)
+	}
 	relation.Modules[module].Configuration[config] = value
-
 	if err := r.SaveRelation(*relation); err != nil {
-		return fmt.Errorf("could not edit relation module config: %v", err)
+		return fmt.Errorf("could not save relation module configuration: %v", err)
 	}
 	return nil
+}
+
+func getUnusedModules(unusedModulesOnly bool, availableModules []string, currentModules map[string]StoryModule) []string {
+	if !unusedModulesOnly {
+		return availableModules
+	}
+
+	var unusedModules []string
+	for _, module := range availableModules {
+		if _, ok := currentModules[module]; !ok {
+			unusedModules = append(unusedModules, module)
+		}
+	}
+	return unusedModules
 }
 
 func addStoryImagesModule(manager *StoryManager) error {
@@ -159,9 +140,8 @@ func addStoryImagesModule(manager *StoryManager) error {
 	}
 	manager.Story.Modules[ImageStoryModuleID] = newImageModule
 	if err := manager.SaveStory(); err != nil {
-		return err
+		return fmt.Errorf("unable to add image module to story: %v", err)
 	}
-
 	return nil
 }
 
@@ -175,9 +155,8 @@ func addStoryTagsModule(manager *StoryManager) error {
 	}
 	manager.Story.Modules[TagListModuleID] = newTagListModule
 	if err := manager.SaveStory(); err != nil {
-		return err
+		return fmt.Errorf("unable to add tag module to story: %v", err)
 	}
-
 	return nil
 }
 
@@ -194,6 +173,5 @@ func addEntityTagsModule(entity *Entity, manager *EntityManager) error {
 	if err := manager.SaveEntity(*entity); err != nil {
 		return fmt.Errorf("unable to add tag module to entity: %v", err)
 	}
-
 	return nil
 }

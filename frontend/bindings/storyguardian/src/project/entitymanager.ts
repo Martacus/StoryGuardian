@@ -9,8 +9,8 @@ import {Call as $Call, Create as $Create} from "@wailsio/runtime";
 // @ts-ignore: Unused imports
 import * as $models from "./models.js";
 
-export function AddEntityModule(entityId: string, $module: string): Promise<void> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(32823016, entityId, $module) as any;
+export function AddEntityModule(entityID: string, $module: string): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(32823016, entityID, $module) as any;
     return $resultPromise;
 }
 
@@ -23,8 +23,8 @@ export function CreateEntity(entity: $models.Entity): Promise<$models.Entity> & 
     return $typingPromise;
 }
 
-export function EditEntityModuleConfig(entityId: string, $module: string, config: string, value: string): Promise<void> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(3627222189, entityId, $module, config, value) as any;
+export function EditEntityModuleConfig(entityID: string, $module: string, config: string, value: string): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(3627222189, entityID, $module, config, value) as any;
     return $resultPromise;
 }
 
@@ -37,8 +37,8 @@ export function GetEntity(entityId: string): Promise<$models.Entity | null> & { 
     return $typingPromise;
 }
 
-export function GetEntityModules(entityId: string, unusedModulesOnly: boolean): Promise<string[]> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(3904918628, entityId, unusedModulesOnly) as any;
+export function GetEntityModules(entityID: string, unusedModulesOnly: boolean): Promise<string[]> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(3904918628, entityID, unusedModulesOnly) as any;
     let $typingPromise = $resultPromise.then(($result) => {
         return $$createType2($result);
     }) as any;
