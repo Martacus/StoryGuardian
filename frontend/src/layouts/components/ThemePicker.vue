@@ -29,7 +29,7 @@ const colorMode = useColorMode()
         Dark
       </DropdownMenuItem>
       <!--suppress TypeScriptValidateTypes -->
-      <DropdownMenuItem @click="colorMode = 'system'">
+      <DropdownMenuItem @click="colorMode = 'auto'">
         System
       </DropdownMenuItem>
     </DropdownMenuContent>

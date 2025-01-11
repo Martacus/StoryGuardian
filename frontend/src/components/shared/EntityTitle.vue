@@ -8,10 +8,10 @@ const editTitle = ref(false);
 const emit = defineEmits(['saveTitle']);
 
 const props = defineProps<{
-  title: String
+  title: string
 }>();
 
-const localTitle = ref(props.title);
+const localTitle = ref<string>(props.title);
 
 watch(() => props.title, (newTitle) => {
   localTitle.value = newTitle;

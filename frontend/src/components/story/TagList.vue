@@ -8,7 +8,7 @@ import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
 import {Button} from "@/components/ui/button";
-import {Toast, useToast} from "@/components/ui/toast";
+import {useToast} from "@/components/ui/toast";
 import {FormControl, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {ScrollArea} from "@/components/ui/scroll-area";
@@ -66,7 +66,7 @@ const onSubmit = handleSubmit(async (values) => {
       title: 'Success',
       description: 'Tag successfully created.',
       icon: 'check',
-    } as Toast);
+    });
     dialogOpen.value = false;
   } catch (error: any) {
     toast({

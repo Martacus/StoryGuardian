@@ -31,7 +31,7 @@ const {columnSize, changeGridSize } = useGridSize(props.moduleConfig)
       <div class="flex flex-row space-x-2">
         <TextTooltip text="Edit" v-if="showCardBody">
           <IconButton
-              @click="toggleEdit()">
+              @click="">
             <Edit />
           </IconButton>
         </TextTooltip>
