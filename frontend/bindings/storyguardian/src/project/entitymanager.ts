@@ -28,6 +28,15 @@ export function EditEntityModuleConfig(entityID: string, $module: string, config
     return $resultPromise;
 }
 
+export function GetEntities(): Promise<($models.Entity | null)[]> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(2932847699) as any;
+    let $typingPromise = $resultPromise.then(($result) => {
+        return $$createType2($result);
+    }) as any;
+    $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
+    return $typingPromise;
+}
+
 export function GetEntity(entityId: string): Promise<$models.Entity | null> & { cancel(): void } {
     let $resultPromise = $Call.ByID(2607049459, entityId) as any;
     let $typingPromise = $resultPromise.then(($result) => {
@@ -40,7 +49,7 @@ export function GetEntity(entityId: string): Promise<$models.Entity | null> & { 
 export function GetEntityModules(entityID: string, unusedModulesOnly: boolean): Promise<string[]> & { cancel(): void } {
     let $resultPromise = $Call.ByID(3904918628, entityID, unusedModulesOnly) as any;
     let $typingPromise = $resultPromise.then(($result) => {
-        return $$createType2($result);
+        return $$createType3($result);
     }) as any;
     $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
     return $typingPromise;
@@ -49,7 +58,7 @@ export function GetEntityModules(entityID: string, unusedModulesOnly: boolean): 
 export function LoadEntities(): Promise<$models.Entity[]> & { cancel(): void } {
     let $resultPromise = $Call.ByID(2421700187) as any;
     let $typingPromise = $resultPromise.then(($result) => {
-        return $$createType3($result);
+        return $$createType4($result);
     }) as any;
     $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
     return $typingPromise;
@@ -87,5 +96,6 @@ export function SetEntityName(entityId: string, name: string): Promise<string> &
 // Private type creation functions
 const $$createType0 = $models.Entity.createFrom;
 const $$createType1 = $Create.Nullable($$createType0);
-const $$createType2 = $Create.Array($Create.Any);
-const $$createType3 = $Create.Array($$createType0);
+const $$createType2 = $Create.Array($$createType1);
+const $$createType3 = $Create.Array($Create.Any);
+const $$createType4 = $Create.Array($$createType0);

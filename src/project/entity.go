@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"storyguardian/src/constants"
 	"storyguardian/src/fileio"
+	"storyguardian/src/utility"
 	"time"
 )
 
@@ -59,6 +60,10 @@ func (e *EntityManager) LoadEntities() ([]Entity, error) {
 	}
 
 	return entityList, nil
+}
+
+func (e *EntityManager) GetEntities() []*Entity {
+	return utility.GetAllValues(e.Entities)
 }
 
 func (e *EntityManager) GetEntity(entityId string) (*Entity, error) {
