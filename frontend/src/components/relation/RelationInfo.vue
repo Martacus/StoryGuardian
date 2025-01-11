@@ -7,6 +7,10 @@ import {useGridSize} from "@/composables/useGridSize";
 import {useToggleBody} from "@/composables/useToggleBody";
 import VerticalSeperator from "@/components/ui/separator/VerticalSeparator.vue";
 import CardBodyToggler from "@/components/shared/button/CardBodyToggler.vue";
+import {Label} from "@/components/ui/label";
+import IconButton from "@/components/ui/button/IconButton.vue";
+import {Edit} from "lucide-vue-next";
+import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
 
 const props = defineProps<{
   moduleConfig: StoryModule
@@ -25,14 +29,22 @@ const {columnSize, changeGridSize } = useGridSize(props.moduleConfig)
     <CardHeader class="flex flex-row justify-between items-center">
       <CardTitle>Information</CardTitle>
       <div class="flex flex-row space-x-2">
+        <TextTooltip text="Edit" v-if="showCardBody">
+          <IconButton
+              @click="toggleEdit()">
+            <Edit />
+          </IconButton>
+        </TextTooltip>
         <VerticalSeperator />
-        <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('description', newSize, emit)"/>
+        <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('relationInfo', newSize, emit)"/>
         <CardBodyToggler :show-card-body="showCardBody"  @toggle="toggleCardBody('relationInfo', emit)"/>
       </div>
 
     </CardHeader>
     <CardContent v-if="showCardBody">
-
+      <Label>
+        Zac - Agorass
+      </Label>
     </CardContent>
   </Card>
 </template>
