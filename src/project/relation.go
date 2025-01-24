@@ -2,9 +2,10 @@ package project
 
 import (
 	"fmt"
-	"github.com/google/uuid"
 	"os"
 	"path/filepath"
+
+	"github.com/google/uuid"
 	"storyguardian/src/constants"
 	"storyguardian/src/fileio"
 )
@@ -29,12 +30,10 @@ type RelationManager struct {
 }
 
 func NewRelationManager(entityManager *EntityManager) *RelationManager {
-	relationManager := RelationManager{
+	return &RelationManager{
 		EntityManager: entityManager,
 		Relations:     make(map[string]*Relation),
 	}
-
-	return &relationManager
 }
 
 func (r *Relation) getOther(entityId string) string {
@@ -45,14 +44,13 @@ func (r *Relation) getOther(entityId string) string {
 }
 
 func (r *RelationManager) LoadRelations() error {
-	var relationList []Relation
 	relationFolderPath := filepath.Join(r.EntityManager.StoryManager.Story.Location, "relations")
-
 	files, err := os.ReadDir(relationFolderPath)
 	if err != nil {
 		return fmt.Errorf("could not load relations: %v", err)
 	}
 
+	var relationList []Relation
 	for _, file := range files {
 		var relation Relation
 		if err := fileio.WriteFilePathToStruct(filepath.Join(relationFolderPath, file.Name()), &relation); err != nil {
@@ -70,9 +68,6 @@ func (r *RelationManager) LoadRelations() error {
 }
 
 func (r *RelationManager) LoadRelationInfo(entityId string, paginationStart int, amount int) ([]RelationInfo, error) {
-	_ = paginationStart
-	_ = amount
-
 	entity, err := r.EntityManager.GetEntity(entityId)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load relation info: %v", err)
@@ -93,13 +88,11 @@ func (r *RelationManager) LoadRelationInfo(entityId string, paginationStart int,
 			return relationInfo, nil
 		}
 
-		var relatedEntity *Entity
-		relatedEntity, err = r.EntityManager.GetEntity(relation.getOther(entityId))
+		relatedEntity, err := r.EntityManager.GetEntity(relation.getOther(entityId))
 		if err != nil {
 			return nil, fmt.Errorf("failed to load relation info: %v", err)
 		}
 
-		//Might need to remove depointer on relation
 		relationInfo = append(relationInfo, RelationInfo{
 			ToName:   relatedEntity.Name,
 			Relation: *relation,
@@ -140,13 +133,11 @@ func (r *RelationManager) CreateRelation(entityId string) (string, error) {
 		},
 	}
 
-	//Write the relation to the system
 	filePath := r.getRelationPath(relation.Id)
 	if err := fileio.WriteStructToFilePath(relation, filePath); err != nil {
 		return "", fmt.Errorf("failed to create relation: %v", err)
 	}
 
-	//Write the relation id to the entity
 	entity.Relations = append(entity.Relations, relation.Id)
 	if err = fileio.WriteStructToFilePath(entity, r.EntityManager.getEntityFilePath(entityId)); err != nil {
 		return "", fmt.Errorf("failed to create relation: %v", err)
@@ -164,7 +155,7 @@ func (r *RelationManager) getRelationPath(relationId string) string {
 func (r *RelationManager) GetRelation(relationId string) (*Relation, error) {
 	relation, ok := r.Relations[relationId]
 	if !ok {
-		return nil, fmt.Errorf("could retrieve relation: %v", relationId)
+		return nil, fmt.Errorf("could not retrieve relation: %v", relationId)
 	}
 
 	return relation, nil
