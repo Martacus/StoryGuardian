@@ -35,7 +35,7 @@ const {columnSize, changeGridSize } = useGridSize(props.moduleConfig)
       <div class="flex flex-row space-x-2">
 
         <!--    Edit Relation Info Modal    -->
-        <Dialog v-model:open="infoDialogOpen" v-if="showCardBody">
+        <Dialog v-model:open="infoDialogOpen" v-if="showCardBody" >
           <DialogTrigger>
             <TextTooltip text="Edit Relation">
               <IconButton @click="">
@@ -48,11 +48,15 @@ const {columnSize, changeGridSize } = useGridSize(props.moduleConfig)
               <DialogTitle>Edit Relation</DialogTitle>
             </DialogHeader>
 
-            <EntitySelector></EntitySelector>
+            <div id="wg-dialog-content" class="w-full flex flex-col justify-center items-center">
+              <EntitySelector></EntitySelector>
+              <p class="my-4">And</p>
+              <EntitySelector></EntitySelector>
+            </div>
 
             <DialogFooter>
               <Button class="w-full">
-                Create
+                Save
               </Button>
             </DialogFooter>
           </DialogContent>

@@ -46,7 +46,7 @@ async function setEntity(entityId: string){
           variant="outline"
           role="combobox"
           :aria-expanded="open"
-          class="w-[200px] justify-between"
+          class="w-full justify-between"
       >
         {{ selectedEntity ? entities.find((entity) => entity.value === selectedEntity)?.label : 'Select entity...' }}
 
