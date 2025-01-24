@@ -205,3 +205,18 @@ func (r *RelationManager) SaveRelation(relation Relation) error {
 
 	return nil
 }
+
+func (r *RelationManager) SetRelationEntities(entityOneId string, entityTwoId string, relationId string) error {
+	relation, ok := r.Relations[relationId]
+	if !ok {
+		return fmt.Errorf("could not set relation entities: relation not found")
+	}
+
+	relation.EntityOne = entityOneId
+	relation.EntityTwo = entityTwoId
+	if err := r.SaveRelation(*relation); err != nil {
+		return fmt.Errorf("could not set relation entities: %v", err)
+	}
+
+	return nil
+}

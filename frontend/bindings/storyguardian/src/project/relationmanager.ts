@@ -66,6 +66,11 @@ export function SetRelationDescription(relationId: string, description: string):
     return $resultPromise;
 }
 
+export function SetRelationEntities(entityOneId: string, entityTwoId: string, relationId: string): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(2549640606, entityOneId, entityTwoId, relationId) as any;
+    return $resultPromise;
+}
+
 export function SetRelationName(relationId: string, name: string): Promise<string> & { cancel(): void } {
     let $resultPromise = $Call.ByID(953438602, relationId, name) as any;
     return $resultPromise;

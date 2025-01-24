@@ -124,6 +124,7 @@ function moduleConfigChange(module: string, key: string, value: string) {
         v-if="relation"
         :module-config="relation.modules['relationInfo']"
         @config-change="moduleConfigChange"
+        :relation="relation"
     />
   </DashboardLayout>
 </template>

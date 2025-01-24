@@ -27,6 +27,7 @@ import ItemSearch from "@/components/shared/ItemSearch.vue";
 import IconButton from "@/components/ui/button/IconButton.vue";
 import CardBodyToggler from "@/components/shared/button/CardBodyToggler.vue";
 import ItemViewSelector from "@/components/shared/button/ItemViewSelector.vue";
+import {useNavigation} from "@/composables/useNavigation";
 
 
 const props = defineProps<{
@@ -37,6 +38,7 @@ const emit = defineEmits(['configChange'])
 
 const {toast} = useToast()
 const router = useRouter()
+const { navigateToEntity } = useNavigation()
 
 const entities = ref<Entity[]>([]);
 const dialogOpen = ref(false);
@@ -122,9 +124,6 @@ const onSubmit = handleSubmit(async (values) => {
   }
 })
 
-async function navigateToEntity(id: string) {
-  await router.push('/entity/' + id)
-}
 
 const checkScrollable = () => {
   if (scrollAreaRef.value && contentRef.value) {

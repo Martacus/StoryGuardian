@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button'
-
 import {
   Command,
   CommandEmpty,
@@ -16,26 +15,34 @@ import {
 } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
 import { Check, ChevronsUpDown } from 'lucide-vue-next'
-import {onMounted, ref} from 'vue'
-import {GetEntities} from "../../../bindings/storyguardian/src/project/entitymanager";
+import { onMounted, ref } from 'vue'
+import { GetEntities } from "../../../bindings/storyguardian/src/project/entitymanager";
 
 const entities = ref<{ value: string; label: string }[]>([]);
-
 const open = ref(false)
 const selectedEntity = ref('')
+
+const props = defineProps<{
+  modelValue: string
+}>();
+
+const emit = defineEmits(['update:modelValue'])
 
 onMounted(async () => {
   const retrievedEntities = await GetEntities();
   retrievedEntities.forEach(e => {
     if(e !== null){
-      entities.value.push({value: e.id.toString(), label: e.name});
+      entities.value.push({ value: e.id.toString(), label: e.name });
     }
   });
+
+  selectedEntity.value = props.modelValue;
 });
 
-async function setEntity(entityId: string){
+async function setEntity(entityId: string) {
   selectedEntity.value = entityId;
   open.value = false;
+  emit('update:modelValue', entityId);
 }
 </script>
 
@@ -49,7 +56,6 @@ async function setEntity(entityId: string){
           class="w-full justify-between"
       >
         {{ selectedEntity ? entities.find((entity) => entity.value === selectedEntity)?.label : 'Select entity...' }}
-
         <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
       </Button>
     </PopoverTrigger>
@@ -81,5 +87,4 @@ async function setEntity(entityId: string){
 </template>
 
 <style scoped>
-
 </style>
