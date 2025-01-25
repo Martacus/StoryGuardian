@@ -27,6 +27,8 @@ import RelationModule from "@/components/entity/RelationModule.vue";
 import ModuleSelectItem from "@/components/story/modules/ModuleSelectItem.vue";
 import PageHeaderCard from "@/components/shared/PageHeaderCard.vue";
 import IconButton from "@/components/ui/button/IconButton.vue";
+import TagList from "@/components/story/TagList.vue";
+import EntityList from "@/components/story/EntityList.vue";
 
 const route = useRoute();
 const router = useRouter()
@@ -173,9 +175,13 @@ function moduleConfigChange(module: string, key: string, value: string) {
         :module-config="entity.modules['relations']"
         @config-change="moduleConfigChange"
     />
-    <div v-if="entity && isUsedModule('tagList')">
-      Tags
-    </div>
+
+    <TagList
+        v-if="entity && isUsedModule('relations')"
+        :module-config="entity.modules['tagList']"
+        :tags="entity.tags"
+        @config-change="moduleConfigChange"
+    />
   </DashboardLayout>
 </template>
 
