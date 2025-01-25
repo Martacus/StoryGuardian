@@ -28,7 +28,6 @@ import ModuleSelectItem from "@/components/story/modules/ModuleSelectItem.vue";
 import PageHeaderCard from "@/components/shared/PageHeaderCard.vue";
 import IconButton from "@/components/ui/button/IconButton.vue";
 import TagList from "@/components/story/TagList.vue";
-import EntityList from "@/components/story/EntityList.vue";
 
 const route = useRoute();
 const router = useRouter()
@@ -88,16 +87,7 @@ async function saveDescription(descriptionValue: string) {
 
 function addEntityModule(module: string){
   AddEntityModule(entityId, module).then(() => {
-    RefreshEntity(entityId).then(newEntity => {
-      if(newEntity){
-        entity.value = newEntity;
-      }
-    }).catch((error: string) => {
-      toast({
-        title: 'Failed to refresh entity',
-        description: error,
-      });
-    });
+    refreshEntity();
   }).catch((error: string) => {
     toast({
       title: 'Failed to add module',
@@ -117,6 +107,19 @@ function moduleConfigChange(module: string, key: string, value: string) {
   EditEntityModuleConfig(entityId, module, key, value).catch((error: string) => {
     toast({
       title: 'Failed to save module config change',
+      description: error,
+    });
+  });
+}
+
+function refreshEntity(){
+  RefreshEntity(entityId).then(newEntity => {
+    if(newEntity){
+      entity.value = newEntity;
+    }
+  }).catch((error: string) => {
+    toast({
+      title: 'Failed to refresh entity',
       description: error,
     });
   });
@@ -181,6 +184,7 @@ function moduleConfigChange(module: string, key: string, value: string) {
         :module-config="entity.modules['tagList']"
         :tags="entity.tags"
         @config-change="moduleConfigChange"
+        @refresh-tags="refreshEntity"
     />
   </DashboardLayout>
 </template>

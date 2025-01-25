@@ -190,6 +190,7 @@ function addStoryModule(module: string){
         :module-config="story.modules['tagList']"
         :tags="story.tags"
         @config-change="moduleConfigChange"
+        @refresh-tags="retrieveStory(true)"
     />
     <ImageModule
         v-if="story && isUsedModule('images')"

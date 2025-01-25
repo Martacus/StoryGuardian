@@ -19,7 +19,7 @@ const props = defineProps<{
   tags: string[],
   moduleConfig: StoryModule
 }>();
-const emit = defineEmits(['configChange'])
+const emit = defineEmits(['configChange', 'refreshTags'])
 
 const {toast} = useToast();
 
@@ -39,6 +39,8 @@ const onSubmit = handleSubmit(async (values) => {
       description: 'Tag successfully created.',
       icon: 'check',
     });
+    dialogOpen.value = false;
+    emit('refreshTags')
   } catch (error: any) {
     toast({
       title: 'Uh oh! Something went wrong.',
@@ -46,6 +48,8 @@ const onSubmit = handleSubmit(async (values) => {
     });
   }
 })
+
+
 </script>
 
 <template>

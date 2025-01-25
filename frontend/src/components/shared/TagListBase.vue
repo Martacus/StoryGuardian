@@ -1,6 +1,6 @@
 <!-- frontend/src/components/shared/TagListBase.vue -->
 <script setup lang="ts">
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import {useToggleBody} from "@/composables/useToggleBody";
@@ -51,6 +51,12 @@ onMounted(() => {
   searchResult.value = props.tags
   calcListHeight();
 })
+
+watch(() => props.tags, (newTags) => {
+  tagList.value = newTags;
+  searchResult.value = newTags;
+  calcListHeight();
+});
 </script>
 
 <template>
