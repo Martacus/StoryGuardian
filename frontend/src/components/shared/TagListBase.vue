@@ -1,10 +1,7 @@
 <!-- frontend/src/components/shared/TagListBase.vue -->
 <script setup lang="ts">
-import {Plus} from 'lucide-vue-next';
 import {onMounted, ref} from "vue";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import {Dialog, DialogContent, DialogTrigger} from "@/components/ui/dialog";
-import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import {useToggleBody} from "@/composables/useToggleBody";
 import {useGridSize} from "@/composables/useGridSize";
@@ -14,7 +11,6 @@ import VerticalSeperator from "@/components/ui/separator/VerticalSeparator.vue";
 import {useItemGridLayout} from "@/composables/useItemGridLayout";
 import {useItemFilter} from "@/composables/useItemFilter";
 import ItemSearch from "@/components/shared/ItemSearch.vue";
-import IconButton from "@/components/ui/button/IconButton.vue";
 import CardBodyToggler from "@/components/shared/button/CardBodyToggler.vue";
 import ItemViewSelector from "@/components/shared/button/ItemViewSelector.vue";
 
@@ -24,7 +20,6 @@ const props = defineProps<{
 }>();
 const emit = defineEmits(['configChange'])
 
-const dialogOpen = ref(false);
 const listHeight = ref<string>('h-0');
 const tagList = ref<string[]>([]);
 
@@ -64,18 +59,7 @@ onMounted(() => {
       <CardTitle>Tags</CardTitle>
       <ItemSearch v-if="showCardBody" v-model:search-input="searchInput" placeholder="Search tags..."/>
       <div class="flex flex-row space-x-2">
-        <Dialog v-model:open="dialogOpen" v-if="showCardBody">
-          <DialogTrigger>
-            <TextTooltip text="Add a tag">
-              <IconButton @click="">
-                <Plus/>
-              </IconButton>
-            </TextTooltip>
-          </DialogTrigger>
-          <DialogContent>
-            <slot name="dialog-content"></slot>
-          </DialogContent>
-        </Dialog>
+        <slot name="add-dialog"></slot>
         <VerticalSeperator/>
         <GridSizeSelector
             v-if="moduleConfig"

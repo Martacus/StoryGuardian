@@ -9,7 +9,11 @@ import {FormControl, FormItem, FormLabel, FormMessage} from "@/components/ui/for
 import {Input} from "@/components/ui/input";
 import {useToast} from "@/components/ui/toast";
 import {CreateTag} from "../../../bindings/storyguardian/src/project/storymanager";
-import {DialogFooter} from "@/components/ui/dialog";
+import {Dialog, DialogContent, DialogFooter, DialogTrigger} from "@/components/ui/dialog";
+import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
+import IconButton from "@/components/ui/button/IconButton.vue";
+import {Plus} from "lucide-vue-next";
+import {ref} from "vue";
 
 const props = defineProps<{
   tags: string[],
@@ -18,6 +22,9 @@ const props = defineProps<{
 const emit = defineEmits(['configChange'])
 
 const {toast} = useToast();
+
+const dialogOpen = ref(false);
+
 const {handleSubmit} = useForm({
   validationSchema: toTypedSchema(z.object({
     tag: z.string(),
@@ -43,24 +50,34 @@ const onSubmit = handleSubmit(async (values) => {
 
 <template>
   <TagListBase :tags="props.tags" :moduleConfig="props.moduleConfig" @configChange="emit('configChange', $event)">
-    <template #dialog-content>
-      <!-- Custom Dialog content for TagList -->
-      <form class="space-y-6" @submit="onSubmit">
-        <Field :validate-on-blur="false" v-slot="{ componentField }" name="tag">
-          <FormItem>
-            <FormLabel>Tag Name</FormLabel>
-            <FormControl>
-              <Input type="text" placeholder="Warrior" v-bind="componentField" autocomplete="off"/>
-            </FormControl>
-            <FormMessage/>
-          </FormItem>
-        </Field>
-        <DialogFooter>
-          <Button type="submit" class="w-full">
-            Create
-          </Button>
-        </DialogFooter>
-      </form>
+    <template #add-dialog>
+      <Dialog v-model:open="dialogOpen">
+        <DialogTrigger>
+          <TextTooltip text="Add a tag">
+            <IconButton @click="">
+              <Plus/>
+            </IconButton>
+          </TextTooltip>
+        </DialogTrigger>
+        <DialogContent>
+          <form class="space-y-6" @submit="onSubmit">
+            <Field :validate-on-blur="false" v-slot="{ componentField }" name="tag">
+              <FormItem>
+                <FormLabel>Tag Name</FormLabel>
+                <FormControl>
+                  <Input type="text" placeholder="Warrior" v-bind="componentField" autocomplete="off"/>
+                </FormControl>
+                <FormMessage/>
+              </FormItem>
+            </Field>
+            <DialogFooter>
+              <Button type="submit" class="w-full">
+                Create
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </template>
   </TagListBase>
 </template>
