@@ -90,6 +90,17 @@ func (e *EntityManager) CreateEntity(entity Entity) (Entity, error) {
 	layout := "2006-01-02 15:04:05"
 	entity.CreatedAt = time.Now().Format(layout)
 
+	entity.Modules = map[string]StoryModule{
+		"description": {
+			Name: "Description",
+			Configuration: map[string]string{
+				"columnSize": "2",
+				"name":       "description",
+				"open":       "true",
+			},
+		},
+	}
+
 	filePath := e.getEntityFilePath(entity.Id)
 	if err := fileio.WriteStructToFilePath(entity, filePath); err != nil {
 		return entity, fmt.Errorf("could save new entity to file: %v", err)

@@ -142,9 +142,14 @@ function moduleConfigChange(module: string, key: string, value: string) {
               <DialogTitle>Select a module</DialogTitle>
             </DialogHeader>
             <DialogDescription>Choose a module to add to your entity, you can always remove them.</DialogDescription>
-            <ModuleSelectItem v-if="isUnused('tagList')" @click="addEntityModule('tagList')">
-              <p>Tags</p>
-            </ModuleSelectItem>
+            <div class="flex flex-row gap-2">
+              <ModuleSelectItem v-if="isUnused('tagList')" @click="addEntityModule('tagList')">
+                <p>Tags</p>
+              </ModuleSelectItem>
+              <ModuleSelectItem v-if="isUnused('relations')" @click="addEntityModule('relations')">
+                <p>Relations</p>
+              </ModuleSelectItem>
+            </div>
           </DialogContent>
         </Dialog>
         <TextToolTip text="Story settings">
@@ -163,7 +168,7 @@ function moduleConfigChange(module: string, key: string, value: string) {
         @config-change="moduleConfigChange"
     />
     <RelationModule
-        v-if="entity"
+        v-if="entity && isUsedModule('relations')"
         :entity="entity"
         :module-config="entity.modules['relations']"
         @config-change="moduleConfigChange"

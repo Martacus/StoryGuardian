@@ -107,6 +107,9 @@ const onSubmit = handleSubmit(async (values) => {
       name: values.name,
       description: values.description,
       storyId: props.story.id,
+      modules: {
+
+      }
     } as Entity);
 
     entities.value.push(entity);

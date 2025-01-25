@@ -19,6 +19,22 @@ var (
 	availableRelationModules = []string{DescriptionModuleID, RelationInfoModuleID}
 )
 
+func getUnusedModules(unusedModulesOnly bool, availableModules []string, currentModules map[string]StoryModule) []string {
+	if !unusedModulesOnly {
+		return availableModules
+	}
+
+	var unusedModules []string
+	for _, module := range availableModules {
+		if _, ok := currentModules[module]; !ok {
+			unusedModules = append(unusedModules, module)
+		}
+	}
+	return unusedModules
+}
+
+// === Story Modules === //
+
 func (s *StoryManager) GetStoryModules(unusedModulesOnly bool) []string {
 	return getUnusedModules(unusedModulesOnly, availableStoryModules, s.Story.Modules)
 }
@@ -45,6 +61,37 @@ func (s *StoryManager) EditStoryModuleConfig(module, config, value string) error
 	return nil
 }
 
+func addStoryImagesModule(manager *StoryManager) error {
+	newImageModule := StoryModule{
+		Name: ImageStoryModuleID,
+		Configuration: map[string]string{
+			"columnSize": "4",
+		},
+	}
+	manager.Story.Modules[ImageStoryModuleID] = newImageModule
+	if err := manager.SaveStory(); err != nil {
+		return fmt.Errorf("unable to add image module to story: %v", err)
+	}
+	return nil
+}
+
+func addStoryTagsModule(manager *StoryManager) error {
+	newTagListModule := StoryModule{
+		Name: TagListModuleID,
+		Configuration: map[string]string{
+			"columnSize": "4",
+			"itemView":   "list",
+		},
+	}
+	manager.Story.Modules[TagListModuleID] = newTagListModule
+	if err := manager.SaveStory(); err != nil {
+		return fmt.Errorf("unable to add tag module to story: %v", err)
+	}
+	return nil
+}
+
+// === Entity Modules === //
+
 func (e *EntityManager) GetEntityModules(entityID string, unusedModulesOnly bool) []string {
 	entity, err := e.GetEntity(entityID)
 	if err != nil {
@@ -59,9 +106,16 @@ func (e *EntityManager) AddEntityModule(entityID, module string) error {
 		return fmt.Errorf("could not add module to entity: %v", err)
 	}
 
+	defaultConfig := map[string]string{
+		"columnSize": "4",
+		"itemView":   "list",
+	}
+
 	switch module {
 	case TagListModuleID:
-		return addEntityTagsModule(entity, e)
+		return addModuleToEntity(entity, e, TagListModuleID, defaultConfig)
+	case RelationsEntityModuleID:
+		return addModuleToEntity(entity, e, RelationsEntityModuleID, defaultConfig)
 	default:
 		return fmt.Errorf("unknown entity module: %s", module)
 	}
@@ -81,6 +135,25 @@ func (e *EntityManager) EditEntityModuleConfig(entityID, module, config, value s
 	}
 	return nil
 }
+
+func addModuleToEntity(entity *Entity, manager *EntityManager, moduleID string, config map[string]string) error {
+	newModule := StoryModule{
+		Name:          moduleID,
+		Configuration: config,
+	}
+
+	if entity.Modules == nil {
+		entity.Modules = make(map[string]StoryModule)
+	}
+	entity.Modules[moduleID] = newModule
+
+	if err := manager.SaveEntity(*entity); err != nil {
+		return fmt.Errorf("unable to add %s module to entity: %v", moduleID, err)
+	}
+	return nil
+}
+
+// === Relation Modules === //
 
 func (r *RelationManager) GetRelationModules(relationID string, unusedModulesOnly bool) []string {
 	relation, err := r.GetRelation(relationID)
@@ -113,65 +186,6 @@ func (r *RelationManager) EditRelationModuleConfig(relationID, module, config, v
 	relation.Modules[module].Configuration[config] = value
 	if err := r.SaveRelation(*relation); err != nil {
 		return fmt.Errorf("could not save relation module configuration: %v", err)
-	}
-	return nil
-}
-
-func getUnusedModules(unusedModulesOnly bool, availableModules []string, currentModules map[string]StoryModule) []string {
-	if !unusedModulesOnly {
-		return availableModules
-	}
-
-	var unusedModules []string
-	for _, module := range availableModules {
-		if _, ok := currentModules[module]; !ok {
-			unusedModules = append(unusedModules, module)
-		}
-	}
-	return unusedModules
-}
-
-func addStoryImagesModule(manager *StoryManager) error {
-	newImageModule := StoryModule{
-		Name: ImageStoryModuleID,
-		Configuration: map[string]string{
-			"columnSize": "4",
-		},
-	}
-	manager.Story.Modules[ImageStoryModuleID] = newImageModule
-	if err := manager.SaveStory(); err != nil {
-		return fmt.Errorf("unable to add image module to story: %v", err)
-	}
-	return nil
-}
-
-func addStoryTagsModule(manager *StoryManager) error {
-	newTagListModule := StoryModule{
-		Name: TagListModuleID,
-		Configuration: map[string]string{
-			"columnSize": "4",
-			"itemView":   "list",
-		},
-	}
-	manager.Story.Modules[TagListModuleID] = newTagListModule
-	if err := manager.SaveStory(); err != nil {
-		return fmt.Errorf("unable to add tag module to story: %v", err)
-	}
-	return nil
-}
-
-func addEntityTagsModule(entity *Entity, manager *EntityManager) error {
-	newTagListModule := StoryModule{
-		Name: TagListModuleID,
-		Configuration: map[string]string{
-			"columnSize": "4",
-			"itemView":   "list",
-		},
-	}
-
-	entity.Modules[TagListModuleID] = newTagListModule
-	if err := manager.SaveEntity(*entity); err != nil {
-		return fmt.Errorf("unable to add tag module to entity: %v", err)
 	}
 	return nil
 }

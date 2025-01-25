@@ -19,11 +19,19 @@ export function CreateRelation(entityId: string): Promise<string> & { cancel(): 
     return $resultPromise;
 }
 
+export function DeleteRelation(relationId: string): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(3768597192, relationId) as any;
+    return $resultPromise;
+}
+
 export function EditRelationModuleConfig(relationID: string, $module: string, config: string, value: string): Promise<void> & { cancel(): void } {
     let $resultPromise = $Call.ByID(3946188197, relationID, $module, config, value) as any;
     return $resultPromise;
 }
 
+/**
+ * GetRelation returns the relation with the given id
+ */
 export function GetRelation(relationId: string): Promise<$models.Relation | null> & { cancel(): void } {
     let $resultPromise = $Call.ByID(34754189, relationId) as any;
     let $typingPromise = $resultPromise.then(($result) => {
@@ -61,6 +69,9 @@ export function SaveRelation(relation: $models.Relation): Promise<void> & { canc
     return $resultPromise;
 }
 
+/**
+ * SetRelationDescription sets the description of the relation with the given id
+ */
 export function SetRelationDescription(relationId: string, description: string): Promise<string> & { cancel(): void } {
     let $resultPromise = $Call.ByID(439834261, relationId, description) as any;
     return $resultPromise;
@@ -71,6 +82,9 @@ export function SetRelationEntities(entityOneId: string, entityTwoId: string, re
     return $resultPromise;
 }
 
+/**
+ * SetRelationName sets the name of the relation with the given id
+ */
 export function SetRelationName(relationId: string, name: string): Promise<string> & { cancel(): void } {
     let $resultPromise = $Call.ByID(953438602, relationId, name) as any;
     return $resultPromise;

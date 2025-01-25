@@ -22,7 +22,11 @@ import GridSizeSelector from "@/components/shared/button/GridSizeSelector.vue";
 import VerticalSeperator from "@/components/ui/separator/VerticalSeparator.vue";
 import IconButton from "@/components/ui/button/IconButton.vue";
 import CardBodyToggler from "@/components/shared/button/CardBodyToggler.vue";
-import {CreateRelation, LoadRelationInfo} from "../../../bindings/storyguardian/src/project/relationmanager";
+import {
+  CreateRelation,
+  DeleteRelation,
+  LoadRelationInfo
+} from "../../../bindings/storyguardian/src/project/relationmanager";
 
 const props = defineProps<{
   entity: Entity,
@@ -83,6 +87,19 @@ async function createRelation(){
 function openRelation(relationId: string){
  router.push("/relation/" + relationId);
 }
+
+function deleteRelation(relationId: string){
+  try{
+    DeleteRelation(relationId).then(() => {
+      loadRelations()
+    })
+  } catch (error: any) {
+    toast({
+      title: 'Uh oh! Something went wrong.',
+      description: error.message,
+    });
+  }
+}
 </script>
 
 <template>
@@ -119,7 +136,7 @@ function openRelation(relationId: string){
             <TableCell>{{ relation.toName }}</TableCell>
             <TableCell class="text-right">
               <TextTooltip text="Delete">
-                <IconButton @click.stop="console.log('eee')">
+                <IconButton @click.stop="deleteRelation(relation.id)">
                   <Trash2/>
                 </IconButton>
               </TextTooltip>
