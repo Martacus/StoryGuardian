@@ -27,7 +27,6 @@ import RelationModule from "@/components/entity/RelationModule.vue";
 import ModuleSelectItem from "@/components/story/modules/ModuleSelectItem.vue";
 import PageHeaderCard from "@/components/shared/PageHeaderCard.vue";
 import IconButton from "@/components/ui/button/IconButton.vue";
-import TagList from "@/components/story/TagList.vue";
 import EntityTagList from "@/components/entity/EntityTagList.vue";
 
 const route = useRoute();
