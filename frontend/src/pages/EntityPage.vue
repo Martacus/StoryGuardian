@@ -28,6 +28,7 @@ import ModuleSelectItem from "@/components/story/modules/ModuleSelectItem.vue";
 import PageHeaderCard from "@/components/shared/PageHeaderCard.vue";
 import IconButton from "@/components/ui/button/IconButton.vue";
 import TagList from "@/components/story/TagList.vue";
+import EntityTagList from "@/components/entity/EntityTagList.vue";
 
 const route = useRoute();
 const router = useRouter()
@@ -103,7 +104,10 @@ function refreshUnusedEntityModules(){
   })
 }
 
-function moduleConfigChange(module: string, key: string, value: string) {
+function moduleConfigChange({ module, key, value }: { module: string, key: string, value: string }) {
+  console.log(module)
+  console.log(key)
+  console.log(value)
   EditEntityModuleConfig(entityId, module, key, value).catch((error: string) => {
     toast({
       title: 'Failed to save module config change',
@@ -179,8 +183,8 @@ function refreshEntity(){
         @config-change="moduleConfigChange"
     />
 
-    <TagList
-        v-if="entity && isUsedModule('relations')"
+    <EntityTagList
+        v-if="entity && isUsedModule('tagList')"
         :module-config="entity.modules['tagList']"
         :tags="entity.tags"
         @config-change="moduleConfigChange"

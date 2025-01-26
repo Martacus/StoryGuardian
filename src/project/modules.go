@@ -109,6 +109,7 @@ func (e *EntityManager) AddEntityModule(entityID, module string) error {
 	defaultConfig := map[string]string{
 		"columnSize": "4",
 		"itemView":   "list",
+		"open":       "true",
 	}
 
 	switch module {

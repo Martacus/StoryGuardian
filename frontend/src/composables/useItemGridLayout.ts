@@ -12,7 +12,7 @@ export function useItemGridLayout(moduleConfig: StoryModule | undefined) {
         } else {
             itemView.value = 'list';
         }
-        emit('configChange', module, 'itemView', newItemView);
+        emit('configChange', { module, key: 'itemView', value: newItemView });
     }
 
 

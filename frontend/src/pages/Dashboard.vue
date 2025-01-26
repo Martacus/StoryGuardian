@@ -105,7 +105,7 @@ async function saveStoryTitle(title: string) {
   }
 }
 
-function moduleConfigChange(module: string, key: string, value: string) {
+function moduleConfigChange({ module, key, value }: { module: string, key: string, value: string }) {
   EditStoryModuleConfig(module, key, value).catch((error: string) => {
     toast({
       title: 'Failed to save module config change',

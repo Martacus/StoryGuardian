@@ -6,7 +6,7 @@ export function useToggleBody(moduleConfig: StoryModule | undefined) {
 
     function toggleCardBody(module: string, emit: any) {
         showCardBody.value = !showCardBody.value;
-        emit('configChange', module, 'open', JSON.stringify(showCardBody.value))
+        emit('configChange', { module, key: 'open', value: JSON.stringify(showCardBody.value) });
     }
 
     onMounted(() => {

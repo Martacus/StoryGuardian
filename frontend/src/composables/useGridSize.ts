@@ -47,7 +47,7 @@ export function useGridSize(moduleConfig: StoryModule | undefined) {
         if (!moduleConfig) return;
 
         moduleConfig.configuration['columnSize'] = newColumnSize;
-        emit('configChange', module, 'columnSize', newColumnSize);
+        emit('configChange', { module, key: 'columnSize', value: newColumnSize });
 
         updateColumnSize(newColumnSize);
     }
