@@ -1,11 +1,10 @@
-<!-- frontend/src/components/entity/EntityTagList.vue -->
 <script setup lang="ts">
 import TagListBase from "@/components/shared/TagListBase.vue";
 import {StoryModule} from "../../../bindings/storyguardian/src/project";
 import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
 import {Dialog, DialogContent, DialogTrigger} from "@/components/ui/dialog";
 import IconButton from "@/components/ui/button/IconButton.vue";
-import {Diff } from "lucide-vue-next";
+import {Diff} from "lucide-vue-next";
 import {computed, onMounted, ref, watch} from "vue";
 import ItemSearch from "@/components/shared/ItemSearch.vue";
 import {ScrollArea} from "@/components/ui/scroll-area";
@@ -20,13 +19,13 @@ const props = defineProps<{
   entityId: string
 }>();
 
-const emit = defineEmits(['update:tags'])
+const emit = defineEmits(['update:tags']);
 
 const dialogOpen = ref(false);
 const listHeight = ref<string>('h-0');
 const tagList = ref<string[]>([]);
 
-const {toast} = useToast()
+const {toast} = useToast();
 const {searchInput, searchResult} = useItemFilter(tagList, (tag, filter) => {
   return tag.toLowerCase().includes(filter.toLowerCase());
 });
@@ -53,45 +52,49 @@ onMounted(() => {
       title: 'Failed to load story tags',
       description: error,
     });
-    tagList.value = props.tags
-    searchResult.value = props.tags
+    tagList.value = props.tags;
+    searchResult.value = props.tags;
     calcListHeight();
   });
-})
+});
 
 async function addOrRemoveTags(tag: string) {
   const newTags = [...props.tags];
   if (newTags.includes(tag)) {
     newTags.splice(newTags.indexOf(tag), 1);
-    RemoveTagFromEntity(props.entityId, tag).then(() => {
+    try {
+      await RemoveTagFromEntity(props.entityId, tag);
       toast({
         title: 'Tag removed',
         description: `Tag ${tag} has been removed from the entity.`,
       });
-    }).catch((error) => {
+    } catch (error: string) {
       toast({
         title: 'Failed to remove tag',
         description: error,
       });
-    });
+    }
   } else {
     newTags.push(tag);
-    AddTagToEntity(props.entityId, tag).then(() => {
+    try {
+      await AddTagToEntity(props.entityId, tag);
       toast({
         title: 'Tag added',
         description: `Tag ${tag} has been added to the entity.`,
       });
-    }).catch((error) => {
+    } catch (error: string) {
       toast({
         title: 'Failed to add tag',
         description: error,
       });
-    });
+    }
   }
   emit('update:tags', newTags);
 }
 
-watch(() => props.tags, () => {});
+watch(() => props.tags, () => {
+  calcListHeight();
+});
 </script>
 
 <template>
@@ -113,7 +116,9 @@ watch(() => props.tags, () => {});
                   :class="{'bg-muted/90 border border-white': isTagSelected(tag), 'bg-muted/30 hover:bg-muted/40': !isTagSelected(tag)}"
                   class="rounded-lg py-2 hover:cursor-pointer"
                   @click="addOrRemoveTags(tag)"
-                  v-for="tag in searchResult">
+                  v-for="tag in searchResult"
+                  :key="tag"
+              >
                 <p class="px-4 text-center">
                   {{ tag }}
                 </p>
