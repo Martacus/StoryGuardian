@@ -163,3 +163,43 @@ func (e *EntityManager) SetEntityName(entityId string, name string) (string, err
 func (e *EntityManager) getEntityFilePath(entityID string) string {
 	return filepath.Join(e.StoryManager.Story.Location, constants.EntityFolderName, entityID+".json")
 }
+
+func (e *EntityManager) AddTagToEntity(entityId string, tag string) error {
+	entity, err := e.GetEntity(entityId)
+	if err != nil {
+		return fmt.Errorf("could not retrieve entity to add tag to: %v", err)
+	}
+
+	for _, existingTag := range entity.Tags {
+		if existingTag == tag {
+			return nil
+		}
+	}
+
+	entity.Tags = append(entity.Tags, tag)
+	if err := e.SaveEntity(*entity); err != nil {
+		return fmt.Errorf("could not save entity with new tag: %v", err)
+	}
+
+	return nil
+}
+
+func (e *EntityManager) RemoveTagFromEntity(entityId string, tag string) error {
+	entity, err := e.GetEntity(entityId)
+	if err != nil {
+		return fmt.Errorf("could not retrieve entity to remove tag: %v", err)
+	}
+
+	for i, existingTag := range entity.Tags {
+		if existingTag == tag {
+			entity.Tags = append(entity.Tags[:i], entity.Tags[i+1:]...)
+			break
+		}
+	}
+
+	if err := e.SaveEntity(*entity); err != nil {
+		return fmt.Errorf("could not save entity with removed tag: %v", err)
+	}
+
+	return nil
+}

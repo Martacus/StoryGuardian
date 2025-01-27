@@ -14,6 +14,11 @@ export function AddEntityModule(entityID: string, $module: string): Promise<void
     return $resultPromise;
 }
 
+export function AddTagToEntity(entityId: string, tag: string): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(2688464487, entityId, tag) as any;
+    return $resultPromise;
+}
+
 export function CreateEntity(entity: $models.Entity): Promise<$models.Entity> & { cancel(): void } {
     let $resultPromise = $Call.ByID(3380210067, entity) as any;
     let $typingPromise = $resultPromise.then(($result) => {
@@ -71,6 +76,11 @@ export function RefreshEntity(entityId: string): Promise<$models.Entity | null> 
     }) as any;
     $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
     return $typingPromise;
+}
+
+export function RemoveTagFromEntity(entityId: string, tag: string): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(965329335, entityId, tag) as any;
+    return $resultPromise;
 }
 
 export function SaveEntity(entity: $models.Entity): Promise<void> & { cancel(): void } {

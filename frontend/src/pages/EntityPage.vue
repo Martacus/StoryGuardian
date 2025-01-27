@@ -127,6 +127,12 @@ function refreshEntity(){
     });
   });
 }
+
+function updateEntityTags(tags: string[]){
+  if(entity.value){
+    entity.value.tags = tags;
+  }
+}
 </script>
 
 <template>
@@ -188,6 +194,8 @@ function refreshEntity(){
         :tags="entity.tags"
         @config-change="moduleConfigChange"
         @refresh-tags="refreshEntity"
+        @update:tags="args => updateEntityTags(args)"
+        :entity-id="entity.id"
     />
   </DashboardLayout>
 </template>
