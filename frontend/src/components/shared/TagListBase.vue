@@ -13,6 +13,7 @@ import {useItemFilter} from "@/composables/useItemFilter";
 import ItemSearch from "@/components/shared/ItemSearch.vue";
 import CardBodyToggler from "@/components/shared/button/CardBodyToggler.vue";
 import ItemViewSelector from "@/components/shared/button/ItemViewSelector.vue";
+import BasicListItem from "@/components/story/entity-list/BasicListItem.vue";
 
 const props = defineProps<{
   tags: string[],
@@ -85,31 +86,16 @@ watch(() => props.tags, (newTags) => {
     </CardHeader>
     <CardContent v-if="showCardBody">
       <ScrollArea class="w-full" :class="listHeight">
-        <div class="flex flex-col gap-2" v-if="itemView === 'list'">
-          <div class="bg-muted/30 hover:bg-muted/40 rounded-lg py-2 hover:cursor-pointer"
-               @click=""
-               v-for="tag in searchResult">
-            <p class="px-4 text-center">
-              {{ tag }}
-            </p>
-          </div>
-          <p v-if="searchResult.length <= 0">
-            No Tags have been found.
-          </p>
+        <div id="single-entity-list" :class="[itemView === 'list' ? 'flex flex-col gap-2' : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2', {'mr-4': isScrollable}]" ref="contentRef">
+          <BasicListItem v-for="tag in searchResult" :text="tag">
+            <template #item-action>
+              <slot name="item-action"/>
+            </template>
+          </BasicListItem>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2"
-             v-if="itemView === 'grid'">
-          <div class=" bg-muted/30 hover:bg-muted/40 rounded-lg py-2 hover:cursor-pointer"
-               @click=""
-               v-for="tag in searchResult">
-            <p class="px-4 text-center">
-              {{ tag }}
-            </p>
-          </div>
-          <p v-if="searchResult.length <= 0">
-            No Tags have been found.
-          </p>
-        </div>
+        <p v-if="searchResult.length <= 0">
+          No Tags have been found.
+        </p>
       </ScrollArea>
     </CardContent>
   </Card>

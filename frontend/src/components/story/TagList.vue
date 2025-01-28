@@ -12,7 +12,7 @@ import {CreateTag} from "../../../bindings/storyguardian/src/project/storymanage
 import {Dialog, DialogContent, DialogFooter, DialogTrigger} from "@/components/ui/dialog";
 import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
 import IconButton from "@/components/ui/button/IconButton.vue";
-import {Plus} from "lucide-vue-next";
+import {Plus, Trash2} from "lucide-vue-next";
 import {ref} from "vue";
 
 const props = defineProps<{
@@ -82,6 +82,11 @@ const onSubmit = handleSubmit(async (values) => {
           </form>
         </DialogContent>
       </Dialog>
+    </template>
+    <template #item-action>
+      <IconButton class="absolute right-0 flex-shrink-0 hidden group-hover:flex">
+        <Trash2/>
+      </IconButton>
     </template>
   </TagListBase>
 </template>

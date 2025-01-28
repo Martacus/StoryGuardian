@@ -27,7 +27,7 @@ import IconButton from "@/components/ui/button/IconButton.vue";
 import CardBodyToggler from "@/components/shared/button/CardBodyToggler.vue";
 import ItemViewSelector from "@/components/shared/button/ItemViewSelector.vue";
 import {useNavigation} from "@/composables/useNavigation";
-import EntityListItem from "@/components/story/entity-list/EntityListItem.vue";
+import BasicListItem from "@/components/story/entity-list/BasicListItem.vue";
 
 
 const props = defineProps<{
@@ -254,11 +254,13 @@ function deleteEntity(){
     <CardContent v-if="showCardBody">
       <ScrollArea :class="listHeight" type="auto" ref="scrollAreaRef">
         <div id="single-entity-list" :class="[itemView === 'list' ? 'flex flex-col gap-2' : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2', {'mr-4': isScrollable}]" ref="contentRef">
-          <EntityListItem v-for="entity in searchResult" :entity-name="entity.name" @click="navigateToEntity(entity.id)">
-            <IconButton @click.stop="initDelete(entity.id)" class="absolute right-0 flex-shrink-0 hidden group-hover:flex">
-              <Trash2/>
-            </IconButton>
-          </EntityListItem>
+          <BasicListItem v-for="entity in searchResult" :text="entity.name" @click="navigateToEntity(entity.id)">
+            <template #item-action>
+              <IconButton @click.stop="initDelete(entity.id)" class="absolute right-0 flex-shrink-0 hidden group-hover:flex">
+                <Trash2/>
+              </IconButton>
+            </template>
+          </BasicListItem>
         </div>
         <p v-if="searchResult.length <= 0">
           No Entities have been found.
