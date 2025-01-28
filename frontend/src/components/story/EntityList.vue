@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {Plus} from 'lucide-vue-next';
+import {Plus, Trash2} from 'lucide-vue-next';
 import {toTypedSchema} from '@vee-validate/zod';
 import {z} from 'zod';
 import {Field, useForm} from 'vee-validate';
@@ -38,7 +38,7 @@ const emit = defineEmits(['configChange'])
 
 const {toast} = useToast()
 const router = useRouter()
-const { navigateToEntity } = useNavigation()
+const {navigateToEntity} = useNavigation()
 
 const entities = ref<Entity[]>([]);
 const dialogOpen = ref(false);
@@ -75,7 +75,7 @@ async function getEntities() {
   }
 }
 
-function refreshViewLength(){
+function refreshViewLength() {
   if (itemView.value === 'list') {
     if (searchResult.value.length > 8) {
       listHeight.value = 'h-96';
@@ -107,9 +107,7 @@ const onSubmit = handleSubmit(async (values) => {
       name: values.name,
       description: values.description,
       storyId: props.story.id,
-      modules: {
-
-      }
+      modules: {}
     } as Entity);
 
     entities.value.push(entity);
@@ -230,12 +228,17 @@ watch(itemView, () => {
         <div id="single-entity-list" class="flex flex-col gap-2" :class="{'mr-4': isScrollable}"
              v-if="itemView === 'list'" ref="contentRef">
           <!-- Entities -->
-          <div class=" bg-muted/30 hover:bg-muted/40 rounded-lg py-2 hover:cursor-pointer"
+          <div class="group bg-muted/30 hover:bg-muted/40 rounded-lg hover:cursor-pointer
+                      py-2 flex flex-row items-center justify-center relative"
                @click="navigateToEntity(entity.id)"
                v-for="entity in searchResult">
             <p class="px-4 text-center">
               {{ entity.name }}
             </p>
+
+            <IconButton @click.stop="console.log('t')" class="absolute right-0 flex-shrink-0 hidden group-hover:flex">
+              <Trash2/>
+            </IconButton>
           </div>
           <!-- No entities -->
           <p v-if="searchResult.length <= 0">
@@ -245,12 +248,18 @@ watch(itemView, () => {
         <div id="single-entity-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2"
              v-if="itemView === 'grid'" ref="contentRef">
           <!-- Entities -->
-          <div class=" bg-muted/30 hover:bg-muted/40 rounded-lg py-2 hover:cursor-pointer"
+          <div :id="'entity-list-tag-' + entity.id"
+               class="group bg-muted/30 hover:bg-muted/40 rounded-lg hover:cursor-pointer
+                      py-2 flex flex-row items-center relative"
                @click="navigateToEntity(entity.id)"
                v-for="entity in searchResult">
-            <p class="px-4 text-center">
+            <p class="px-4 text-center truncate flex-grow">
               {{ entity.name }}
             </p>
+
+            <IconButton @click.stop="console.log('t')" class="absolute right-0 flex-shrink-0 hidden group-hover:flex">
+              <Trash2/>
+            </IconButton>
           </div>
           <!-- No entities -->
           <p v-if="searchResult.length <= 0">
@@ -258,7 +267,6 @@ watch(itemView, () => {
           </p>
         </div>
       </ScrollArea>
-
     </CardContent>
   </Card>
 </template>
