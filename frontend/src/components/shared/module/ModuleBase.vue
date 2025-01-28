@@ -19,7 +19,7 @@ const props = withDefaults(defineProps<{
 }>(), {
   bodyToggle: true,
   gridSize: true,
-  itemGridLayout: true
+  itemGridLayout: false
 });
 
 const emit = defineEmits(['configChange', 'update:columnSize', 'update:showCardBody', 'update:itemView']);
@@ -51,18 +51,18 @@ watch(itemView, (newVal) => {
         <GridSizeSelector
             v-if="gridSize"
             :column-size="moduleConfig.configuration['columnSize']"
-            @update-grid-size="(newSize) => changeGridSize(moduleConfig.configuration['name'], newSize, emit)"
+            @update-grid-size="(newSize) => changeGridSize(moduleConfig.name, newSize, emit)"
         />
         <ItemViewSelector
             v-if="itemGridLayout"
             :item-view="itemView"
             :show-card-body="showCardBody"
-            @toggle="(payload) => changeItemView(moduleConfig.configuration['name'], payload, emit)"
+            @toggle="(payload) => changeItemView(moduleConfig.name, payload, emit)"
         />
         <CardBodyToggler
             v-if="bodyToggle"
             :show-card-body="showCardBody"
-            @toggle="toggleCardBody(moduleConfig.configuration['name'], emit)"
+            @toggle="toggleCardBody(moduleConfig.name, emit)"
         />
       </div>
     </CardHeader>

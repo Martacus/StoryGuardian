@@ -184,7 +184,8 @@ watch(itemView, () => {
   <ModuleBase title="Entities"
               :module-config="moduleConfig"
               @config-change="(payload) => emit('configChange', payload)"
-              @update:item-view="args => itemView = args">
+              @update:item-view="args => itemView = args"
+              :item-grid-layout="true">
 
     <template #center-space>
       <ItemSearch  v-model:search-input="searchInput" placeholder="Search entities..."/>

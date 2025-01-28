@@ -29,7 +29,7 @@ async function save() {
 </script>
 
 <template>
-  <ModuleBase title="Description" :module-config="moduleConfig" :item-grid-layout="false" @config-change="(payload) => emit('configChange', payload)">
+  <ModuleBase title="Description" :module-config="moduleConfig" @config-change="(payload) => emit('configChange', payload)">
     <template #side-buttons>
       <TextTooltip text="Edit">
         <IconButton

@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from '@/components/ui/table'
-import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-
 import {RefreshCcw} from 'lucide-vue-next';
 import {onMounted, ref} from "vue";
 import {Button} from "@/components/ui/button";
@@ -10,12 +8,8 @@ import {Dialog, DialogContent} from "@/components/ui/dialog";
 import {ImageFile, Story, StoryModule} from "../../../bindings/storyguardian/src/project";
 import {GetStoryImages} from "../../../bindings/storyguardian/src/project/storymanager";
 import {OpenProjectFolder} from "../../../bindings/storyguardian/src/project/applicationmanager";
-import {useToggleBody} from "@/composables/useToggleBody";
-import {useGridSize} from "@/composables/useGridSize";
-import GridSizeSelector from "@/components/shared/button/GridSizeSelector.vue";
-import VerticalSeperator from "@/components/ui/separator/VerticalSeparator.vue";
 import IconButton from "@/components/ui/button/IconButton.vue";
-import CardBodyToggler from "@/components/shared/button/CardBodyToggler.vue";
+import ModuleBase from "@/components/shared/module/ModuleBase.vue";
 
 const props = defineProps<{
   story: Story
@@ -26,11 +20,6 @@ const emit = defineEmits(['configChange'])
 const {toast} = useToast()
 const images = ref<ImageFile[]>([])
 const openDialogs = ref(images.value.map(() => false));
-
-
-const {showCardBody, toggleCardBody} = useToggleBody(props.moduleConfig);
-const {columnSize, changeGridSize } = useGridSize(props.moduleConfig);
-
 
 onMounted(async () => {
   if (!props.story) {
@@ -58,23 +47,16 @@ function openImageFolder(){
 </script>
 
 <template>
-  <Card class="bg-muted/30 min-w-[22rem]" :class="columnSize">
-    <CardHeader class="flex flex-row justify-between items-center">
-      <CardTitle>Images</CardTitle>
-      <div class="flex flex-row space-x-2">
-        <Button class="btn btn-primary" variant="outline" @click="openImageFolder()">
-          Open folder
-        </Button>
-        <IconButton @click="retrieveImages()">
-          <RefreshCcw/>
-        </IconButton>
-        <VerticalSeperator />
-        <GridSizeSelector v-if="moduleConfig" :column-size="moduleConfig.configuration['columnSize']" @update-grid-size="(newSize) => changeGridSize('images', newSize, emit)"/>
-        <CardBodyToggler :show-card-body="showCardBody"  @toggle="toggleCardBody('images', emit)"/>
-
-      </div>
-    </CardHeader>
-    <CardContent v-if="showCardBody">
+  <ModuleBase title="Images" :module-config="moduleConfig" @config-change="(payload) => emit('configChange', payload)">
+    <template #side-buttons>
+      <Button class="btn btn-primary" variant="outline" @click="openImageFolder()">
+        Open folder
+      </Button>
+      <IconButton @click="retrieveImages()">
+        <RefreshCcw/>
+      </IconButton>
+    </template>
+    <template #card-content>
       <Table>
         <TableHeader>
           <TableRow>
@@ -94,7 +76,7 @@ function openImageFolder(){
             <TableCell>{{ image.location }}</TableCell>
 
             <!--  Image Dialog  -->
-            <Dialog v-model:open="openDialogs[index]" v-if="showCardBody">
+            <Dialog v-model:open="openDialogs[index]">
               <DialogContent>
                 <img :src="'/images/' + image.location" alt="Error loading image"/>
               </DialogContent>
@@ -103,8 +85,8 @@ function openImageFolder(){
           </TableRow>
         </TableBody>
       </Table>
-    </CardContent>
-  </Card>
+    </template>
+  </ModuleBase>
 </template>
 
 <style scoped>
