@@ -9,11 +9,12 @@ import {FormControl, FormItem, FormLabel, FormMessage} from "@/components/ui/for
 import {Input} from "@/components/ui/input";
 import {useToast} from "@/components/ui/toast";
 import {CreateTag} from "../../../bindings/storyguardian/src/project/storymanager";
-import {Dialog, DialogContent, DialogFooter, DialogTrigger} from "@/components/ui/dialog";
+import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
 import IconButton from "@/components/ui/button/IconButton.vue";
 import {Plus, Trash2} from "lucide-vue-next";
 import {ref} from "vue";
+import {DeleteEntity} from "../../../bindings/storyguardian/src/project/entitymanager";
 
 const props = defineProps<{
   tags: string[],
@@ -23,7 +24,12 @@ const emit = defineEmits(['configChange', 'refreshTags'])
 
 const {toast} = useToast();
 
+//Add dialog
 const dialogOpen = ref(false);
+
+//Delete dialog
+const tagDeleteDialogOpen = ref(false);
+const tagToDelete = ref<string>('');
 
 const {handleSubmit} = useForm({
   validationSchema: toTypedSchema(z.object({
@@ -49,7 +55,29 @@ const onSubmit = handleSubmit(async (values) => {
   }
 })
 
+function initDelete(tag: string){
+  tagToDelete.value = tag;
+  tagDeleteDialogOpen.value = true;
+}
 
+function deleteEntity(){
+  // DeleteEntity(entityToDelete.value!.id).then(() => {
+  //   entities.value = entities.value.filter(entity => entity.id !== entityToDelete.value!.id);
+  //   toast({
+  //     title: 'Success',
+  //     description: 'Entity successfully deleted.',
+  //     icon: 'check',
+  //   });
+  //   deleteDialogOpen.value = false;
+  //   searchResult.value = entities.value;
+  //   refreshViewLength();
+  // }).catch((error: string) => {
+  //   toast({
+  //     title: 'Uh oh! Something went wrong.',
+  //     description: error,
+  //   });
+  // });
+}
 </script>
 
 <template>
@@ -84,9 +112,23 @@ const onSubmit = handleSubmit(async (values) => {
       </Dialog>
     </template>
     <template #item-action>
-      <IconButton class="absolute right-0 flex-shrink-0 hidden group-hover:flex">
+      <IconButton class="absolute right-0 flex-shrink-0 hidden group-hover:flex" @click="initDelete">
         <Trash2/>
       </IconButton>
     </template>
   </TagListBase>
+
+  <Dialog v-model:open="tagDeleteDialogOpen">
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Are you sure you want to remove this entity?</DialogTitle>
+      </DialogHeader>
+      <p v-if="tagToDelete">{{ tagToDelete }}</p>
+      <DialogFooter>
+        <Button @click="deleteEntity" class="w-full">
+          Remove
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
 </template>

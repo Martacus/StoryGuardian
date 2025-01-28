@@ -1,4 +1,3 @@
-<!-- frontend/src/components/shared/TagListBase.vue -->
 <script setup lang="ts">
 import {onMounted, ref, watch} from "vue";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
@@ -86,7 +85,8 @@ watch(() => props.tags, (newTags) => {
     </CardHeader>
     <CardContent v-if="showCardBody">
       <ScrollArea class="w-full" :class="listHeight">
-        <div id="single-entity-list" :class="[itemView === 'list' ? 'flex flex-col gap-2' : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2', {'mr-4': isScrollable}]" ref="contentRef">
+<!--        , {'mr-4': isScrollable}-->
+        <div id="single-entity-list" :class="[itemView === 'list' ? 'flex flex-col gap-2' : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2']" ref="contentRef">
           <BasicListItem v-for="tag in searchResult" :text="tag">
             <template #item-action>
               <slot name="item-action"/>
