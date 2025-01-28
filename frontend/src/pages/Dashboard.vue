@@ -12,7 +12,7 @@ import TextToolTip from "@/components/ui/tooltip/TextTooltip.vue";
 import {Plus, Settings} from 'lucide-vue-next';
 import {onMounted, ref} from "vue";
 import Description from "@/components/shared/Description.vue";
-import EntityList from "@/components/story/EntityList.vue";
+import EntityList from "@/components/story/entity-list/EntityList.vue";
 import {useToast} from "@/components/ui/toast";
 import EntityTitle from "@/components/shared/EntityTitle.vue";
 import ImageModule from "@/components/story/ImageModule.vue";

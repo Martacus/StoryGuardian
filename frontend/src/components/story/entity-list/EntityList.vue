@@ -14,8 +14,8 @@ import {Input} from "@/components/ui/input";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import {Textarea} from "@/components/ui/textarea";
 import {v4} from "uuid";
-import {Entity, Story, StoryModule} from "../../../bindings/storyguardian/src/project";
-import {CreateEntity, DeleteEntity, LoadEntities} from "../../../bindings/storyguardian/src/project/entitymanager";
+import {Entity, Story, StoryModule} from "../../../../bindings/storyguardian/src/project";
+import {CreateEntity, DeleteEntity, LoadEntities} from "../../../../bindings/storyguardian/src/project/entitymanager";
 import {useToggleBody} from "@/composables/useToggleBody";
 import {useGridSize} from "@/composables/useGridSize";
 import GridSizeSelector from "@/components/shared/button/GridSizeSelector.vue";
@@ -27,6 +27,7 @@ import IconButton from "@/components/ui/button/IconButton.vue";
 import CardBodyToggler from "@/components/shared/button/CardBodyToggler.vue";
 import ItemViewSelector from "@/components/shared/button/ItemViewSelector.vue";
 import {useNavigation} from "@/composables/useNavigation";
+import EntityListItem from "@/components/story/entity-list/EntityListItem.vue";
 
 
 const props = defineProps<{
@@ -252,47 +253,16 @@ function deleteEntity(){
     </CardHeader>
     <CardContent v-if="showCardBody">
       <ScrollArea :class="listHeight" type="auto" ref="scrollAreaRef">
-        <div id="single-entity-list" class="flex flex-col gap-2" :class="{'mr-4': isScrollable}"
-             v-if="itemView === 'list'" ref="contentRef">
-          <!-- Entities -->
-          <div class="group bg-muted/30 hover:bg-muted/40 rounded-lg hover:cursor-pointer
-                      py-2 flex flex-row items-center justify-center relative"
-               @click="navigateToEntity(entity.id)"
-               v-for="entity in searchResult">
-            <p class="px-4 text-center">
-              {{ entity.name }}
-            </p>
-
+        <div id="single-entity-list" :class="[itemView === 'list' ? 'flex flex-col gap-2' : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2', {'mr-4': isScrollable}]" ref="contentRef">
+          <EntityListItem v-for="entity in searchResult" :entity-name="entity.name" @click="navigateToEntity(entity.id)">
             <IconButton @click.stop="initDelete(entity.id)" class="absolute right-0 flex-shrink-0 hidden group-hover:flex">
               <Trash2/>
             </IconButton>
-          </div>
-          <!-- No entities -->
-          <p v-if="searchResult.length <= 0">
-            No Entities have been found.
-          </p>
+          </EntityListItem>
         </div>
-        <div id="single-entity-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2"
-             v-if="itemView === 'grid'" ref="contentRef">
-          <!-- Entities -->
-          <div :id="'entity-list-tag-' + entity.id"
-               class="group bg-muted/30 hover:bg-muted/40 rounded-lg hover:cursor-pointer
-                      py-2 flex flex-row items-center relative"
-               @click="navigateToEntity(entity.id)"
-               v-for="entity in searchResult">
-            <p class="px-4 text-center truncate flex-grow">
-              {{ entity.name }}
-            </p>
-
-            <IconButton @click.stop="initDelete(entity.id)" class="absolute right-0 flex-shrink-0 hidden group-hover:flex">
-              <Trash2/>
-            </IconButton>
-          </div>
-          <!-- No entities -->
-          <p v-if="searchResult.length <= 0">
-            No Entities have been found.
-          </p>
-        </div>
+        <p v-if="searchResult.length <= 0">
+          No Entities have been found.
+        </p>
       </ScrollArea>
     </CardContent>
   </Card>
