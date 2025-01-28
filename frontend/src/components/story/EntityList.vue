@@ -14,9 +14,8 @@ import {Input} from "@/components/ui/input";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import {Textarea} from "@/components/ui/textarea";
 import {v4} from "uuid";
-import {useRouter} from "vue-router";
 import {Entity, Story, StoryModule} from "../../../bindings/storyguardian/src/project";
-import {CreateEntity, LoadEntities} from "../../../bindings/storyguardian/src/project/entitymanager";
+import {CreateEntity, DeleteEntity, LoadEntities} from "../../../bindings/storyguardian/src/project/entitymanager";
 import {useToggleBody} from "@/composables/useToggleBody";
 import {useGridSize} from "@/composables/useGridSize";
 import GridSizeSelector from "@/components/shared/button/GridSizeSelector.vue";
@@ -37,7 +36,6 @@ const props = defineProps<{
 const emit = defineEmits(['configChange'])
 
 const {toast} = useToast()
-const router = useRouter()
 const {navigateToEntity} = useNavigation()
 
 const entities = ref<Entity[]>([]);
@@ -47,6 +45,11 @@ const contentRef = ref<any>(null);
 const isScrollable = ref(false);
 const listHeight = ref<string>('h-0')
 
+//Delete dialog
+const deleteDialogOpen = ref(false);
+const entityToDelete = ref<Entity>();
+
+//Composables
 const {showCardBody, toggleCardBody} = useToggleBody(props.moduleConfig)
 const {columnSize, changeGridSize} = useGridSize(props.moduleConfig)
 const {itemView, changeItemView} = useItemGridLayout(props.moduleConfig);
@@ -128,7 +131,7 @@ const onSubmit = handleSubmit(async (values) => {
 
 const checkScrollable = () => {
   if (scrollAreaRef.value && contentRef.value) {
-    const scrollAreaEl = scrollAreaRef.value.$el; // Get the DOM element of the ScrollArea component
+    const scrollAreaEl = scrollAreaRef.value.$el;
     isScrollable.value = contentRef.value.scrollHeight > scrollAreaEl.clientHeight;
   }
 };
@@ -152,6 +155,30 @@ watch(
 watch(itemView, () => {
   refreshViewLength();
 })
+
+function initDelete(entityId: string){
+  entityToDelete.value = entities.value.find(entity => entity.id === entityId);
+  deleteDialogOpen.value = true;
+}
+
+function deleteEntity(){
+  DeleteEntity(entityToDelete.value!.id).then(() => {
+    entities.value = entities.value.filter(entity => entity.id !== entityToDelete.value!.id);
+    toast({
+      title: 'Success',
+      description: 'Entity successfully deleted.',
+      icon: 'check',
+    });
+    deleteDialogOpen.value = false;
+    searchResult.value = entities.value;
+    refreshViewLength();
+  }).catch((error: string) => {
+    toast({
+      title: 'Uh oh! Something went wrong.',
+      description: error,
+    });
+  });
+}
 </script>
 
 <template>
@@ -236,7 +263,7 @@ watch(itemView, () => {
               {{ entity.name }}
             </p>
 
-            <IconButton @click.stop="console.log('t')" class="absolute right-0 flex-shrink-0 hidden group-hover:flex">
+            <IconButton @click.stop="initDelete(entity.id)" class="absolute right-0 flex-shrink-0 hidden group-hover:flex">
               <Trash2/>
             </IconButton>
           </div>
@@ -257,7 +284,7 @@ watch(itemView, () => {
               {{ entity.name }}
             </p>
 
-            <IconButton @click.stop="console.log('t')" class="absolute right-0 flex-shrink-0 hidden group-hover:flex">
+            <IconButton @click.stop="initDelete(entity.id)" class="absolute right-0 flex-shrink-0 hidden group-hover:flex">
               <Trash2/>
             </IconButton>
           </div>
@@ -269,5 +296,19 @@ watch(itemView, () => {
       </ScrollArea>
     </CardContent>
   </Card>
+
+  <Dialog v-model:open="deleteDialogOpen" v-if="showCardBody">
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Are you sure you want to remove this entity?</DialogTitle>
+      </DialogHeader>
+      <p v-if="entityToDelete">{{ entityToDelete.name }}</p>
+      <DialogFooter>
+        <Button @click="deleteEntity" class="w-full">
+          Remove
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
 </template>
 

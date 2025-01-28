@@ -28,6 +28,11 @@ export function CreateEntity(entity: $models.Entity): Promise<$models.Entity> & 
     return $typingPromise;
 }
 
+export function DeleteEntity(id: string): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(3032011312, id) as any;
+    return $resultPromise;
+}
+
 export function EditEntityModuleConfig(entityID: string, $module: string, config: string, value: string): Promise<void> & { cancel(): void } {
     let $resultPromise = $Call.ByID(3627222189, entityID, $module, config, value) as any;
     return $resultPromise;

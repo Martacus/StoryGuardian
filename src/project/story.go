@@ -12,7 +12,6 @@ import (
 type Story struct {
 	ProjectDetails
 	Description string                 `json:"description"`
-	Entities    []Entity               `json:"entities"`
 	Tags        []string               `json:"tags"`
 	Modules     map[string]StoryModule `json:"modules"`
 }

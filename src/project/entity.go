@@ -203,3 +203,14 @@ func (e *EntityManager) RemoveTagFromEntity(entityId string, tag string) error {
 
 	return nil
 }
+
+func (e *EntityManager) DeleteEntity(id string) error {
+	filePath := e.getEntityFilePath(id)
+	if err := os.Remove(filePath); err != nil {
+		return fmt.Errorf("could not remove entity file: %v", err)
+	}
+
+	delete(e.Entities, id)
+
+	return nil
+}

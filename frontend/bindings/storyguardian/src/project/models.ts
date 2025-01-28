@@ -252,7 +252,6 @@ export class Story {
     "name": string;
     "location": string;
     "description": string;
-    "entities": Entity[];
     "tags": string[];
     "modules": { [_: string]: StoryModule };
 
@@ -270,9 +269,6 @@ export class Story {
         if (!("description" in $$source)) {
             this["description"] = "";
         }
-        if (!("entities" in $$source)) {
-            this["entities"] = [];
-        }
         if (!("tags" in $$source)) {
             this["tags"] = [];
         }
@@ -287,18 +283,14 @@ export class Story {
      * Creates a new Story instance from a string or object.
      */
     static createFrom($$source: any = {}): Story {
-        const $$createField4_0 = $$createType6;
-        const $$createField5_0 = $$createType2;
-        const $$createField6_0 = $$createType4;
+        const $$createField4_0 = $$createType2;
+        const $$createField5_0 = $$createType4;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
-        if ("entities" in $$parsedSource) {
-            $$parsedSource["entities"] = $$createField4_0($$parsedSource["entities"]);
-        }
         if ("tags" in $$parsedSource) {
-            $$parsedSource["tags"] = $$createField5_0($$parsedSource["tags"]);
+            $$parsedSource["tags"] = $$createField4_0($$parsedSource["tags"]);
         }
         if ("modules" in $$parsedSource) {
-            $$parsedSource["modules"] = $$createField6_0($$parsedSource["modules"]);
+            $$parsedSource["modules"] = $$createField5_0($$parsedSource["modules"]);
         }
         return new Story($$parsedSource as Partial<Story>);
     }
@@ -324,7 +316,7 @@ export class StoryModule {
      * Creates a new StoryModule instance from a string or object.
      */
     static createFrom($$source: any = {}): StoryModule {
-        const $$createField1_0 = $$createType7;
+        const $$createField1_0 = $$createType5;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("configuration" in $$parsedSource) {
             $$parsedSource["configuration"] = $$createField1_0($$parsedSource["configuration"]);
@@ -339,6 +331,4 @@ const $$createType1 = $Create.Map($Create.Any, $$createType0);
 const $$createType2 = $Create.Array($Create.Any);
 const $$createType3 = StoryModule.createFrom;
 const $$createType4 = $Create.Map($Create.Any, $$createType3);
-const $$createType5 = Entity.createFrom;
-const $$createType6 = $Create.Array($$createType5);
-const $$createType7 = $Create.Map($Create.Any, $Create.Any);
+const $$createType5 = $Create.Map($Create.Any, $Create.Any);
