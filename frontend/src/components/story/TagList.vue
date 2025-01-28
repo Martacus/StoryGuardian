@@ -14,7 +14,6 @@ import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
 import IconButton from "@/components/ui/button/IconButton.vue";
 import {Plus, Trash2} from "lucide-vue-next";
 import {ref} from "vue";
-import {DeleteEntity} from "../../../bindings/storyguardian/src/project/entitymanager";
 
 const props = defineProps<{
   tags: string[],
