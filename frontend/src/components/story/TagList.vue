@@ -18,6 +18,7 @@ import ItemSearch from "@/components/shared/ItemSearch.vue";
 import {useItemFilter} from "@/composables/useItemFilter";
 import BasicListItem from "@/components/story/entity-list/BasicListItem.vue";
 import BasicItemList from "@/components/story/entity-list/BasicItemList.vue";
+import {useBasicListHeight} from "@/composables/list/useBasicListHeight";
 
 const props = defineProps<{
   tags: string[],
@@ -27,7 +28,6 @@ const emit = defineEmits(['configChange', 'refreshTags'])
 
 const {toast} = useToast();
 
-const listHeight = ref<string>('h-0');
 const tagList = ref<string[]>([]);
 const itemView = ref(props.moduleConfig.configuration['itemView']);
 
@@ -35,39 +35,20 @@ const itemView = ref(props.moduleConfig.configuration['itemView']);
 const {searchInput, searchResult} = useItemFilter(tagList, (tag, filter) => {
   return tag.toLowerCase().includes(filter.toLowerCase());
 });
-
-function calcListHeight() {
-  if (itemView.value === 'list') {
-    console.log('val;' + searchResult.value.length)
-    if (searchResult.value.length > 8) {
-      listHeight.value = 'h-96';
-    } else {
-      listHeight.value = 'h-' + Math.max(searchResult.value.length, 1) * 12;
-    }
-  } else {
-    if (searchResult.value.length > 24) {
-      listHeight.value = 'h-96';
-    } else {
-      listHeight.value = 'h-' + Math.max(searchResult.value.length, 3) / 3 * 12;
-    }
-  }
-}
+const {listHeight} = useBasicListHeight(itemView, searchResult);
 
 onMounted(() => {
   tagList.value = props.tags
   searchResult.value = props.tags
-  calcListHeight();
 })
 
 watch(() => props.tags, (newTags) => {
   tagList.value = newTags;
   searchResult.value = newTags;
-  calcListHeight();
 });
 
 function updateItemView(view: string){
   itemView.value = view;
-  calcListHeight();
 }
 
 //Add dialog
