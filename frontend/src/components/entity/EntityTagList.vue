@@ -1,13 +1,6 @@
 <script setup lang="ts">
-import TagListBase from "@/components/shared/TagListBase.vue";
 import {StoryModule} from "../../../bindings/storyguardian/src/project";
-import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
-import {Dialog, DialogContent, DialogTrigger} from "@/components/ui/dialog";
-import IconButton from "@/components/ui/button/IconButton.vue";
-import {Diff} from "lucide-vue-next";
 import {computed, onMounted, ref, watch} from "vue";
-import ItemSearch from "@/components/shared/ItemSearch.vue";
-import {ScrollArea} from "@/components/ui/scroll-area";
 import {useItemFilter} from "@/composables/useItemFilter";
 import {GetStoryTags} from "../../../bindings/storyguardian/src/project/storymanager";
 import {useToast} from "@/components/ui/toast";
@@ -68,7 +61,7 @@ async function addOrRemoveTags(tag: string) {
         title: 'Tag removed',
         description: `Tag ${tag} has been removed from the entity.`,
       });
-    } catch (error: string) {
+    } catch (error: any) {
       toast({
         title: 'Failed to remove tag',
         description: error,
@@ -82,7 +75,7 @@ async function addOrRemoveTags(tag: string) {
         title: 'Tag added',
         description: `Tag ${tag} has been added to the entity.`,
       });
-    } catch (error: string) {
+    } catch (error: any) {
       toast({
         title: 'Failed to add tag',
         description: error,
@@ -98,38 +91,38 @@ watch(() => props.tags, () => {
 </script>
 
 <template>
-  <TagListBase :tags="props.tags" :moduleConfig="props.moduleConfig">
-    <template #add-dialog>
-      <Dialog v-model:open="dialogOpen">
-        <DialogTrigger>
-          <TextTooltip text="Add a tag">
-            <IconButton @click="">
-              <Diff/>
-            </IconButton>
-          </TextTooltip>
-        </DialogTrigger>
-        <DialogContent class="max-w-xl">
-          <ItemSearch v-model:search-input="searchInput" placeholder="Search tags..." class="mx-4"/>
-          <ScrollArea class="w-full" :class="listHeight">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-              <div
-                  :class="{'bg-muted/90 border border-white': isTagSelected(tag), 'bg-muted/30 hover:bg-muted/40': !isTagSelected(tag)}"
-                  class="rounded-lg py-2 hover:cursor-pointer"
-                  @click="addOrRemoveTags(tag)"
-                  v-for="tag in searchResult"
-                  :key="tag"
-              >
-                <p class="px-4 text-center">
-                  {{ tag }}
-                </p>
-              </div>
-            </div>
-            <p v-if="searchResult.length <= 0">
-              No Tags have been found.
-            </p>
-          </ScrollArea>
-        </DialogContent>
-      </Dialog>
-    </template>
-  </TagListBase>
+<!--  <TagListBase :tags="props.tags" :moduleConfig="props.moduleConfig">-->
+<!--    <template #add-dialog>-->
+<!--      <Dialog v-model:open="dialogOpen">-->
+<!--        <DialogTrigger>-->
+<!--          <TextTooltip text="Add a tag">-->
+<!--            <IconButton @click="">-->
+<!--              <Diff/>-->
+<!--            </IconButton>-->
+<!--          </TextTooltip>-->
+<!--        </DialogTrigger>-->
+<!--        <DialogContent class="max-w-xl">-->
+<!--          <ItemSearch v-model:search-input="searchInput" placeholder="Search tags..." class="mx-4"/>-->
+<!--          <ScrollArea class="w-full" :class="listHeight">-->
+<!--            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">-->
+<!--              <div-->
+<!--                  :class="{'bg-muted/90 border border-white': isTagSelected(tag), 'bg-muted/30 hover:bg-muted/40': !isTagSelected(tag)}"-->
+<!--                  class="rounded-lg py-2 hover:cursor-pointer"-->
+<!--                  @click="addOrRemoveTags(tag)"-->
+<!--                  v-for="tag in searchResult"-->
+<!--                  :key="tag"-->
+<!--              >-->
+<!--                <p class="px-4 text-center">-->
+<!--                  {{ tag }}-->
+<!--                </p>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            <p v-if="searchResult.length <= 0">-->
+<!--              No Tags have been found.-->
+<!--            </p>-->
+<!--          </ScrollArea>-->
+<!--        </DialogContent>-->
+<!--      </Dialog>-->
+<!--    </template>-->
+<!--  </TagListBase>-->
 </template>

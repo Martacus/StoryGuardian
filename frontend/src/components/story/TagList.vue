@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import TagListBase from "@/components/shared/TagListBase.vue";
 import {StoryModule} from "../../../bindings/storyguardian/src/project";
 import {Field, useForm} from 'vee-validate';
 import {toTypedSchema} from '@vee-validate/zod';
@@ -12,8 +11,13 @@ import {CreateTag} from "../../../bindings/storyguardian/src/project/storymanage
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
 import IconButton from "@/components/ui/button/IconButton.vue";
-import {Plus, Trash2} from "lucide-vue-next";
-import {ref} from "vue";
+import {Plus} from "lucide-vue-next";
+import {onMounted, ref, watch} from "vue";
+import ModuleBase from "@/components/shared/module/ModuleBase.vue";
+import ItemSearch from "@/components/shared/ItemSearch.vue";
+import {useItemFilter} from "@/composables/useItemFilter";
+import BasicListItem from "@/components/story/entity-list/BasicListItem.vue";
+import BasicItemList from "@/components/story/entity-list/BasicItemList.vue";
 
 const props = defineProps<{
   tags: string[],
@@ -22,6 +26,49 @@ const props = defineProps<{
 const emit = defineEmits(['configChange', 'refreshTags'])
 
 const {toast} = useToast();
+
+const listHeight = ref<string>('h-0');
+const tagList = ref<string[]>([]);
+const itemView = ref(props.moduleConfig.configuration['itemView']);
+
+//Composables
+const {searchInput, searchResult} = useItemFilter(tagList, (tag, filter) => {
+  return tag.toLowerCase().includes(filter.toLowerCase());
+});
+
+function calcListHeight() {
+  if (itemView.value === 'list') {
+    console.log('val;' + searchResult.value.length)
+    if (searchResult.value.length > 8) {
+      listHeight.value = 'h-96';
+    } else {
+      listHeight.value = 'h-' + Math.max(searchResult.value.length, 1) * 12;
+    }
+  } else {
+    if (searchResult.value.length > 24) {
+      listHeight.value = 'h-96';
+    } else {
+      listHeight.value = 'h-' + Math.max(searchResult.value.length, 3) / 3 * 12;
+    }
+  }
+}
+
+onMounted(() => {
+  tagList.value = props.tags
+  searchResult.value = props.tags
+  calcListHeight();
+})
+
+watch(() => props.tags, (newTags) => {
+  tagList.value = newTags;
+  searchResult.value = newTags;
+  calcListHeight();
+});
+
+function updateItemView(view: string){
+  itemView.value = view;
+  calcListHeight();
+}
 
 //Add dialog
 const dialogOpen = ref(false);
@@ -80,8 +127,12 @@ function deleteEntity(){
 </script>
 
 <template>
-  <TagListBase :tags="props.tags" :moduleConfig="props.moduleConfig" @configChange="emit('configChange', $event)">
-    <template #add-dialog>
+  <ModuleBase title="Tags" :module-config="moduleConfig"
+              @config-change="(payload) => emit('configChange', payload)"
+              @update:item-view="updateItemView"
+              :item-grid-layout="true">
+
+    <template #side-buttons>
       <Dialog v-model:open="dialogOpen">
         <DialogTrigger>
           <TextTooltip text="Add a tag">
@@ -110,12 +161,33 @@ function deleteEntity(){
         </DialogContent>
       </Dialog>
     </template>
-    <template #item-action>
-      <IconButton class="absolute right-0 flex-shrink-0 hidden group-hover:flex" @click="initDelete">
-        <Trash2/>
-      </IconButton>
+
+    <template #center-space>
+      <ItemSearch v-model:search-input="searchInput" placeholder="Search tags..."/>
     </template>
-  </TagListBase>
+
+    <template #card-content>
+      <BasicItemList :list-height="listHeight" :item-view="itemView">
+
+        <template #items>
+          <BasicListItem v-for="tag in searchResult" :text="tag">
+            <template #item-action>
+              <slot name="item-action"/>
+            </template>
+          </BasicListItem>
+        </template>
+
+        <template #no-items>
+          <p v-if="searchResult.length <= 0">
+            No Tags have been found.
+          </p>
+        </template>
+
+      </BasicItemList>
+    </template>
+  </ModuleBase>
+
+
 
   <Dialog v-model:open="tagDeleteDialogOpen">
     <DialogContent>
