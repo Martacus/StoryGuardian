@@ -11,7 +11,7 @@ import {CreateTag} from "../../../bindings/storyguardian/src/project/storymanage
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
 import IconButton from "@/components/ui/button/IconButton.vue";
-import {Plus} from "lucide-vue-next";
+import {Plus, Trash2} from "lucide-vue-next";
 import {onMounted, ref, watch} from "vue";
 import ModuleBase from "@/components/shared/module/ModuleBase.vue";
 import ItemSearch from "@/components/shared/ItemSearch.vue";
@@ -153,7 +153,9 @@ function deleteEntity(){
         <template #items>
           <BasicListItem v-for="tag in searchResult" :text="tag">
             <template #item-action>
-              <slot name="item-action"/>
+              <IconButton @click.stop="initDelete(tag)" class="absolute right-0 flex-shrink-0 hidden group-hover:flex">
+                <Trash2/>
+              </IconButton>
             </template>
           </BasicListItem>
         </template>

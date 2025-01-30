@@ -7,6 +7,7 @@ import ModuleBase from "@/components/shared/module/ModuleBase.vue";
 import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
 import IconButton from "@/components/ui/button/IconButton.vue";
 import TipTap from "@/components/shared/TipTap.vue";
+import {Button} from "@/components/ui/button";
 
 defineProps<{
   description: String,

@@ -131,6 +131,7 @@ function refreshEntity(){
 function updateEntityTags(tags: string[]){
   if(entity.value){
     entity.value.tags = tags;
+    console.log('set parent tags')
   }
 }
 </script>
@@ -194,7 +195,7 @@ function updateEntityTags(tags: string[]){
         :tags="entity.tags"
         @config-change="moduleConfigChange"
         @refresh-tags="refreshEntity"
-        @update:tags="args => updateEntityTags(args)"
+        @update:tags="updateEntityTags"
         :entity-id="entity.id"
     />
   </DashboardLayout>
