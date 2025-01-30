@@ -12,16 +12,17 @@ import {GetEntitiesByTag} from "../../bindings/storyguardian/src/project/entitym
 import BasicListItem from "@/components/story/entity-list/BasicListItem.vue";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import {useNavigation} from "@/composables/useNavigation";
+import {Entity} from "../../bindings/storyguardian/src/project";
 
 const route = useRoute();
 const router = useRouter();
 const {navigateToEntity} = useNavigation();
 
 const tag: string = route.params['id'] as string
-const entityList = ref<string[]>([]);
+const entityList = ref<Entity[]>([]);
 
-const {searchInput, searchResult} = useItemFilter(entityList, (entityName, filter) => {
-  return entityName.toLowerCase().includes(filter.toLowerCase());
+const {searchInput, searchResult} = useItemFilter(entityList, (entity, filter) => {
+  return entity.name.toLowerCase().includes(filter.toLowerCase());
 });
 
 onMounted(() => {
@@ -31,6 +32,8 @@ onMounted(() => {
   }).catch((error) => {
     console.error(error);
   })
+
+
 })
 </script>
 
@@ -83,7 +86,7 @@ onMounted(() => {
       <template #card-content>
         <ScrollArea class="w-full">
           <div id="single-entity-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2" ref="contentRef">
-            <BasicListItem v-for="entity in searchResult" :text="entity" @click="navigateToEntity(entity)">
+            <BasicListItem v-for="entity in searchResult" :text="entity.name" @click="navigateToEntity(entity.id)">
             </BasicListItem>
           </div>
           <p v-if="searchResult.length <= 0">

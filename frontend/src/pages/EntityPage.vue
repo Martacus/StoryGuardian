@@ -104,9 +104,6 @@ function refreshUnusedEntityModules(){
 }
 
 function moduleConfigChange({ module, key, value }: { module: string, key: string, value: string }) {
-  console.log(module)
-  console.log(key)
-  console.log(value)
   EditEntityModuleConfig(entityId, module, key, value).catch((error: string) => {
     toast({
       title: 'Failed to save module config change',

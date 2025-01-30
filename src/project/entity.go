@@ -217,12 +217,12 @@ func (e *EntityManager) DeleteEntity(id string) error {
 	return nil
 }
 
-func (e *EntityManager) GetEntitiesByTag(tag string) []string {
-	var entities []string
+func (e *EntityManager) GetEntitiesByTag(tag string) []Entity {
+	var entities []Entity
 	for _, entity := range e.Entities {
 		for _, entityTag := range entity.Tags {
 			if entityTag == tag {
-				entities = append(entities, entity.Name)
+				entities = append(entities, *entity)
 				break
 			}
 		}

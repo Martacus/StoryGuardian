@@ -116,15 +116,15 @@ function moduleConfigChange(module: string, key: string, value: string) {
     <Description
         v-if="relation"
         :description="relation.description"
-        @save-description="saveDescription"
         :module-config="relation.modules['description']"
+        @save-description="saveDescription"
         @config-change="moduleConfigChange"
     />
     <RelationInfo
         v-if="relation"
         :module-config="relation.modules['relationInfo']"
-        @config-change="moduleConfigChange"
         :relation="relation"
+        @config-change="moduleConfigChange"
     />
   </DashboardLayout>
 </template>

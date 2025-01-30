@@ -150,6 +150,7 @@ const onSubmit = handleSubmit(async (values) => {
     } as Entity);
 
     entities.value.push(entity);
+    searchResult.value = entities.value;
     toast({
       title: 'Success',
       description: 'Entity successfully created.',

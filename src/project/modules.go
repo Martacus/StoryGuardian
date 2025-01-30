@@ -181,12 +181,15 @@ func (r *RelationManager) EditRelationModuleConfig(relationID, module, config, v
 	if err != nil {
 		return fmt.Errorf("could not edit relation module config: %v", err)
 	}
+	fmt.Println("1")
 	if _, exists := relation.Modules[module]; !exists {
 		return fmt.Errorf("relation module %s does not exist", module)
 	}
+	fmt.Println("2")
 	relation.Modules[module].Configuration[config] = value
 	if err := r.SaveRelation(*relation); err != nil {
 		return fmt.Errorf("could not save relation module configuration: %v", err)
 	}
+	fmt.Println("3")
 	return nil
 }

@@ -47,7 +47,7 @@ export function GetEntities(): Promise<($models.Entity | null)[]> & { cancel(): 
     return $typingPromise;
 }
 
-export function GetEntitiesByTag(tag: string): Promise<string[]> & { cancel(): void } {
+export function GetEntitiesByTag(tag: string): Promise<$models.Entity[]> & { cancel(): void } {
     let $resultPromise = $Call.ByID(2313708174, tag) as any;
     let $typingPromise = $resultPromise.then(($result) => {
         return $$createType3($result);
@@ -68,7 +68,7 @@ export function GetEntity(entityId: string): Promise<$models.Entity | null> & { 
 export function GetEntityModules(entityID: string, unusedModulesOnly: boolean): Promise<string[]> & { cancel(): void } {
     let $resultPromise = $Call.ByID(3904918628, entityID, unusedModulesOnly) as any;
     let $typingPromise = $resultPromise.then(($result) => {
-        return $$createType3($result);
+        return $$createType4($result);
     }) as any;
     $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
     return $typingPromise;
@@ -77,7 +77,7 @@ export function GetEntityModules(entityID: string, unusedModulesOnly: boolean): 
 export function LoadEntities(): Promise<$models.Entity[]> & { cancel(): void } {
     let $resultPromise = $Call.ByID(2421700187) as any;
     let $typingPromise = $resultPromise.then(($result) => {
-        return $$createType4($result);
+        return $$createType3($result);
     }) as any;
     $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
     return $typingPromise;
@@ -126,5 +126,5 @@ export function SetEntityName(entityId: string, name: string): Promise<string> &
 const $$createType0 = $models.Entity.createFrom;
 const $$createType1 = $Create.Nullable($$createType0);
 const $$createType2 = $Create.Array($$createType1);
-const $$createType3 = $Create.Array($Create.Any);
-const $$createType4 = $Create.Array($$createType0);
+const $$createType3 = $Create.Array($$createType0);
+const $$createType4 = $Create.Array($Create.Any);
