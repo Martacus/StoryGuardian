@@ -132,6 +132,12 @@ function addStoryModule(module: string){
   });
   addModuleDialogOpened.value = false;
 }
+
+function updateTagsFromTagList(tags: string[]){
+  if(story.value){
+    story.value.tags = tags;
+  }
+}
 </script>
 
 <template>
@@ -190,7 +196,7 @@ function addStoryModule(module: string){
         :module-config="story.modules['tagList']"
         :tags="story.tags"
         @config-change="moduleConfigChange"
-        @refresh-tags="retrieveStory(true)"
+        @update:tags="updateTagsFromTagList"
     />
     <ImageModule
         v-if="story && isUsedModule('images')"

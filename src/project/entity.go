@@ -184,6 +184,8 @@ func (e *EntityManager) AddTagToEntity(entityId string, tag string) error {
 	return nil
 }
 
+//Tags
+
 func (e *EntityManager) RemoveTagFromEntity(entityId string, tag string) error {
 	entity, err := e.GetEntity(entityId)
 	if err != nil {
@@ -213,4 +215,32 @@ func (e *EntityManager) DeleteEntity(id string) error {
 	delete(e.Entities, id)
 
 	return nil
+}
+
+func (e *EntityManager) GetEntitiesByTag(tag string) []string {
+	var entities []string
+	for _, entity := range e.Entities {
+		for _, entityTag := range entity.Tags {
+			if entityTag == tag {
+				entities = append(entities, entity.Name)
+				break
+			}
+		}
+	}
+
+	return entities
+}
+
+func (e *EntityManager) RemoveTagFromEntities(tag string) {
+	for _, entity := range e.Entities {
+		for i, entityTag := range entity.Tags {
+			if entityTag == tag {
+				entity.Tags = append(entity.Tags[:i], entity.Tags[i+1:]...)
+				if err := e.SaveEntity(*entity); err != nil {
+					fmt.Printf("could not save entity %v with removed tag: %v", entity.Name, err)
+				}
+				break
+			}
+		}
+	}
 }

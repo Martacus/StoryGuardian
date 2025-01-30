@@ -14,6 +14,7 @@ import ItemSearch from "@/components/shared/ItemSearch.vue";
 import {Diff} from "lucide-vue-next";
 import ModuleBase from "@/components/shared/module/ModuleBase.vue";
 import {ScrollArea} from "@/components/ui/scroll-area";
+import {useNavigation} from "@/composables/useNavigation";
 
 const props = defineProps<{
   tags: string[],
@@ -22,6 +23,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits(['update:tags', 'configChange']);
+const {navigateToTag} = useNavigation()
 
 const dialogOpen = ref(false);
 const listHeight = ref<string>('h-0');
@@ -163,7 +165,7 @@ function updateItemView(view: string){
       <BasicItemList :list-height="listHeight" :item-view="itemView">
 
         <template #items>
-          <BasicListItem v-for="tag in searchResult" :text="tag">
+          <BasicListItem v-for="tag in searchResult" :text="tag" @click="navigateToTag(tag)">
           </BasicListItem>
         </template>
 

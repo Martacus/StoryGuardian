@@ -7,7 +7,7 @@ import {Button} from "@/components/ui/button";
 import {FormControl, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {useToast} from "@/components/ui/toast";
-import {CreateTag} from "../../../bindings/storyguardian/src/project/storymanager";
+import {CreateTag, RemoveTagFromStory} from "../../../bindings/storyguardian/src/project/storymanager";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
 import IconButton from "@/components/ui/button/IconButton.vue";
@@ -19,14 +19,17 @@ import {useItemFilter} from "@/composables/useItemFilter";
 import BasicListItem from "@/components/story/entity-list/BasicListItem.vue";
 import BasicItemList from "@/components/story/entity-list/BasicItemList.vue";
 import {useBasicListHeight} from "@/composables/list/useBasicListHeight";
+import {useNavigation} from "@/composables/useNavigation";
+import {RemoveTagFromEntities} from "../../../bindings/storyguardian/src/project/entitymanager";
 
 const props = defineProps<{
   tags: string[],
   moduleConfig: StoryModule
 }>();
-const emit = defineEmits(['configChange', 'refreshTags'])
+const emit = defineEmits(['configChange', 'update:tags'])
 
 const {toast} = useToast();
+const {navigateToTag} = useNavigation()
 
 const tagList = ref<string[]>([]);
 const itemView = ref(props.moduleConfig.configuration['itemView']);
@@ -45,9 +48,10 @@ onMounted(() => {
 watch(() => props.tags, (newTags) => {
   tagList.value = newTags;
   searchResult.value = newTags;
+  console.log('update')
 });
 
-function updateItemView(view: string){
+function updateItemView(view: string) {
   itemView.value = view;
 }
 
@@ -73,7 +77,8 @@ const onSubmit = handleSubmit(async (values) => {
       icon: 'check',
     });
     dialogOpen.value = false;
-    emit('refreshTags')
+    const newTagList = [...tagList.value, values.tag];
+    emit('update:tags', newTagList);
   } catch (error: any) {
     toast({
       title: 'Uh oh! Something went wrong.',
@@ -82,28 +87,36 @@ const onSubmit = handleSubmit(async (values) => {
   }
 })
 
-function initDelete(tag: string){
+function initDelete(tag: string) {
   tagToDelete.value = tag;
   tagDeleteDialogOpen.value = true;
 }
 
-function deleteEntity(){
-  // DeleteEntity(entityToDelete.value!.id).then(() => {
-  //   entities.value = entities.value.filter(entity => entity.id !== entityToDelete.value!.id);
-  //   toast({
-  //     title: 'Success',
-  //     description: 'Entity successfully deleted.',
-  //     icon: 'check',
-  //   });
-  //   deleteDialogOpen.value = false;
-  //   searchResult.value = entities.value;
-  //   refreshViewLength();
-  // }).catch((error: string) => {
-  //   toast({
-  //     title: 'Uh oh! Something went wrong.',
-  //     description: error,
-  //   });
-  // });
+function deleteTagFromStory() {
+  RemoveTagFromStory(tagToDelete.value).then(() => {
+    const newTagList = tagList.value.filter(tag => tag !== tagToDelete.value);
+    emit('update:tags', newTagList);
+  }).catch((error: string) => {
+    toast({
+      title: 'Uh oh! Something went wrong removing the tag from the story.',
+      description: error,
+    });
+  });
+
+  RemoveTagFromEntities(tagToDelete.value).catch((error: string) => {
+    toast({
+      title: 'Uh oh! Something went wrong removing the tag from entities.',
+      description: error,
+    });
+  });
+
+  toast({
+    title: 'Success',
+    description: 'Tag successfully removed.',
+    icon: 'check',
+  });
+
+  tagDeleteDialogOpen.value = false;
 }
 </script>
 
@@ -151,7 +164,7 @@ function deleteEntity(){
       <BasicItemList :list-height="listHeight" :item-view="itemView">
 
         <template #items>
-          <BasicListItem v-for="tag in searchResult" :text="tag">
+          <BasicListItem v-for="tag in searchResult" :text="tag" @click="navigateToTag(tag)">
             <template #item-action>
               <IconButton @click.stop="initDelete(tag)" class="absolute right-0 flex-shrink-0 hidden group-hover:flex">
                 <Trash2/>
@@ -171,7 +184,6 @@ function deleteEntity(){
   </ModuleBase>
 
 
-
   <Dialog v-model:open="tagDeleteDialogOpen">
     <DialogContent>
       <DialogHeader>
@@ -179,7 +191,7 @@ function deleteEntity(){
       </DialogHeader>
       <p v-if="tagToDelete">{{ tagToDelete }}</p>
       <DialogFooter>
-        <Button @click="deleteEntity" class="w-full">
+        <Button @click="deleteTagFromStory" class="w-full">
           Remove
         </Button>
       </DialogFooter>

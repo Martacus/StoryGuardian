@@ -76,7 +76,7 @@ func WriteFileToStruct(file *os.File, data interface{}) error {
 	}
 
 	if err := json.Unmarshal(fileContents, data); err != nil {
-		return fmt.Errorf("could not unmarshal JSON: %w", err)
+		return fmt.Errorf("could not unmarshal JSON: %v, %w", file.Name(), err)
 	}
 
 	return nil

@@ -47,6 +47,15 @@ export function GetEntities(): Promise<($models.Entity | null)[]> & { cancel(): 
     return $typingPromise;
 }
 
+export function GetEntitiesByTag(tag: string): Promise<string[]> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(2313708174, tag) as any;
+    let $typingPromise = $resultPromise.then(($result) => {
+        return $$createType3($result);
+    }) as any;
+    $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
+    return $typingPromise;
+}
+
 export function GetEntity(entityId: string): Promise<$models.Entity | null> & { cancel(): void } {
     let $resultPromise = $Call.ByID(2607049459, entityId) as any;
     let $typingPromise = $resultPromise.then(($result) => {
@@ -81,6 +90,11 @@ export function RefreshEntity(entityId: string): Promise<$models.Entity | null> 
     }) as any;
     $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
     return $typingPromise;
+}
+
+export function RemoveTagFromEntities(tag: string): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(196140367, tag) as any;
+    return $resultPromise;
 }
 
 export function RemoveTagFromEntity(entityId: string, tag: string): Promise<void> & { cancel(): void } {

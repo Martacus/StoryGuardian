@@ -78,6 +78,11 @@ export function NewStory(projectDirectory: string): Promise<$models.Story | null
     return $typingPromise;
 }
 
+export function RemoveTagFromStory(tagName: string): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(3453731275, tagName) as any;
+    return $resultPromise;
+}
+
 export function SaveStory(): Promise<void> & { cancel(): void } {
     let $resultPromise = $Call.ByID(3515724504) as any;
     return $resultPromise;

@@ -7,7 +7,12 @@ export function useNavigation() {
         await router.push('/entity/' + id);
     }
 
+    async function navigateToTag(tag: string) {
+        await router.push('/tag/' + tag);
+    }
+
     return {
         navigateToEntity,
+        navigateToTag
     };
 }

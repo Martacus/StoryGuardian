@@ -150,6 +150,8 @@ func (s *StoryManager) GetStoryImages() ([]ImageFile, error) {
 	return images, nil
 }
 
+// === Story Tags === //
+
 func (s *StoryManager) CreateTag(tagName string) error {
 	s.Story.Tags = append(s.Story.Tags, tagName)
 	if err := s.SaveStory(); err != nil {
@@ -161,6 +163,21 @@ func (s *StoryManager) CreateTag(tagName string) error {
 func (s *StoryManager) GetStoryTags() []string {
 	return s.Story.Tags
 }
+
+func (s *StoryManager) RemoveTagFromStory(tagName string) error {
+	for i, tag := range s.Story.Tags {
+		if tag == tagName {
+			s.Story.Tags = append(s.Story.Tags[:i], s.Story.Tags[i+1:]...)
+			if err := s.SaveStory(); err != nil {
+				return fmt.Errorf("could not save the tag removal: %v", err)
+			}
+			return nil
+		}
+	}
+	return fmt.Errorf("tag %s not found", tagName)
+}
+
+// === Story Modules === //
 
 func addStoryModules(moduleMap map[string]StoryModule) map[string]StoryModule {
 	moduleMap["description"] = StoryModule{
