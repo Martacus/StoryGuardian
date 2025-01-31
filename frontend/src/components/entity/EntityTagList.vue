@@ -178,9 +178,4 @@ function updateItemView(view: string){
       </BasicItemList>
     </template>
   </ModuleBase>
-<!--  <TagListBase :tags="props.tags" :moduleConfig="props.moduleConfig">-->
-<!--    <template #add-dialog>-->
-
-<!--    </template>-->
-<!--  </TagListBase>-->
 </template>

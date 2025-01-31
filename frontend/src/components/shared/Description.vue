@@ -8,8 +8,9 @@ import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
 import IconButton from "@/components/ui/button/IconButton.vue";
 import TipTap from "@/components/shared/TipTap.vue";
 import {Button} from "@/components/ui/button";
+import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 
-defineProps<{
+const props = defineProps<{
   description: String,
   moduleConfig: StoryModule
 }>()
@@ -18,9 +19,23 @@ const emit = defineEmits(['saveDescription', 'configChange'])
 
 const storyDescriptionEditor = ref();
 const isEditing = ref(false);
+const editAlertOpen = ref(false);
 
 function toggleEdit() {
+  if (isEditing.value && storyDescriptionEditor.value?.getHTML() !== props.description) {
+    editAlertOpen.value = true;
+  } else {
+    isEditing.value = !isEditing.value;
+  }
+}
+
+function closeUCEditAlert(){
+  editAlertOpen.value = false;
   isEditing.value = !isEditing.value;
+}
+
+function keepChanges(){
+  editAlertOpen.value = false;
 }
 
 async function save() {
@@ -47,6 +62,23 @@ async function save() {
       </div>
     </template>
   </ModuleBase>
+
+  <Dialog v-model:open="editAlertOpen">
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Unsaved Changes</DialogTitle>
+      </DialogHeader>
+      <p >Do you want to lose your changes?</p>
+      <DialogFooter>
+        <Button @click="keepChanges">
+          No
+        </Button>
+        <Button @click="closeUCEditAlert" variant="destructive">
+          Yes
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
 </template>
 
 <style scoped>
