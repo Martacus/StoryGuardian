@@ -26,6 +26,7 @@ func main() {
 	projectManager := project.NewStoryManager(appManager)
 	entityManager := project.NewEntityManager(projectManager)
 	relationManager := project.NewRelationManager(entityManager)
+	tagManager := project.NewTagManager(entityManager)
 
 	wailsAssetHandler := application.AssetFileServerFS(assets)
 	finalAssetHandler := wrapWithImageServer(wailsAssetHandler)
@@ -38,6 +39,7 @@ func main() {
 			application.NewService(projectManager),
 			application.NewService(entityManager),
 			application.NewService(relationManager),
+			application.NewService(tagManager),
 		},
 		Assets: application.AssetOptions{
 			Handler: finalAssetHandler,

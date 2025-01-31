@@ -5,11 +5,13 @@ import * as ApplicationManager from "./applicationmanager.js";
 import * as EntityManager from "./entitymanager.js";
 import * as RelationManager from "./relationmanager.js";
 import * as StoryManager from "./storymanager.js";
+import * as TagManager from "./tagmanager.js";
 export {
     ApplicationManager,
     EntityManager,
     RelationManager,
-    StoryManager
+    StoryManager,
+    TagManager
 };
 
 export * from "./models.js";

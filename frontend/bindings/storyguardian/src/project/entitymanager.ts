@@ -47,6 +47,9 @@ export function GetEntities(): Promise<($models.Entity | null)[]> & { cancel(): 
     return $typingPromise;
 }
 
+/**
+ * GetEntitiesByTag returns a list of entities with the specified tag
+ */
 export function GetEntitiesByTag(tag: string): Promise<$models.Entity[]> & { cancel(): void } {
     let $resultPromise = $Call.ByID(2313708174, tag) as any;
     let $typingPromise = $resultPromise.then(($result) => {
@@ -92,11 +95,9 @@ export function RefreshEntity(entityId: string): Promise<$models.Entity | null> 
     return $typingPromise;
 }
 
-export function RemoveTagFromEntities(tag: string): Promise<void> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(196140367, tag) as any;
-    return $resultPromise;
-}
-
+/**
+ * RemoveTagFromEntity removes a tag from an entity
+ */
 export function RemoveTagFromEntity(entityId: string, tag: string): Promise<void> & { cancel(): void } {
     let $resultPromise = $Call.ByID(965329335, entityId, tag) as any;
     return $resultPromise;

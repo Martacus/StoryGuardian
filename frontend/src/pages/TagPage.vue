@@ -13,12 +13,15 @@ import BasicListItem from "@/components/story/entity-list/BasicListItem.vue";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import {useNavigation} from "@/composables/useNavigation";
 import {Entity} from "../../bindings/storyguardian/src/project";
+import EntityTitle from "@/components/shared/EntityTitle.vue";
+import {useToast} from "@/components/ui/toast";
+import {EditTagName} from "../../bindings/storyguardian/src/project/tagmanager";
 
 const route = useRoute();
 const router = useRouter();
 const {navigateToEntity} = useNavigation();
-
-const tag: string = route.params['id'] as string
+const {toast} = useToast();
+const tag = ref<string>(route.params['id'] as string);
 const entityList = ref<Entity[]>([]);
 
 const {searchInput, searchResult} = useItemFilter(entityList, (entity, filter) => {
@@ -26,15 +29,24 @@ const {searchInput, searchResult} = useItemFilter(entityList, (entity, filter) =
 });
 
 onMounted(() => {
-  GetEntitiesByTag(tag).then((entities) => {
+  GetEntitiesByTag(tag.value).then((entities) => {
     entityList.value = entities;
     searchResult.value = entities;
   }).catch((error) => {
     console.error(error);
-  })
+  });
+});
 
-
-})
+async function editTagName(newTag: string) {
+  EditTagName(tag.value, newTag).then(() => {
+    tag.value = newTag;
+  }).catch((error: string) => {
+    toast({
+      title: 'Uh oh! Something went wrong updating the tag.',
+      description: error,
+    });
+  });
+}
 </script>
 
 <template>
@@ -43,9 +55,9 @@ onMounted(() => {
       <IconButton @click="router.back()">
         <ArrowLeft/>
       </IconButton>
-      <div class="flex flex-row gap-2 items-center m-auto">
-        <p class="text-2xl leading-loose ml-2">{{ tag }}</p>
-      </div>
+
+      <EntityTitle :title="tag" @save-title="editTagName" class="flex flex-1 justify-center"/>
+
       <div class="flex flex-row gap-2">
         <!--        <Dialog v-model:open="addModuleDialogOpened">-->
         <!--          <DialogTrigger>-->

@@ -14,6 +14,9 @@ export function AddStoryModule($module: string): Promise<void> & { cancel(): voi
     return $resultPromise;
 }
 
+/**
+ * CreateTag creates a new tag
+ */
 export function CreateTag(tagName: string): Promise<void> & { cancel(): void } {
     let $resultPromise = $Call.ByID(2945885466, tagName) as any;
     return $resultPromise;
@@ -60,6 +63,9 @@ export function GetStoryModules(unusedModulesOnly: boolean): Promise<string[]> &
     return $typingPromise;
 }
 
+/**
+ * GetStoryTags returns the tags of the story
+ */
 export function GetStoryTags(): Promise<string[]> & { cancel(): void } {
     let $resultPromise = $Call.ByID(2508802762) as any;
     let $typingPromise = $resultPromise.then(($result) => {
@@ -76,11 +82,6 @@ export function NewStory(projectDirectory: string): Promise<$models.Story | null
     }) as any;
     $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
     return $typingPromise;
-}
-
-export function RemoveTagFromStory(tagName: string): Promise<void> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(3453731275, tagName) as any;
-    return $resultPromise;
 }
 
 export function SaveStory(): Promise<void> & { cancel(): void } {

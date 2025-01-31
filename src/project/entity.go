@@ -92,10 +92,9 @@ func (e *EntityManager) CreateEntity(entity Entity) (Entity, error) {
 
 	entity.Modules = map[string]StoryModule{
 		"description": {
-			Name: "Description",
+			Name: "description",
 			Configuration: map[string]string{
 				"columnSize": "2",
-				"name":       "description",
 				"open":       "true",
 			},
 		},
@@ -184,28 +183,6 @@ func (e *EntityManager) AddTagToEntity(entityId string, tag string) error {
 	return nil
 }
 
-//Tags
-
-func (e *EntityManager) RemoveTagFromEntity(entityId string, tag string) error {
-	entity, err := e.GetEntity(entityId)
-	if err != nil {
-		return fmt.Errorf("could not retrieve entity to remove tag: %v", err)
-	}
-
-	for i, existingTag := range entity.Tags {
-		if existingTag == tag {
-			entity.Tags = append(entity.Tags[:i], entity.Tags[i+1:]...)
-			break
-		}
-	}
-
-	if err := e.SaveEntity(*entity); err != nil {
-		return fmt.Errorf("could not save entity with removed tag: %v", err)
-	}
-
-	return nil
-}
-
 func (e *EntityManager) DeleteEntity(id string) error {
 	filePath := e.getEntityFilePath(id)
 	if err := os.Remove(filePath); err != nil {
@@ -215,32 +192,4 @@ func (e *EntityManager) DeleteEntity(id string) error {
 	delete(e.Entities, id)
 
 	return nil
-}
-
-func (e *EntityManager) GetEntitiesByTag(tag string) []Entity {
-	var entities []Entity
-	for _, entity := range e.Entities {
-		for _, entityTag := range entity.Tags {
-			if entityTag == tag {
-				entities = append(entities, *entity)
-				break
-			}
-		}
-	}
-
-	return entities
-}
-
-func (e *EntityManager) RemoveTagFromEntities(tag string) {
-	for _, entity := range e.Entities {
-		for i, entityTag := range entity.Tags {
-			if entityTag == tag {
-				entity.Tags = append(entity.Tags[:i], entity.Tags[i+1:]...)
-				if err := e.SaveEntity(*entity); err != nil {
-					fmt.Printf("could not save entity %v with removed tag: %v", entity.Name, err)
-				}
-				break
-			}
-		}
-	}
 }

@@ -60,7 +60,7 @@ async function retrieveEntity(){
   }
 }
 
-async function saveStoryTitle(title: string) {
+async function editEntityName(title: string) {
   if (!entity.value) return;
   try {
     await SetEntityName(entity.value.id, title)
@@ -139,7 +139,7 @@ function updateEntityTags(tags: string[]){
       <IconButton @click="router.back()">
         <ArrowLeft />
       </IconButton>
-      <EntityTitle :title="entity.name" @save-title="saveStoryTitle" class="flex flex-1 justify-center"/>
+      <EntityTitle :title="entity.name" @save-title="editEntityName" class="flex flex-1 justify-center"/>
       <div class="flex flex-row gap-2">
         <Dialog v-model:open="addModuleDialogOpened">
           <DialogTrigger>

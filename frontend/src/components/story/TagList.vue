@@ -7,7 +7,7 @@ import {Button} from "@/components/ui/button";
 import {FormControl, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {useToast} from "@/components/ui/toast";
-import {CreateTag, RemoveTagFromStory} from "../../../bindings/storyguardian/src/project/storymanager";
+import {CreateTag} from "../../../bindings/storyguardian/src/project/storymanager";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import TextTooltip from "@/components/ui/tooltip/TextTooltip.vue";
 import IconButton from "@/components/ui/button/IconButton.vue";
@@ -20,7 +20,7 @@ import BasicListItem from "@/components/story/entity-list/BasicListItem.vue";
 import BasicItemList from "@/components/story/entity-list/BasicItemList.vue";
 import {useBasicListHeight} from "@/composables/list/useBasicListHeight";
 import {useNavigation} from "@/composables/useNavigation";
-import {RemoveTagFromEntities} from "../../../bindings/storyguardian/src/project/entitymanager";
+import {RemoveTag} from "../../../bindings/storyguardian/src/project/tagmanager";
 
 const props = defineProps<{
   tags: string[],
@@ -93,22 +93,15 @@ function initDelete(tag: string) {
 }
 
 function deleteTagFromStory() {
-  RemoveTagFromStory(tagToDelete.value).then(() => {
+  RemoveTag(tagToDelete.value).then(() => {
     const newTagList = tagList.value.filter(tag => tag !== tagToDelete.value);
     emit('update:tags', newTagList);
   }).catch((error: string) => {
     toast({
-      title: 'Uh oh! Something went wrong removing the tag from the story.',
+      title: 'Uh oh! Something went wrong removing the tag.',
       description: error,
     });
-  });
-
-  RemoveTagFromEntities(tagToDelete.value).catch((error: string) => {
-    toast({
-      title: 'Uh oh! Something went wrong removing the tag from entities.',
-      description: error,
-    });
-  });
+  }); 
 
   toast({
     title: 'Success',
