@@ -110,14 +110,14 @@ func (r *RelationManager) CreateRelation(entityId string) (string, error) {
 
 	infoModule := StoryModule{
 		Name: RelationInfoModuleID,
-		Configuration: map[string]string{
+		Configuration: map[string]any{
 			"columnSize": "4",
 		},
 	}
 
 	descModule := StoryModule{
 		Name: DescriptionModuleID,
-		Configuration: map[string]string{
+		Configuration: map[string]any{
 			"columnSize": "4",
 		},
 	}

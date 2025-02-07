@@ -253,7 +253,7 @@ export class Story {
     "location": string;
     "description": string;
     "tags": string[];
-    "modules": { [_: string]: StoryModule };
+    "modules": StoryModule[];
 
     /** Creates a new Story instance. */
     constructor($$source: Partial<Story> = {}) {
@@ -273,7 +273,7 @@ export class Story {
             this["tags"] = [];
         }
         if (!("modules" in $$source)) {
-            this["modules"] = {};
+            this["modules"] = [];
         }
 
         Object.assign(this, $$source);
@@ -284,7 +284,7 @@ export class Story {
      */
     static createFrom($$source: any = {}): Story {
         const $$createField4_0 = $$createType2;
-        const $$createField5_0 = $$createType4;
+        const $$createField5_0 = $$createType5;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("tags" in $$parsedSource) {
             $$parsedSource["tags"] = $$createField4_0($$parsedSource["tags"]);
@@ -298,7 +298,7 @@ export class Story {
 
 export class StoryModule {
     "name": string;
-    "configuration": { [_: string]: string };
+    "configuration": { [_: string]: any };
 
     /** Creates a new StoryModule instance. */
     constructor($$source: Partial<StoryModule> = {}) {
@@ -316,7 +316,7 @@ export class StoryModule {
      * Creates a new StoryModule instance from a string or object.
      */
     static createFrom($$source: any = {}): StoryModule {
-        const $$createField1_0 = $$createType5;
+        const $$createField1_0 = $$createType6;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("configuration" in $$parsedSource) {
             $$parsedSource["configuration"] = $$createField1_0($$parsedSource["configuration"]);
@@ -331,4 +331,5 @@ const $$createType1 = $Create.Map($Create.Any, $$createType0);
 const $$createType2 = $Create.Array($Create.Any);
 const $$createType3 = StoryModule.createFrom;
 const $$createType4 = $Create.Map($Create.Any, $$createType3);
-const $$createType5 = $Create.Map($Create.Any, $Create.Any);
+const $$createType5 = $Create.Array($$createType3);
+const $$createType6 = $Create.Map($Create.Any, $Create.Any);

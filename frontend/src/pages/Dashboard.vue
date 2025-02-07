@@ -178,32 +178,34 @@ function updateTagsFromTagList(tags: string[]){
       </div>
     </PageHeaderCard>
 
-    <Description
-        v-if="story"
-        :module-config="story.modules['description']"
-        :description="story.description"
-        @save-description="saveStoryDescription"
-        @config-change="moduleConfigChange"
-    />
-    <EntityList
-        v-if="story"
-        :module-config="story.modules['entityList']"
-        :story="story"
-        @config-change="moduleConfigChange"
-    />
-    <TagList
-        v-if="story && isUsedModule('tagList')"
-        :module-config="story.modules['tagList']"
-        :tags="story.tags"
-        @config-change="moduleConfigChange"
-        @update:tags="updateTagsFromTagList"
-    />
-    <ImageModule
-        v-if="story && isUsedModule('images')"
-        :story="story"
-        :module-config="story.modules['images']"
-        @config-change="moduleConfigChange"
-    />
+    <template v-if="story" v-for="module in story.modules">
+      <Description
+          v-if="module && module.name === 'description'"
+          :module-config="module"
+          :description="story.description"
+          @save-description="saveStoryDescription"
+          @config-change="moduleConfigChange"
+      />
+      <EntityList
+          v-if="module && module.name === 'entities'"
+          :module-config="module"
+          :story="story"
+          @config-change="moduleConfigChange"
+      />
+      <TagList
+          v-if="module && module.name === 'tagList'"
+          :module-config="module"
+          :tags="story.tags"
+          @config-change="moduleConfigChange"
+          @update:tags="updateTagsFromTagList"
+      />
+      <ImageModule
+          v-if="module && module.name === 'images'"
+          :story="story"
+          :module-config="module"
+          @config-change="moduleConfigChange"
+      />
+    </template>
   </DashboardLayout>
 </template>
 

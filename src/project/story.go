@@ -5,15 +5,16 @@ import (
 	"github.com/google/uuid"
 	"os"
 	"path/filepath"
+	"slices"
 	"storyguardian/src/constants"
 	"storyguardian/src/fileio"
 )
 
 type Story struct {
 	ProjectDetails
-	Description string                 `json:"description"`
-	Tags        []string               `json:"tags"`
-	Modules     map[string]StoryModule `json:"modules"`
+	Description string        `json:"description"`
+	Tags        []string      `json:"tags"`
+	Modules     []StoryModule `json:"modules"`
 }
 
 type StoryManager struct {
@@ -27,8 +28,8 @@ type ImageFile struct {
 }
 
 type StoryModule struct {
-	Name          string            `json:"name"`
-	Configuration map[string]string `json:"configuration"`
+	Name          string         `json:"name"`
+	Configuration map[string]any `json:"configuration"`
 }
 
 func NewStoryManager(appManager *ApplicationManager) *StoryManager {
@@ -47,7 +48,7 @@ func (s *StoryManager) NewStory(projectDirectory string) (*Story, error) {
 		Location: projectDirectory,
 	}
 
-	moduleMap := addStoryModules(make(map[string]StoryModule))
+	moduleMap := addStoryModules(make([]StoryModule, 0))
 
 	story := Story{
 		ProjectDetails: projectDetails,
@@ -83,6 +84,12 @@ func (s *StoryManager) GetStory(projectId string, refresh bool) (*Story, error) 
 	if err != nil {
 		return nil, fmt.Errorf("could not find the story with id: %v | %v", projectId, err)
 	}
+
+	slices.SortFunc(story.Modules, func(i, j StoryModule) int {
+		iPos, _ := i.Configuration["position"].(int)
+		jPos, _ := j.Configuration["position"].(int)
+		return iPos - jPos
+	})
 
 	s.Story = story
 	return story, nil
@@ -152,28 +159,28 @@ func (s *StoryManager) GetStoryImages() ([]ImageFile, error) {
 
 // === Story Modules === //
 
-func addStoryModules(moduleMap map[string]StoryModule) map[string]StoryModule {
-	moduleMap["description"] = StoryModule{
+func addStoryModules(moduleMap []StoryModule) []StoryModule {
+	moduleMap = append(moduleMap, StoryModule{
 		Name: "description",
-		Configuration: map[string]string{
+		Configuration: map[string]any{
 			"columnSize": "4",
 		},
-	}
+	})
 
-	moduleMap["entityList"] = StoryModule{
+	moduleMap = append(moduleMap, StoryModule{
 		Name: "entityList",
-		Configuration: map[string]string{
+		Configuration: map[string]any{
 			"columnSize": "4",
 			"listView":   "list",
 		},
-	}
+	})
 
-	moduleMap["images"] = StoryModule{
+	moduleMap = append(moduleMap, StoryModule{
 		Name: "images",
-		Configuration: map[string]string{
+		Configuration: map[string]any{
 			"columnSize": "4",
 		},
-	}
+	})
 
 	return moduleMap
 }

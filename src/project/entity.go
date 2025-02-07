@@ -93,7 +93,7 @@ func (e *EntityManager) CreateEntity(entity Entity) (Entity, error) {
 	entity.Modules = map[string]StoryModule{
 		"description": {
 			Name: "description",
-			Configuration: map[string]string{
+			Configuration: map[string]any{
 				"columnSize": "2",
 				"open":       "true",
 			},

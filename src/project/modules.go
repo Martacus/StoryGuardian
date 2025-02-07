@@ -19,14 +19,21 @@ var (
 	availableRelationModules = []string{DescriptionModuleID, RelationInfoModuleID}
 )
 
-func getUnusedModules(unusedModulesOnly bool, availableModules []string, currentModules map[string]StoryModule) []string {
+func getUnusedModules(unusedModulesOnly bool, availableModules []string, currentModules []StoryModule) []string {
 	if !unusedModulesOnly {
 		return availableModules
 	}
 
 	var unusedModules []string
 	for _, module := range availableModules {
-		if _, ok := currentModules[module]; !ok {
+		found := false
+		for _, currentModule := range currentModules {
+			if currentModule.Configuration["name"] == module {
+				found = true
+				break
+			}
+		}
+		if !found {
 			unusedModules = append(unusedModules, module)
 		}
 	}
@@ -51,10 +58,13 @@ func (s *StoryManager) AddStoryModule(module string) error {
 }
 
 func (s *StoryManager) EditStoryModuleConfig(module, config, value string) error {
-	if _, exists := s.Story.Modules[module]; !exists {
+	recModule, exists := storyModuleExists(module, s.Story.Modules)
+
+	if !exists {
 		return fmt.Errorf("story module %s does not exist", module)
 	}
-	s.Story.Modules[module].Configuration[config] = value
+	recModule.Configuration[config] = value
+
 	if err := s.SaveStory(); err != nil {
 		return fmt.Errorf("could not save module configuration edit: %v", err)
 	}
@@ -64,11 +74,11 @@ func (s *StoryManager) EditStoryModuleConfig(module, config, value string) error
 func addStoryImagesModule(manager *StoryManager) error {
 	newImageModule := StoryModule{
 		Name: ImageStoryModuleID,
-		Configuration: map[string]string{
+		Configuration: map[string]any{
 			"columnSize": "4",
 		},
 	}
-	manager.Story.Modules[ImageStoryModuleID] = newImageModule
+	manager.Story.Modules = append(manager.Story.Modules, newImageModule)
 	if err := manager.SaveStory(); err != nil {
 		return fmt.Errorf("unable to add image module to story: %v", err)
 	}
@@ -78,26 +88,36 @@ func addStoryImagesModule(manager *StoryManager) error {
 func addStoryTagsModule(manager *StoryManager) error {
 	newTagListModule := StoryModule{
 		Name: TagListModuleID,
-		Configuration: map[string]string{
+		Configuration: map[string]any{
 			"columnSize": "4",
 			"itemView":   "list",
 		},
 	}
-	manager.Story.Modules[TagListModuleID] = newTagListModule
+	manager.Story.Modules = append(manager.Story.Modules, newTagListModule)
 	if err := manager.SaveStory(); err != nil {
 		return fmt.Errorf("unable to add tag module to story: %v", err)
 	}
 	return nil
 }
 
+func storyModuleExists(module string, modules []StoryModule) (*StoryModule, bool) {
+	for _, m := range modules {
+		if m.Configuration["name"] == module {
+			return &m, true
+		}
+	}
+
+	return nil, false
+}
+
 // === Entity Modules === //
 
 func (e *EntityManager) GetEntityModules(entityID string, unusedModulesOnly bool) []string {
-	entity, err := e.GetEntity(entityID)
+	_, err := e.GetEntity(entityID)
 	if err != nil {
 		return []string{}
 	}
-	return getUnusedModules(unusedModulesOnly, availableEntityModules, entity.Modules)
+	return nil //getUnusedModules(unusedModulesOnly, availableEntityModules, entity.Modules)
 }
 
 func (e *EntityManager) AddEntityModule(entityID, module string) error {
@@ -106,7 +126,7 @@ func (e *EntityManager) AddEntityModule(entityID, module string) error {
 		return fmt.Errorf("could not add module to entity: %v", err)
 	}
 
-	defaultConfig := map[string]string{
+	defaultConfig := map[string]any{
 		"columnSize": "4",
 		"itemView":   "list",
 		"open":       "true",
@@ -137,7 +157,7 @@ func (e *EntityManager) EditEntityModuleConfig(entityID, module, config, value s
 	return nil
 }
 
-func addModuleToEntity(entity *Entity, manager *EntityManager, moduleID string, config map[string]string) error {
+func addModuleToEntity(entity *Entity, manager *EntityManager, moduleID string, config map[string]any) error {
 	newModule := StoryModule{
 		Name:          moduleID,
 		Configuration: config,
@@ -157,11 +177,11 @@ func addModuleToEntity(entity *Entity, manager *EntityManager, moduleID string, 
 // === Relation Modules === //
 
 func (r *RelationManager) GetRelationModules(relationID string, unusedModulesOnly bool) []string {
-	relation, err := r.GetRelation(relationID)
+	_, err := r.GetRelation(relationID)
 	if err != nil {
 		return []string{}
 	}
-	return getUnusedModules(unusedModulesOnly, availableRelationModules, relation.Modules)
+	return nil // getUnusedModules(unusedModulesOnly, availableRelationModules, relation.Modules)
 }
 
 func (r *RelationManager) AddRelationModule(relationID, module string) error {
@@ -177,6 +197,7 @@ func (r *RelationManager) AddRelationModule(relationID, module string) error {
 }
 
 func (r *RelationManager) EditRelationModuleConfig(relationID, module, config, value string) error {
+	fmt.Println("0")
 	relation, err := r.GetRelation(relationID)
 	if err != nil {
 		return fmt.Errorf("could not edit relation module config: %v", err)
