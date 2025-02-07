@@ -69,7 +69,7 @@ async function saveDescription(descriptionValue: string) {
   }
 }
 
-function moduleConfigChange(module: string, key: string, value: string) {
+function moduleConfigChange({ module, key, value }: { module: string, key: string, value: string }) {
   EditRelationModuleConfig(relationId.value, module, key, value).catch((error: string) => {
     toast({
       title: 'Failed to save module config change',

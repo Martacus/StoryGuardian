@@ -40,6 +40,8 @@ const {showCardBody, toggleCardBody} = useToggleBody(props.moduleConfig)
 const {columnSize, changeGridSize } = useGridSize(props.moduleConfig)
 
 const dialogOpen = ref(false);
+const deleteRelationConfirmationOpen = ref(false);
+const relToDelete = ref<RelationInfo>();
 
 const relations = ref<RelationInfo[]>([]);
 
@@ -88,17 +90,23 @@ function openRelation(relationId: string){
  router.push("/relation/" + relationId);
 }
 
-function deleteRelation(relationId: string){
+function deleteRelation(){
+  if(!relToDelete.value) return;
   try{
-    DeleteRelation(relationId).then(() => {
-      loadRelations()
+    DeleteRelation(relToDelete.value?.id).then(() => {
+      loadRelations();
+      deleteRelationConfirmationOpen.value = false;
     })
   } catch (error: any) {
     toast({
-      title: 'Uh oh! Something went wrong.',
+      title: 'Uh oh! Something went wrong removing the relation',
       description: error.message,
     });
   }
+}
+function openDeleteConfirmation(relationId: string){
+  relToDelete.value = relations.value.find(relation => relation.id === relationId);
+  deleteRelationConfirmationOpen.value = true;
 }
 </script>
 
@@ -131,12 +139,12 @@ function deleteRelation(relationId: string){
           <TableRow v-for="relation in relations" @click="openRelation(relation.id)" class="hover:cursor-pointer">
             <!-- Table Data -->
             <TableCell class="font-medium">
-              {{ relation.name }}
+              {{ relation.toName }}
             </TableCell>
-            <TableCell>{{ relation.toName }}</TableCell>
+            <TableCell>{{ relation.name }}</TableCell>
             <TableCell class="text-right">
               <TextTooltip text="Delete">
-                <IconButton @click.stop="deleteRelation(relation.id)">
+                <IconButton @click.stop="openDeleteConfirmation(relation.id)">
                   <Trash2/>
                 </IconButton>
               </TextTooltip>
@@ -182,6 +190,20 @@ function deleteRelation(relationId: string){
       </DialogContent>
     </Dialog>
   </Card>
+
+  <Dialog v-model:open="deleteRelationConfirmationOpen">
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Are you sure you want to remove this relation?</DialogTitle>
+      </DialogHeader>
+      <p v-if="relToDelete">{{ relToDelete.name }}</p>
+      <DialogFooter>
+        <Button @click="deleteRelation" class="w-full">
+          Remove
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
 </template>
 
 <style scoped>
