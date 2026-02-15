@@ -9,9 +9,13 @@ import {Call as $Call, Create as $Create} from "@wailsio/runtime";
 // @ts-ignore: Unused imports
 import * as $models from "./models.js";
 
-export function AddStoryModule($module: string): Promise<void> & { cancel(): void } {
+export function AddStoryModule($module: string): Promise<$models.StoryModule> & { cancel(): void } {
     let $resultPromise = $Call.ByID(3262065790, $module) as any;
-    return $resultPromise;
+    let $typingPromise = $resultPromise.then(($result) => {
+        return $$createType0($result);
+    }) as any;
+    $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
+    return $typingPromise;
 }
 
 /**
@@ -30,7 +34,7 @@ export function EditStoryModuleConfig($module: string, config: string, value: st
 export function GetOpenStory(): Promise<$models.Story | null> & { cancel(): void } {
     let $resultPromise = $Call.ByID(2563610799) as any;
     let $typingPromise = $resultPromise.then(($result) => {
-        return $$createType1($result);
+        return $$createType2($result);
     }) as any;
     $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
     return $typingPromise;
@@ -39,7 +43,7 @@ export function GetOpenStory(): Promise<$models.Story | null> & { cancel(): void
 export function GetStory(projectId: string, refresh: boolean): Promise<$models.Story | null> & { cancel(): void } {
     let $resultPromise = $Call.ByID(180270295, projectId, refresh) as any;
     let $typingPromise = $resultPromise.then(($result) => {
-        return $$createType1($result);
+        return $$createType2($result);
     }) as any;
     $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
     return $typingPromise;
@@ -48,7 +52,7 @@ export function GetStory(projectId: string, refresh: boolean): Promise<$models.S
 export function GetStoryImages(): Promise<$models.ImageFile[]> & { cancel(): void } {
     let $resultPromise = $Call.ByID(619858253) as any;
     let $typingPromise = $resultPromise.then(($result) => {
-        return $$createType3($result);
+        return $$createType4($result);
     }) as any;
     $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
     return $typingPromise;
@@ -57,7 +61,7 @@ export function GetStoryImages(): Promise<$models.ImageFile[]> & { cancel(): voi
 export function GetStoryModules(unusedModulesOnly: boolean): Promise<string[]> & { cancel(): void } {
     let $resultPromise = $Call.ByID(3606125984, unusedModulesOnly) as any;
     let $typingPromise = $resultPromise.then(($result) => {
-        return $$createType4($result);
+        return $$createType5($result);
     }) as any;
     $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
     return $typingPromise;
@@ -69,7 +73,7 @@ export function GetStoryModules(unusedModulesOnly: boolean): Promise<string[]> &
 export function GetStoryTags(): Promise<string[]> & { cancel(): void } {
     let $resultPromise = $Call.ByID(2508802762) as any;
     let $typingPromise = $resultPromise.then(($result) => {
-        return $$createType4($result);
+        return $$createType5($result);
     }) as any;
     $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
     return $typingPromise;
@@ -78,7 +82,7 @@ export function GetStoryTags(): Promise<string[]> & { cancel(): void } {
 export function NewStory(projectDirectory: string): Promise<$models.Story | null> & { cancel(): void } {
     let $resultPromise = $Call.ByID(2808099189, projectDirectory) as any;
     let $typingPromise = $resultPromise.then(($result) => {
-        return $$createType1($result);
+        return $$createType2($result);
     }) as any;
     $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
     return $typingPromise;
@@ -100,8 +104,9 @@ export function SetStoryTitle(name: string): Promise<void> & { cancel(): void } 
 }
 
 // Private type creation functions
-const $$createType0 = $models.Story.createFrom;
-const $$createType1 = $Create.Nullable($$createType0);
-const $$createType2 = $models.ImageFile.createFrom;
-const $$createType3 = $Create.Array($$createType2);
-const $$createType4 = $Create.Array($Create.Any);
+const $$createType0 = $models.StoryModule.createFrom;
+const $$createType1 = $models.Story.createFrom;
+const $$createType2 = $Create.Nullable($$createType1);
+const $$createType3 = $models.ImageFile.createFrom;
+const $$createType4 = $Create.Array($$createType3);
+const $$createType5 = $Create.Array($Create.Any);

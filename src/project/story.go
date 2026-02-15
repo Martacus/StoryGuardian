@@ -164,6 +164,7 @@ func addStoryModules(moduleMap []StoryModule) []StoryModule {
 		Name: "description",
 		Configuration: map[string]any{
 			"columnSize": "4",
+			"unique":     true,
 		},
 	})
 
@@ -172,6 +173,7 @@ func addStoryModules(moduleMap []StoryModule) []StoryModule {
 		Configuration: map[string]any{
 			"columnSize": "4",
 			"listView":   "list",
+			"unique":     true,
 		},
 	})
 
@@ -179,6 +181,7 @@ func addStoryModules(moduleMap []StoryModule) []StoryModule {
 		Name: "images",
 		Configuration: map[string]any{
 			"columnSize": "4",
+			"unique":     true,
 		},
 	})
 

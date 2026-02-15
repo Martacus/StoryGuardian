@@ -46,14 +46,14 @@ func (s *StoryManager) GetStoryModules(unusedModulesOnly bool) []string {
 	return getUnusedModules(unusedModulesOnly, availableStoryModules, s.Story.Modules)
 }
 
-func (s *StoryManager) AddStoryModule(module string) error {
+func (s *StoryManager) AddStoryModule(module string) (StoryModule, error) {
 	switch module {
 	case TagListModuleID:
 		return addStoryTagsModule(s)
 	case ImageStoryModuleID:
 		return addStoryImagesModule(s)
 	default:
-		return fmt.Errorf("unknown story module: %s", module)
+		return StoryModule{}, fmt.Errorf("unknown story module: %s", module)
 	}
 }
 
@@ -71,33 +71,35 @@ func (s *StoryManager) EditStoryModuleConfig(module, config, value string) error
 	return nil
 }
 
-func addStoryImagesModule(manager *StoryManager) error {
+func addStoryImagesModule(manager *StoryManager) (StoryModule, error) {
 	newImageModule := StoryModule{
 		Name: ImageStoryModuleID,
 		Configuration: map[string]any{
 			"columnSize": "4",
+			"unique":     true,
 		},
 	}
 	manager.Story.Modules = append(manager.Story.Modules, newImageModule)
 	if err := manager.SaveStory(); err != nil {
-		return fmt.Errorf("unable to add image module to story: %v", err)
+		return StoryModule{}, fmt.Errorf("unable to add image module to story: %v", err)
 	}
-	return nil
+	return newImageModule, nil
 }
 
-func addStoryTagsModule(manager *StoryManager) error {
+func addStoryTagsModule(manager *StoryManager) (StoryModule, error) {
 	newTagListModule := StoryModule{
 		Name: TagListModuleID,
 		Configuration: map[string]any{
 			"columnSize": "4",
 			"itemView":   "list",
+			"unique":     true,
 		},
 	}
 	manager.Story.Modules = append(manager.Story.Modules, newTagListModule)
 	if err := manager.SaveStory(); err != nil {
-		return fmt.Errorf("unable to add tag module to story: %v", err)
+		return StoryModule{}, fmt.Errorf("unable to save story after adding new module: %v", err)
 	}
-	return nil
+	return newTagListModule, nil
 }
 
 func storyModuleExists(module string, modules []StoryModule) (*StoryModule, bool) {
@@ -130,6 +132,7 @@ func (e *EntityManager) AddEntityModule(entityID, module string) error {
 		"columnSize": "4",
 		"itemView":   "list",
 		"open":       "true",
+		"unique":     true,
 	}
 
 	switch module {

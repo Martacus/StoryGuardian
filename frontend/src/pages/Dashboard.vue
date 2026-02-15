@@ -10,17 +10,19 @@ import {
 } from "@/components/ui/dialog";
 import TextToolTip from "@/components/ui/tooltip/TextTooltip.vue";
 import {Plus, Settings} from 'lucide-vue-next';
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 import Description from "@/components/shared/Description.vue";
 import EntityList from "@/components/story/entity-list/EntityList.vue";
 import {useToast} from "@/components/ui/toast";
 import EntityTitle from "@/components/shared/EntityTitle.vue";
 import ImageModule from "@/components/story/ImageModule.vue";
-import {Story} from "../../bindings/storyguardian/src/project";
+import {Story, StoryModule} from "../../bindings/storyguardian/src/project";
 import {
   AddStoryModule,
-  EditStoryModuleConfig, GetOpenStory,
-  GetStory, GetStoryModules,
+  EditStoryModuleConfig,
+  GetOpenStory,
+  GetStory,
+  GetStoryModules,
   SetStoryDescription,
   SetStoryTitle
 } from "../../bindings/storyguardian/src/project/storymanager";
@@ -33,52 +35,46 @@ import {LoadRelations} from "../../bindings/storyguardian/src/project/relationma
 const {toast} = useToast()
 const addModuleDialogOpened = ref(false);
 const story = ref<Story>();
-const unusedStoryModules = ref<string[]>([])
 
 const isUnused = (moduleName: string) => {
-  return unusedStoryModules.value.includes(moduleName);
-};
-
-const isUsedModule = (moduleName: string) => {
-  if(story.value){
-    return moduleName in story.value?.modules;
-  }
-  return false;
+  if(!story.value) return false;
+  let unused = true;
+  story.value.modules.forEach((module) => {
+    if (module.name === moduleName) {
+      unused = false;
+    }
+  });
+  return unused;
 };
 
 onMounted(async () => {
   try {
-  const retrievedStory = await GetOpenStory();
-  LoadRelations()
-  if (retrievedStory !== null) {
-    story.value = retrievedStory
-  }
-} catch (error: any) {
-  toast({
-    title: 'Failed init story',
-    description: error,
-  });
-}
+    const retrievedStory = await GetOpenStory();
+    LoadRelations()
 
-})
-
-async function retrieveStory(refresh: boolean){
-  if(!story.value) return;
-
-  try {
-    const retrievedStory = await GetStory(story.value?.id, refresh)
     if (retrievedStory !== null) {
       story.value = retrievedStory
     }
+
+    //Sort modules by position
+    if (story.value) {
+      story.value.modules.sort((a, b) => {
+        if (a.configuration["position"] < b.configuration["position"]) {
+          return -1;
+        }
+        if (a.configuration["position"] > b.configuration["position"]) {
+          return 1;
+        }
+        return 0;
+      });
+    }
   } catch (error: any) {
     toast({
-      title: 'Failed to retrieve story',
+      title: 'Failed init story',
       description: error,
     });
   }
-
-  console.log(story.value?.tags)
-}
+});
 
 async function saveStoryDescription(descriptionValue: string) {
   if (!story.value) return;
@@ -105,7 +101,7 @@ async function saveStoryTitle(title: string) {
   }
 }
 
-function moduleConfigChange({ module, key, value }: { module: string, key: string, value: string }) {
+function moduleConfigChange({module, key, value}: { module: string, key: string, value: string }) {
   EditStoryModuleConfig(module, key, value).catch((error: string) => {
     toast({
       title: 'Failed to save module config change',
@@ -114,16 +110,9 @@ function moduleConfigChange({ module, key, value }: { module: string, key: strin
   });
 }
 
-function refreshUnusedStoryModules(){
-  GetStoryModules(true).then((unusedModules: string[]) => {
-    console.log(unusedModules)
-    unusedStoryModules.value = unusedModules;
-  })
-}
-
-function addStoryModule(module: string){
-  AddStoryModule(module).then(() => {
-    retrieveStory(true);
+function addStoryModule(module: string) {
+  AddStoryModule(module).then((module) => {
+    story.value?.modules.push(module);
   }).catch((error: string) => {
     toast({
       title: 'Failed to add module',
@@ -133,8 +122,8 @@ function addStoryModule(module: string){
   addModuleDialogOpened.value = false;
 }
 
-function updateTagsFromTagList(tags: string[]){
-  if(story.value){
+function updateTagsFromTagList(tags: string[]) {
+  if (story.value) {
     story.value.tags = tags;
   }
 }
@@ -148,7 +137,7 @@ function updateTagsFromTagList(tags: string[]){
         <Dialog v-model:open="addModuleDialogOpened">
           <DialogTrigger>
             <TextToolTip text="Add a module">
-              <IconButton @click="refreshUnusedStoryModules">
+              <IconButton>
                 <Plus/>
               </IconButton>
             </TextToolTip>
