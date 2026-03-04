@@ -1,13 +1,13 @@
 [Desktop Entry]
 Version=1.0
 Name=My Product
-Comment=A litguradian application
+Comment=A litguardian application
 # The Exec line includes %u to pass the URL to the application
-Exec=/usr/local/bin/litguradian.exe %u
+Exec=/usr/local/bin/litguardian.exe %u
 Terminal=false
 Type=Application
-Icon=litguradian.exe
+Icon=litguardian.exe
 Categories=Utility;
-StartupWMClass=litguradian.exe
+StartupWMClass=litguardian.exe
 
  

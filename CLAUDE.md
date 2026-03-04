@@ -5,7 +5,8 @@ Local-first desktop worldbuilding app for LitRPG and fantasy authors. Users full
 ## Tech Stack
 
 - **Backend**: Go 1.25, Wails 3 (v3.0.0-alpha.74)
-- **Frontend**: Vue 3 + TypeScript, Vite 5, Pinia (planned)
+- **Frontend**: Vue 3 + TypeScript, Vite 5, Pinia
+- **UI**: shadcn-vue (New York style, Tailwind CSS v4, lucide icons)
 - **Runtime**: Wails bindings bridge Go services ↔ TypeScript
 - **Storage**: JSON files in user-chosen world folders
 - **Build**: Task runner (go-task), Taskfile.yml
@@ -51,7 +52,6 @@ Vue 3 components → Pinia stores → Wails-generated bindings → Go services �
 ## Known Issues
 
 - Go module name is still `changeme` (needs renaming)
-- App name has typo: `litguradian` instead of `litguardian` (in Taskfile, main.go, build configs)
 
 ## Design Docs (Obsidian Vault)
 
@@ -72,3 +72,4 @@ All design documentation lives in **`C:\Vaults\LitGuardian`**:
 - Frontend state via Vue composables (Pinia stores for shared state)
 - All file I/O goes through Go services, never from frontend
 - Entity data stored as individual JSON files: `world-folder/entities/{id}.json`
+- Use shadcn-vue components wherever possible; add new ones via `npx shadcn-vue@latest add <component>`

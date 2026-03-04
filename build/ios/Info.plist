@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleExecutable</key>
-    <string>litguradian.exe</string>
+    <string>litguardian.exe</string>
     <key>CFBundleIdentifier</key>
-    <string>com.example.litguradian</string>
+    <string>com.example.litguardian</string>
     <key>CFBundleName</key>
     <string>My Product</string>
     <key>CFBundleDisplayName</key>
