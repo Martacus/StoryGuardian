@@ -35,7 +35,7 @@ Vue 3 components → Pinia stores → Wails-generated bindings → Go services �
 ```
 ├── main.go                  # App entry point, window setup, embedded assets
 ├── greetservice.go          # Example Go service (template)
-├── go.mod                   # Go module (currently named "changeme")
+├── go.mod                   # Go module 
 ├── Taskfile.yml             # Build tasks
 ├── frontend/
 │   ├── src/                 # Vue 3 app source
@@ -48,10 +48,6 @@ Vue 3 components → Pinia stores → Wails-generated bindings → Go services �
 │   └── package.json         # Frontend deps
 └── build/                   # Platform-specific build configs
 ```
-
-## Known Issues
-
-- Go module name is still `changeme` (needs renaming)
 
 ## Design Docs (Obsidian Vault)
 
