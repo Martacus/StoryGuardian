@@ -1,4 +1,4 @@
-module changeme
+module litguardian
 
 go 1.25
 
