@@ -1,7 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "WebFetch(domain:www.shadcn-vue.com)"
+      "WebFetch(domain:www.shadcn-vue.com)",
+      "Bash(npx shadcn-vue@latest init:*)",
+      "Bash(npx shadcn-vue@latest add:*)",
+      "Bash(npx vue-tsc:*)",
+      "Bash(echo:*)",
+      "Bash(npx vite build:*)"
     ]
   }
 }
