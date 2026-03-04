@@ -1,7 +1,7 @@
 # Plan: Welcome/Launcher Screen (Obsidian-style World Selector)
 
 ## Context
-StoryGuardian needs a launcher screen — the first thing a user sees when opening the app. Like Obsidian's vault picker: left panel lists recently opened worlds, right panel has "Create New World" and "Open Existing Folder" buttons. This is explicitly in the MVP scope ("World selector: create new, open existing, view recent worlds").
+LitGuardian needs a launcher screen — the first thing a user sees when opening the app. Like Obsidian's vault picker: left panel lists recently opened worlds, right panel has "Create New World" and "Open Existing Folder" buttons. This is explicitly in the MVP scope ("World selector: create new, open existing, view recent worlds").
 
 Currently the app shows a template demo (HelloWorld + GreetService). We need to replace it with the real launcher.
 
@@ -38,7 +38,7 @@ type AppConfig struct {
 ```
 
 ### 1.2 Create service (`appconfigservice.go`)
-- Uses `os.UserConfigDir()` → `%APPDATA%/StoryGuardian/config.json` on Windows
+- Uses `os.UserConfigDir()` → `%APPDATA%/LitGuardian/config.json` on Windows
 - Implements `ServiceStartup(ctx, options)` — loads config from disk on app start
 - Atomic writes (temp file + rename) per Storage Strategy doc
 
@@ -126,7 +126,7 @@ npx shadcn-vue@latest add card scroll-area dialog input label dropdown-menu sepa
 ### 5.1 `WelcomeScreen.vue` — Main layout
 ```
 ┌───────────────────────────────────────────────────┐
-│                  StoryGuardian                     │
+│                  LitGuardian                     │
 ├─────────────────────────┬─────────────────────────┤
 │  Recent Worlds          │  Get Started            │
 │  (ScrollArea)           │                         │
@@ -174,7 +174,7 @@ Pure function converting ISO timestamps to "2 hours ago" strings. No external de
 
 ### 5.6 Clean up
 - Delete `HelloWorld.vue`
-- Update `index.html` title to "StoryGuardian"
+- Update `index.html` title to "LitGuardian"
 
 ---
 
@@ -216,5 +216,5 @@ Pure function converting ISO timestamps to "2 hours ago" strings. No external de
 5. Click recent world → opens it again
 6. Dropdown → "Remove from recents" → entry disappears
 7. "Open Existing Folder" → native picker → select folder with `world.json` → opens
-8. Close + reopen app → recents persist from `%APPDATA%/StoryGuardian/config.json`
+8. Close + reopen app → recents persist from `%APPDATA%/LitGuardian/config.json`
 9. Open a folder without `world.json` → user-friendly error

@@ -6,7 +6,8 @@
       "Bash(npx shadcn-vue@latest add:*)",
       "Bash(npx vue-tsc:*)",
       "Bash(echo:*)",
-      "Bash(npx vite build:*)"
+      "Bash(npx vite build:*)",
+      "Bash(go build:*)"
     ]
   }
 }

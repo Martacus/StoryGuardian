@@ -1,4 +1,4 @@
-# StoryGuardian
+# LitGuardian
 
 Local-first desktop worldbuilding app for LitRPG and fantasy authors. Users fully own their files (JSON on disk), no cloud dependency.
 
