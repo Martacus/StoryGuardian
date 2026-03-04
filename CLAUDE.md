@@ -69,7 +69,10 @@ All design documentation lives in **`C:\Vaults\LitGuardian`**:
 ## Conventions
 
 - One Go service per domain concern, registered in `main.go`
-- Frontend state via Vue composables (Pinia stores for shared state)
+- **Frontend orchestrates**: Pinia stores coordinate cross-service workflows (e.g., create world + add to recents). Go services stay decoupled — no service-to-service calls. This keeps backends swappable.
+- **Go services are independent**: Each service owns its own data and `sync.RWMutex`. No shared state between services.
+- **Error handling**: Go services return descriptive errors → Wails rejects the promise → Pinia store catches and sets `error` ref → component displays to user. No silent failures.
+- **Atomic writes**: All file mutations use temp file + `os.Rename` to prevent corruption on crash.
 - All file I/O goes through Go services, never from frontend
 - Entity data stored as individual JSON files: `world-folder/entities/{id}.json`
 - Use shadcn-vue components wherever possible; add new ones via `npx shadcn-vue@latest add <component>`
