@@ -16,6 +16,7 @@ func main() {
 		Description: "Local-first worldbuilding app for LitRPG and fantasy authors",
 		Services: []application.Service{
 			application.NewService(&AppConfigService{}),
+			application.NewService(&WorldService{}),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
