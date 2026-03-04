@@ -1,31 +1,24 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import { useWorldStore } from '@/stores/worldStore'
+import WelcomeScreen from './components/WelcomeScreen.vue'
+import { Button } from '@/components/ui/button'
+
+const worldStore = useWorldStore()
 </script>
 
 <template>
-  <div class="container">
-    <div>
-      <a data-wml-openURL="https://wails.io">
-        <img src="/wails.png" class="logo" alt="Wails logo"/>
-      </a>
-      <a data-wml-openURL="https://vuejs.org/">
-        <img src="/vue.svg" class="logo vue" alt="Vue logo"/>
-      </a>
-    </div>
-    <HelloWorld msg="Wails + Vue" />
+  <WelcomeScreen v-if="!worldStore.hasOpenWorld" />
+
+  <!-- Placeholder until the main editor is built (Step 6+) -->
+  <div
+    v-else
+    class="h-screen w-screen flex flex-col items-center justify-center gap-4 bg-background text-foreground"
+  >
+    <p class="text-lg font-medium">
+      "{{ worldStore.currentWorld?.name }}" is open.
+    </p>
+    <Button variant="outline" @click="worldStore.closeWorld()">
+      ← Close World
+    </Button>
   </div>
 </template>
-
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #e80000aa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
