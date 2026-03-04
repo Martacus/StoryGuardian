@@ -1,18 +1,20 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { AppConfigService, WorldService } from '../../bindings/litguardian'
-import type { WorldInfo } from '../../bindings/litguardian'
+import type { WorldInfo, WorldMeta } from '../../bindings/litguardian'
 
 export const useWorldStore = defineStore('world', () => {
   // ── State ─────────────────────────────────────────────────────────────────
   // null = no world open → show WelcomeScreen
   const currentWorld = ref<WorldInfo | null>(null)
+  // Full metadata from world.json — populated whenever a world is open
+  const worldMeta = ref<WorldMeta | null>(null)
   const recentWorlds = ref<WorldInfo[]>([])
   const error = ref<string | null>(null)
   const loading = ref(false)
 
   // ── Computed ───────────────────────────────────────────────────────────────
-  // Drives App.vue conditional rendering: WelcomeScreen vs editor
+  // Drives App.vue conditional rendering: WelcomeScreen vs dashboard
   const hasOpenWorld = computed(() => currentWorld.value !== null)
 
   // ── Actions ────────────────────────────────────────────────────────────────
@@ -27,9 +29,40 @@ export const useWorldStore = defineStore('world', () => {
     }
   }
 
+  /** Read world.json for the currently open world and cache in worldMeta. */
+  async function loadWorldMeta() {
+    if (!currentWorld.value) return
+    try {
+      worldMeta.value = await WorldService.GetWorldMeta(currentWorld.value.path)
+    } catch (e) {
+      error.value = String(e)
+    }
+  }
+
+  /**
+   * Update world name + description on disk and refresh worldMeta.
+   * Also syncs the name into currentWorld so the top nav stays up to date.
+   */
+  async function updateWorldMeta(name: string, description: string) {
+    if (!currentWorld.value) return
+    error.value = null
+    loading.value = true
+    try {
+      const updated = await WorldService.UpdateWorldMeta(currentWorld.value.path, name, description)
+      if (!updated) return
+      worldMeta.value = updated
+      // Keep currentWorld.name in sync so the top nav reflects the new name
+      currentWorld.value = { ...currentWorld.value, name: updated.name }
+    } catch (e) {
+      error.value = String(e)
+    } finally {
+      loading.value = false
+    }
+  }
+
   /**
    * Create a new world on disk, add it to recents, and open it.
-   * Orchestrates: WorldService.CreateWorld → AppConfigService.AddRecentWorld → set currentWorld
+   * Orchestrates: WorldService.CreateWorld → AppConfigService.AddRecentWorld → set currentWorld → load meta
    */
   async function createWorld(name: string, folderPath: string) {
     error.value = null
@@ -40,6 +73,7 @@ export const useWorldStore = defineStore('world', () => {
       await AppConfigService.AddRecentWorld(worldInfo.name, worldInfo.path)
       recentWorlds.value = await AppConfigService.GetRecentWorlds()
       currentWorld.value = worldInfo
+      await loadWorldMeta()
     } catch (e) {
       error.value = String(e)
     } finally {
@@ -49,7 +83,7 @@ export const useWorldStore = defineStore('world', () => {
 
   /**
    * Open an existing world folder, add it to recents, and set it as current.
-   * Orchestrates: WorldService.OpenWorld → AppConfigService.AddRecentWorld → set currentWorld
+   * Orchestrates: WorldService.OpenWorld → AppConfigService.AddRecentWorld → set currentWorld → load meta
    */
   async function openWorld(folderPath: string) {
     error.value = null
@@ -60,6 +94,7 @@ export const useWorldStore = defineStore('world', () => {
       await AppConfigService.AddRecentWorld(worldInfo.name, worldInfo.path)
       recentWorlds.value = await AppConfigService.GetRecentWorlds()
       currentWorld.value = worldInfo
+      await loadWorldMeta()
     } catch (e) {
       error.value = String(e)
     } finally {
@@ -87,12 +122,14 @@ export const useWorldStore = defineStore('world', () => {
   /** Close the current world and return to the WelcomeScreen. */
   function closeWorld() {
     currentWorld.value = null
+    worldMeta.value = null
     error.value = null
   }
 
   return {
     // State
     currentWorld,
+    worldMeta,
     recentWorlds,
     error,
     loading,
@@ -100,6 +137,8 @@ export const useWorldStore = defineStore('world', () => {
     hasOpenWorld,
     // Actions
     loadRecentWorlds,
+    loadWorldMeta,
+    updateWorldMeta,
     createWorld,
     openWorld,
     removeRecentWorld,

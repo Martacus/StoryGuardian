@@ -16,9 +16,10 @@ const worldMetaFileName = "world.json"
 // It is the ground truth for a world's metadata on disk.
 // Separate from WorldInfo, which is the lightweight recents-list entry in app config.
 type WorldMeta struct {
-	Name      string    `json:"name"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UpdatedAt   time.Time `json:"updatedAt"`
 }
 
 // WorldService handles world folder operations and the native OS folder picker.
@@ -108,6 +109,60 @@ func (s *WorldService) OpenWorld(folderPath string) (*WorldInfo, error) {
 		Path:       folderPath,
 		LastOpened: time.Now().UTC(),
 	}, nil
+}
+
+// GetWorldMeta reads world.json from folderPath and returns the full metadata.
+func (s *WorldService) GetWorldMeta(folderPath string) (*WorldMeta, error) {
+	if folderPath == "" {
+		return nil, fmt.Errorf("folder path cannot be empty")
+	}
+	metaPath := filepath.Join(folderPath, worldMetaFileName)
+	data, err := os.ReadFile(metaPath)
+	if os.IsNotExist(err) {
+		return nil, fmt.Errorf("no LitGuardian world found at %q — missing world.json", folderPath)
+	}
+	if err != nil {
+		return nil, fmt.Errorf("read world.json: %w", err)
+	}
+	var meta WorldMeta
+	if err := json.Unmarshal(data, &meta); err != nil {
+		return nil, fmt.Errorf("parse world.json: %w", err)
+	}
+	return &meta, nil
+}
+
+// UpdateWorldMeta updates the name and description in world.json, bumps UpdatedAt,
+// and writes atomically. Returns the updated meta so the caller doesn't need a second round-trip.
+func (s *WorldService) UpdateWorldMeta(folderPath, name, description string) (*WorldMeta, error) {
+	if folderPath == "" {
+		return nil, fmt.Errorf("folder path cannot be empty")
+	}
+	if name == "" {
+		return nil, fmt.Errorf("world name cannot be empty")
+	}
+
+	metaPath := filepath.Join(folderPath, worldMetaFileName)
+	data, err := os.ReadFile(metaPath)
+	if os.IsNotExist(err) {
+		return nil, fmt.Errorf("no LitGuardian world found at %q — missing world.json", folderPath)
+	}
+	if err != nil {
+		return nil, fmt.Errorf("read world.json: %w", err)
+	}
+
+	var meta WorldMeta
+	if err := json.Unmarshal(data, &meta); err != nil {
+		return nil, fmt.Errorf("parse world.json: %w", err)
+	}
+
+	meta.Name = name
+	meta.Description = description
+	meta.UpdatedAt = time.Now().UTC()
+
+	if err := writeJSONAtomic(metaPath, meta); err != nil {
+		return nil, fmt.Errorf("update world.json: %w", err)
+	}
+	return &meta, nil
 }
 
 // writeJSONAtomic marshals v to indented JSON and writes it to path using
