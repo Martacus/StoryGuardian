@@ -45,9 +45,6 @@ function formatDate(date: string | Date | null | undefined): string {
 <template>
   <div class="flex flex-col gap-4">
 
-    <!-- Error -->
-    <p v-if="store.error" class="text-sm text-destructive">{{ store.error }}</p>
-
     <!-- Name -->
     <div class="grid gap-2">
       <Label for="world-name">Name</Label>
