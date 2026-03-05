@@ -30,23 +30,64 @@ Vue 3 components → Pinia stores → Wails-generated bindings → Go services �
 | `task run` | Run the built application |
 | `task package` | Create installer (NSIS on Windows) |
 
+## Build & Codegen
+
+- **Regen bindings** after any Go service change: `wails3 generate bindings -ts -d frontend/bindings`
+- **Go build check**: `go build -v .` (ignore `build/ios` errors — pre-existing Wails platform stubs)
+- **Vite build check**: `cd frontend && npx vite build`
+- **Bindings import path** from `src/`: use relative `../../bindings/litguardian` (`@/` alias won't reach bindings outside `src/`)
+
 ## Project Structure
 
 ```
-├── main.go                  # App entry point, window setup, embedded assets
-├── greetservice.go          # Example Go service (template)
-├── go.mod                   # Go module 
-├── Taskfile.yml             # Build tasks
+├── main.go                     # App entry point, window setup, service registration
+├── appconfig.go                # AppConfig struct
+├── appconfigservice.go         # App-level settings (recent worlds, etc.)
+├── worldservice.go             # World CRUD — create, open, save, delete
+├── layoutservice.go            # Per-world layout.json read/write
+├── go.mod
+├── Taskfile.yml
+├── plans/                      # Implementation plan docs (gitignored)
 ├── frontend/
-│   ├── src/                 # Vue 3 app source
-│   │   ├── main.ts          # Vue entry point
-│   │   ├── App.vue          # Root component
-│   │   └── components/      # Vue components
-│   ├── bindings/            # Auto-generated Go↔TS bindings (do not edit)
-│   ├── index.html           # HTML shell
-│   ├── vite.config.ts       # Vite config + Wails plugin
-│   └── package.json         # Frontend deps
-└── build/                   # Platform-specific build configs
+│   ├── bindings/               # Auto-generated Go↔TS bindings (do not edit)
+│   │   └── litguardian/
+│   │       ├── appconfigservice.ts
+│   │       ├── worldservice.ts
+│   │       ├── layoutservice.ts
+│   │       └── models.ts
+│   ├── src/
+│   │   ├── main.ts             # Vue entry point
+│   │   ├── App.vue             # Root component
+│   │   ├── assets/index.css    # Tailwind + global styles
+│   │   ├── components/
+│   │   │   ├── WelcomeScreen.vue       # World picker / launch screen
+│   │   │   ├── DashboardLayout.vue     # App shell with sidebar nav
+│   │   │   ├── WorldOverview.vue       # Thin wrapper → <ModuleGrid view-id="overview">
+│   │   │   ├── CreateWorldDialog.vue
+│   │   │   ├── WorldListItem.vue
+│   │   │   ├── SidebarNavItem.vue
+│   │   │   ├── modules/
+│   │   │   │   ├── ModuleGrid.vue      # 12-col grid, VueDraggable, Customize/Done button
+│   │   │   │   └── ModuleCard.vue      # Card wrapper — drag handle, resize, visibility toggle
+│   │   │   └── ui/                     # shadcn-vue components
+│   │   ├── modules/            # Feature module components (lazy-loaded)
+│   │   │   ├── registry.ts             # Central module registry (source of truth)
+│   │   │   └── overview/
+│   │   │       ├── InfoModule.vue      # World name/description form
+│   │   │       ├── EntitiesModule.vue  # Placeholder
+│   │   │       └── ImagesModule.vue    # Placeholder
+│   │   ├── stores/
+│   │   │   ├── worldStore.ts           # World open/close/save state
+│   │   │   └── layoutStore.ts          # Module layout state, edit mode, reconciliation
+│   │   ├── composables/
+│   │   │   └── useAppToast.ts
+│   │   └── lib/
+│   │       ├── utils.ts
+│   │       └── timeago.ts
+│   ├── index.html
+│   ├── vite.config.ts
+│   └── package.json
+└── build/                      # Platform-specific build configs
 ```
 
 ## Design Docs (Obsidian Vault)
@@ -65,10 +106,34 @@ All design documentation lives in **`C:\Vaults\LitGuardian`**:
 ## Conventions
 
 - One Go service per domain concern, registered in `main.go`
-- **Frontend orchestrates**: Pinia stores coordinate cross-service workflows (e.g., create world + add to recents). Go services stay decoupled — no service-to-service calls. This keeps backends swappable.
+- **Frontend orchestrates**: Pinia stores coordinate cross-service workflows (e.g., create world + add to recents). Go services stay decoupled — no service-to-service calls.
 - **Go services are independent**: Each service owns its own data and `sync.RWMutex`. No shared state between services.
 - **Error handling**: Go services return descriptive errors → Wails rejects the promise → Pinia store catches and sets `error` ref → component displays to user. No silent failures.
 - **Atomic writes**: All file mutations use temp file + `os.Rename` to prevent corruption on crash.
+- **Cross-store calls in Pinia**: call `useOtherStore()` inside the action body, not at module top-level (avoids circular import issues).
 - All file I/O goes through Go services, never from frontend
 - Entity data stored as individual JSON files: `world-folder/entities/{id}.json`
 - Use shadcn-vue components wherever possible; add new ones via `npx shadcn-vue@latest add <component>`
+
+## Implemented Features
+
+### Modular Dashboard System
+
+A reusable, customizable grid of draggable module cards. Users can reorder, resize (12-col grid), and show/hide modules. Layout persists per-world in `layout.json`.
+
+**Key files:**
+- `layoutservice.go` — reads/writes `layout.json` atomically
+- `frontend/src/modules/registry.ts` — central module registry; single source of truth for all modules
+- `frontend/src/stores/layoutStore.ts` — layout state, edit mode, reconciliation (adds new modules, drops removed ones, preserves user settings)
+- `frontend/src/components/modules/ModuleGrid.vue` — 12-col grid + VueDraggable
+- `frontend/src/components/modules/ModuleCard.vue` — card wrapper with drag handle, resize dropdown, visibility toggle
+
+**Adding a new module:**
+1. Create `frontend/src/modules/<view>/<Name>Module.vue`
+2. Add one entry to `moduleRegistry` in `registry.ts` with `views: ['<viewId>']`
+3. Grid, card, store, and Go service handle everything automatically
+
+**Adding a new view with its own dashboard:**
+1. Create modules + registry entries with `views: ['newview']`
+2. Create `NewView.vue` → `<ModuleGrid view-id="newview">`
+3. Add to sidebar nav in `DashboardLayout.vue`
