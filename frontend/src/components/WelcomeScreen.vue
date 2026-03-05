@@ -16,7 +16,6 @@ const showCreateDialog = ref(false)
 onMounted(() => store.loadRecentWorlds())
 
 async function openExisting() {
-  store.error = null
   const path = await WorldService.SelectFolder()
   if (path) await store.openWorld(path)
 }
@@ -86,10 +85,6 @@ async function openExisting() {
             </Button>
           </div>
 
-          <!-- Error banner -->
-          <p v-if="store.error" class="text-sm text-destructive max-w-xs text-center mt-2">
-            {{ store.error }}
-          </p>
         </main>
       </div>
     </div>

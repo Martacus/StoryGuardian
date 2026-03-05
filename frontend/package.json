@@ -21,7 +21,8 @@
     "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.2.1",
     "vue": "^3.2.45",
-    "vue-draggable-plus": "^0.6.1"
+    "vue-draggable-plus": "^0.6.1",
+    "vue-sonner": "^2.0.9"
   },
   "devDependencies": {
     "@types/node": "^25.3.3",

@@ -4,8 +4,11 @@ import { LayoutService } from '../../bindings/litguardian'
 import { DashboardLayout, ViewLayout, ModuleLayout } from '../../bindings/litguardian/models'
 import { moduleRegistry, getDefaultModules } from '@/modules/registry'
 import { useWorldStore } from './worldStore'
+import { useAppToast } from '@/composables/useAppToast'
 
 export const useLayoutStore = defineStore('layout', () => {
+  const { errorToast } = useAppToast()
+
   // ── State ─────────────────────────────────────────────────────────────────
   const layout = ref<DashboardLayout>(new DashboardLayout({ version: 1, views: {} }))
   const editMode = ref(false)
@@ -20,7 +23,7 @@ export const useLayoutStore = defineStore('layout', () => {
       const saved = await LayoutService.GetLayout(worldStore.currentWorld.path)
       layout.value = saved ?? new DashboardLayout({ version: 1, views: {} })
     } catch (e) {
-      console.error('Failed to load layout:', e)
+      errorToast('Failed to load layout', String(e))
       layout.value = new DashboardLayout({ version: 1, views: {} })
     }
   }
@@ -93,7 +96,7 @@ export const useLayoutStore = defineStore('layout', () => {
     try {
       await LayoutService.SaveLayout(worldStore.currentWorld.path, layout.value)
     } catch (e) {
-      console.error('Failed to save layout:', e)
+      errorToast('Failed to save layout', String(e))
     }
   }
 
