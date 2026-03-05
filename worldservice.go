@@ -52,31 +52,51 @@ func (s *WorldService) CreateWorld(name, folderPath string) (*WorldInfo, error) 
 		return nil, fmt.Errorf("folder path cannot be empty")
 	}
 
-	// Guard against creating a world on top of an existing one.
-	metaPath := filepath.Join(folderPath, worldMetaFileName)
-	if _, err := os.Stat(metaPath); err == nil {
-		return nil, fmt.Errorf("folder already contains a world: %s", folderPath)
+	// Require the target folder to be empty (catches existing worlds too,
+	// since world.json would make the folder non-empty).
+	entries, err := os.ReadDir(folderPath)
+	if err != nil && !os.IsNotExist(err) {
+		return nil, fmt.Errorf("read folder: %w", err)
+	}
+	if len(entries) > 0 {
+		return nil, fmt.Errorf("folder is not empty: %s", folderPath)
 	}
 
 	now := time.Now().UTC()
 
-	// Write world.json atomically.
-	meta := WorldMeta{Name: name, CreatedAt: now, UpdatedAt: now}
-	if err := writeJSONAtomic(metaPath, meta); err != nil {
-		return nil, fmt.Errorf("create world.json: %w", err)
+	// Track created paths so we can roll back on partial failure.
+	var written []string
+	rollback := func() {
+		for i := len(written) - 1; i >= 0; i-- {
+			os.Remove(written[i])
+		}
 	}
 
+	// Write world.json atomically.
+	metaPath := filepath.Join(folderPath, worldMetaFileName)
+	meta := WorldMeta{Name: name, CreatedAt: now, UpdatedAt: now}
+	if err := writeJSONAtomic(metaPath, meta); err != nil {
+		rollback()
+		return nil, fmt.Errorf("create world.json: %w", err)
+	}
+	written = append(written, metaPath)
+
 	// Create entities/ subdirectory.
-	if err := os.MkdirAll(filepath.Join(folderPath, "entities"), 0755); err != nil {
+	entitiesDir := filepath.Join(folderPath, "entities")
+	if err := os.MkdirAll(entitiesDir, 0755); err != nil {
+		rollback()
 		return nil, fmt.Errorf("create entities dir: %w", err)
 	}
+	written = append(written, entitiesDir)
 
 	// Create empty collection files.
 	for _, filename := range []string{"links.json", "tags.json", "categories.json"} {
 		p := filepath.Join(folderPath, filename)
 		if err := writeJSONAtomic(p, []any{}); err != nil {
+			rollback()
 			return nil, fmt.Errorf("create %s: %w", filename, err)
 		}
+		written = append(written, p)
 	}
 
 	return &WorldInfo{Name: name, Path: folderPath, LastOpened: now}, nil
@@ -166,18 +186,38 @@ func (s *WorldService) UpdateWorldMeta(folderPath, name, description string) (*W
 }
 
 // writeJSONAtomic marshals v to indented JSON and writes it to path using
-// a temp file + rename to prevent corruption on crash.
+// a uniquely-named temp file + fsync + rename to prevent corruption on crash
+// and to avoid races when multiple goroutines write to the same directory.
 func writeJSONAtomic(path string, v any) error {
-	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+	dir := filepath.Dir(path)
+	if err := os.MkdirAll(dir, 0755); err != nil {
 		return err
 	}
 	data, err := json.MarshalIndent(v, "", "  ")
 	if err != nil {
 		return err
 	}
-	tmp := path + ".tmp"
-	if err := os.WriteFile(tmp, data, 0644); err != nil {
+	tmp, err := os.CreateTemp(dir, ".tmp-*")
+	if err != nil {
 		return err
 	}
-	return os.Rename(tmp, path)
+	tmpName := tmp.Name()
+	ok := false
+	defer func() {
+		if !ok {
+			tmp.Close()
+			os.Remove(tmpName)
+		}
+	}()
+	if _, err := tmp.Write(data); err != nil {
+		return err
+	}
+	if err := tmp.Sync(); err != nil {
+		return err
+	}
+	if err := tmp.Close(); err != nil {
+		return err
+	}
+	ok = true
+	return os.Rename(tmpName, path)
 }

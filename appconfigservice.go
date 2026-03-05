@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 	"sync"
 	"time"
 
@@ -53,6 +54,13 @@ func (s *AppConfigService) GetRecentWorlds() []WorldInfo {
 	return result
 }
 
+// canonPath returns a normalised, case-folded representation of p for
+// duplicate detection. The stored path is always the original; only
+// comparisons use the canonical form.
+func canonPath(p string) string {
+	return strings.ToLower(filepath.Clean(p))
+}
+
 // AddRecentWorld upserts a world entry by path, updates LastOpened, caps the
 // list at maxRecentWorlds, and persists to disk.
 func (s *AppConfigService) AddRecentWorld(name, path string) error {
@@ -60,10 +68,11 @@ func (s *AppConfigService) AddRecentWorld(name, path string) error {
 	defer s.mu.Unlock()
 
 	now := time.Now().UTC()
+	canon := canonPath(path)
 
-	// Upsert: update existing entry if path matches.
+	// Upsert: update existing entry if canonical path matches.
 	for i, w := range s.config.RecentWorlds {
-		if w.Path == path {
+		if canonPath(w.Path) == canon {
 			s.config.RecentWorlds[i].Name = name
 			s.config.RecentWorlds[i].LastOpened = now
 			return s.save()
@@ -86,9 +95,10 @@ func (s *AppConfigService) RemoveRecentWorld(path string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
+	canon := canonPath(path)
 	filtered := s.config.RecentWorlds[:0]
 	for _, w := range s.config.RecentWorlds {
-		if w.Path != path {
+		if canonPath(w.Path) != canon {
 			filtered = append(filtered, w)
 		}
 	}
@@ -110,9 +120,12 @@ func (s *AppConfigService) load() error {
 	return json.Unmarshal(data, &s.config)
 }
 
-// save atomically writes the config to disk using a temp file + rename.
+// save atomically writes the config to disk using a uniquely-named temp file +
+// fsync + rename to prevent corruption and races with concurrent saves.
+// Must be called with s.mu held.
 func (s *AppConfigService) save() error {
-	if err := os.MkdirAll(filepath.Dir(s.filePath), 0755); err != nil {
+	dir := filepath.Dir(s.filePath)
+	if err := os.MkdirAll(dir, 0755); err != nil {
 		return err
 	}
 
@@ -121,9 +134,27 @@ func (s *AppConfigService) save() error {
 		return err
 	}
 
-	tmp := s.filePath + ".tmp"
-	if err := os.WriteFile(tmp, data, 0644); err != nil {
+	tmp, err := os.CreateTemp(dir, ".tmp-*")
+	if err != nil {
 		return err
 	}
-	return os.Rename(tmp, s.filePath)
+	tmpName := tmp.Name()
+	ok := false
+	defer func() {
+		if !ok {
+			tmp.Close()
+			os.Remove(tmpName)
+		}
+	}()
+	if _, err := tmp.Write(data); err != nil {
+		return err
+	}
+	if err := tmp.Sync(); err != nil {
+		return err
+	}
+	if err := tmp.Close(); err != nil {
+		return err
+	}
+	ok = true
+	return os.Rename(tmpName, s.filePath)
 }

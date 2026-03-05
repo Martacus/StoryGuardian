@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sync"
 )
 
 const layoutFileName = "layout.json"
@@ -29,11 +30,15 @@ type DashboardLayout struct {
 
 // LayoutService handles reading and writing layout.json for a world folder.
 // It is stateless — all layout state lives on disk.
-type LayoutService struct{}
+type LayoutService struct {
+	mu sync.RWMutex
+}
 
 // GetLayout reads layout.json from folderPath. Returns nil (no error) if the
 // file doesn't exist — the frontend applies registry defaults in that case.
 func (s *LayoutService) GetLayout(folderPath string) (*DashboardLayout, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
 	if folderPath == "" {
 		return nil, fmt.Errorf("folder path cannot be empty")
 	}
@@ -54,6 +59,8 @@ func (s *LayoutService) GetLayout(folderPath string) (*DashboardLayout, error) {
 
 // SaveLayout atomically writes layout to layout.json in folderPath.
 func (s *LayoutService) SaveLayout(folderPath string, layout DashboardLayout) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
 	if folderPath == "" {
 		return fmt.Errorf("folder path cannot be empty")
 	}

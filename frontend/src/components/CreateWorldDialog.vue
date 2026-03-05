@@ -21,6 +21,9 @@ const store = useWorldStore()
 const name = ref('')
 const folderPath = ref('')
 const picking = ref(false)
+// Local error — isolated from the global store so stale errors from other
+// flows (open world, update meta, etc.) never bleed into this dialog.
+const dialogError = ref<string | null>(null)
 
 const canCreate = computed(() => name.value.trim().length > 0 && folderPath.value.length > 0)
 
@@ -36,19 +39,22 @@ async function pickFolder() {
 
 async function handleCreate() {
   if (!canCreate.value || store.loading) return
+  dialogError.value = null
   await store.createWorld(name.value.trim(), folderPath.value)
-  if (!store.error) {
-    open.value = false
-    name.value = ''
-    folderPath.value = ''
+  if (store.error) {
+    dialogError.value = store.error
+    return
   }
+  open.value = false
+  name.value = ''
+  folderPath.value = ''
 }
 
 function handleCancel() {
   open.value = false
   name.value = ''
   folderPath.value = ''
-  store.error = null
+  dialogError.value = null
 }
 </script>
 
@@ -93,7 +99,7 @@ function handleCancel() {
         </div>
 
         <!-- Error -->
-        <p v-if="store.error" class="text-sm text-destructive">{{ store.error }}</p>
+        <p v-if="dialogError" class="text-sm text-destructive">{{ dialogError }}</p>
       </div>
 
       <DialogFooter>
