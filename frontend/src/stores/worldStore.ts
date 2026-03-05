@@ -2,6 +2,7 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { AppConfigService, WorldService } from '../../bindings/litguardian'
 import type { WorldInfo, WorldMeta } from '../../bindings/litguardian'
+import { useLayoutStore } from './layoutStore'
 
 export const useWorldStore = defineStore('world', () => {
   // ── State ─────────────────────────────────────────────────────────────────
@@ -74,6 +75,7 @@ export const useWorldStore = defineStore('world', () => {
       recentWorlds.value = await AppConfigService.GetRecentWorlds()
       currentWorld.value = worldInfo
       await loadWorldMeta()
+      await useLayoutStore().loadLayout()
     } catch (e) {
       error.value = String(e)
     } finally {
@@ -95,6 +97,7 @@ export const useWorldStore = defineStore('world', () => {
       recentWorlds.value = await AppConfigService.GetRecentWorlds()
       currentWorld.value = worldInfo
       await loadWorldMeta()
+      await useLayoutStore().loadLayout()
     } catch (e) {
       error.value = String(e)
     } finally {
@@ -124,6 +127,7 @@ export const useWorldStore = defineStore('world', () => {
     currentWorld.value = null
     worldMeta.value = null
     error.value = null
+    useLayoutStore().reset()
   }
 
   return {

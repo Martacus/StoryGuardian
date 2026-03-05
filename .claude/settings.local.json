@@ -10,7 +10,8 @@
       "Bash(go build:*)",
       "Bash(ls:*)",
       "Bash(npm install:*)",
-      "Bash(wails3 generate bindings:*)"
+      "Bash(wails3 generate bindings:*)",
+      "Bash(npx tsc:*)"
     ]
   }
 }
