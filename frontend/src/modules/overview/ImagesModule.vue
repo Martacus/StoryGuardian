@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, inject, type ComputedRef } from 'vue'
 import { Upload, LayoutGrid, List, Trash2, Check, ImageOff } from 'lucide-vue-next'
 import { useImageStore } from '@/stores/imageStore'
 import { useLayoutStore } from '@/stores/layoutStore'
 import { useWorldStore } from '@/stores/worldStore'
 import { ImageService } from '../../../bindings/litguardian'
 import { Button } from '@/components/ui/button'
+
+const actionsTarget = inject<ComputedRef<string>>('moduleActionsTarget')!
 import {
   Tooltip,
   TooltipContent,
@@ -95,37 +97,34 @@ function formatBytes(bytes: number): string {
 <template>
   <div class="flex flex-col h-full">
 
-    <!-- ── Toolbar ─────────────────────────────────────────────────────────── -->
-    <div class="flex items-center justify-between px-3 py-2 border-b border-border shrink-0">
+    <!-- ── Header actions (teleported into ModuleCard header) ──────────────── -->
+    <Teleport :to="'#' + actionsTarget">
       <Button
-        variant="outline"
-        size="sm"
+        variant="ghost"
+        size="icon-sm"
         :disabled="imageStore.loading"
+        title="Import images"
         @click="imageStore.importImages()"
       >
         <Upload class="h-3.5 w-3.5" />
-        Import
       </Button>
-
-      <div class="flex items-center gap-1">
-        <Button
-          :variant="viewMode === 'grid' ? 'default' : 'ghost'"
-          size="icon"
-          class="h-7 w-7"
-          @click="setViewMode('grid')"
-        >
-          <LayoutGrid class="h-3.5 w-3.5" />
-        </Button>
-        <Button
-          :variant="viewMode === 'list' ? 'default' : 'ghost'"
-          size="icon"
-          class="h-7 w-7"
-          @click="setViewMode('list')"
-        >
-          <List class="h-3.5 w-3.5" />
-        </Button>
-      </div>
-    </div>
+      <Button
+        :variant="viewMode === 'grid' ? 'default' : 'ghost'"
+        size="icon-sm"
+        title="Grid view"
+        @click="setViewMode('grid')"
+      >
+        <LayoutGrid class="h-3.5 w-3.5" />
+      </Button>
+      <Button
+        :variant="viewMode === 'list' ? 'default' : 'ghost'"
+        size="icon-sm"
+        title="List view"
+        @click="setViewMode('list')"
+      >
+        <List class="h-3.5 w-3.5" />
+      </Button>
+    </Teleport>
 
     <!-- ── Content ────────────────────────────────────────────────────────── -->
     <div class="flex-1 overflow-y-auto px-3 py-3">
