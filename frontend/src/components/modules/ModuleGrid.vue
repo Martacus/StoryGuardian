@@ -133,7 +133,11 @@ function onLayoutUpdated(newLayout: LayoutItem[]) {
             :module="getModule(String(item.i))!"
             class="h-full"
           >
-            <component :is="getComponent(String(item.i))" />
+            <component
+              :is="getComponent(String(item.i))"
+              :view-id="viewId"
+              :module-id="String(item.i)"
+            />
           </ModuleCard>
         </GridItem>
       </GridLayout>

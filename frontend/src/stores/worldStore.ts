@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 import { AppConfigService, WorldService } from '../../bindings/litguardian'
 import type { WorldInfo, WorldMeta } from '../../bindings/litguardian'
 import { useLayoutStore } from './layoutStore'
+import { useImageStore } from './imageStore'
 import { useAppToast } from '@/composables/useAppToast'
 
 export const useWorldStore = defineStore('world', () => {
@@ -75,6 +76,7 @@ export const useWorldStore = defineStore('world', () => {
       currentWorld.value = worldInfo
       await loadWorldMeta()
       await useLayoutStore().loadLayout()
+      await useImageStore().loadImages()
     } catch (e) {
       errorToast('Failed to create world', String(e))
     } finally {
@@ -96,6 +98,7 @@ export const useWorldStore = defineStore('world', () => {
       currentWorld.value = worldInfo
       await loadWorldMeta()
       await useLayoutStore().loadLayout()
+      await useImageStore().loadImages()
     } catch (e) {
       errorToast('Failed to open world', String(e))
     } finally {
@@ -124,6 +127,7 @@ export const useWorldStore = defineStore('world', () => {
     currentWorld.value = null
     worldMeta.value = null
     useLayoutStore().reset()
+    useImageStore().reset()
   }
 
   return {

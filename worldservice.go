@@ -89,6 +89,14 @@ func (s *WorldService) CreateWorld(name, folderPath string) (*WorldInfo, error) 
 	}
 	written = append(written, entitiesDir)
 
+	// Create images/ subdirectory.
+	imagesDir := filepath.Join(folderPath, "images")
+	if err := os.MkdirAll(imagesDir, 0755); err != nil {
+		rollback()
+		return nil, fmt.Errorf("create images dir: %w", err)
+	}
+	written = append(written, imagesDir)
+
 	// Create empty collection files.
 	for _, filename := range []string{"links.json", "tags.json", "categories.json"} {
 		p := filepath.Join(folderPath, filename)

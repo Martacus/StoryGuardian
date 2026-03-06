@@ -18,6 +18,7 @@ func main() {
 			application.NewService(&AppConfigService{}),
 			application.NewService(&WorldService{}),
 			application.NewService(&LayoutService{}),
+			application.NewService(&ImageService{}),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
