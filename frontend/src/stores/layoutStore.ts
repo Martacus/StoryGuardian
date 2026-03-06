@@ -120,6 +120,24 @@ export const useLayoutStore = defineStore('layout', () => {
     updateViewLayout(viewId, modules)
   }
 
+  /** Set a single config key for a module. Merges into existing config. */
+  function setModuleConfig(viewId: string, moduleId: string, key: string, value: unknown) {
+    const modules = getViewModules(viewId).map(m => {
+      if (m.id !== moduleId) return m
+      const config = { ...(m.config ?? {}), [key]: value }
+      return new ModuleLayout({ ...m, config })
+    })
+    updateViewLayout(viewId, modules)
+  }
+
+  /** Read a config value for a module, with a typed default fallback. */
+  function getModuleConfig<T>(viewId: string, moduleId: string, key: string, fallback: T): T {
+    const view = layout.value.views?.[viewId]
+    const mod = view?.modules?.find(m => m.id === moduleId)
+    const val = mod?.config?.[key]
+    return (val as T) ?? fallback
+  }
+
   /** Toggle edit mode. Auto-saves layout.json when exiting edit mode. */
   async function toggleEditMode() {
     if (editMode.value) {
@@ -153,7 +171,10 @@ export const useLayoutStore = defineStore('layout', () => {
     updateViewLayout,
     handleLayoutUpdate,
     toggleModuleVisibility,
+    setModuleConfig,
+    getModuleConfig,
     toggleEditMode,
+    saveLayout,
     reset,
   }
 })

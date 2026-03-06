@@ -12,12 +12,13 @@ const layoutFileName = "layout.json"
 
 // ModuleLayout stores the persisted layout config for a single module.
 type ModuleLayout struct {
-	ID      string `json:"id"`
-	X       int    `json:"x"`
-	Y       int    `json:"y"`
-	W       int    `json:"w"`
-	H       int    `json:"h"`
-	Visible bool   `json:"visible"`
+	ID      string         `json:"id"`
+	X       int            `json:"x"`
+	Y       int            `json:"y"`
+	W       int            `json:"w"`
+	H       int            `json:"h"`
+	Visible bool           `json:"visible"`
+	Config  map[string]any `json:"config,omitempty"`
 }
 
 // ViewLayout stores the ordered list of modules for a single view.
