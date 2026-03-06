@@ -32,60 +32,60 @@ const navItems: { id: View; icon: Component; label: string; disabled: boolean }[
 </script>
 
 <template>
-  <div class="h-screen w-screen flex flex-col bg-background text-foreground overflow-hidden select-none">
+  <div class="h-screen w-screen flex bg-background text-foreground overflow-hidden select-none">
 
-    <!-- ── Top nav ─────────────────────────────────────────────────────────── -->
-    <header class="flex items-center gap-3 px-4 h-12 border-b border-border shrink-0">
-      <span class="text-sm font-medium truncate max-w-[200px]">
-        {{ store.currentWorld?.name }}
-      </span>
-      <div class="ml-auto flex items-center gap-2">
-        <Search class="h-4 w-4 text-muted-foreground shrink-0" />
-        <Input
-          class="h-8 w-56 bg-transparent border-none shadow-none focus-visible:ring-0 placeholder:text-muted-foreground/50 px-0"
-          placeholder="Search… (coming soon)"
-          disabled
-        />
+    <!-- ── Sidebar (full height) ──────────────────────────────────────────── -->
+    <aside class="flex flex-col w-52 shrink-0 border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
+
+      <!-- Logo -->
+      <div class="flex items-center gap-2.5 px-4 h-12 shrink-0 border-b border-sidebar-border">
+        <BookOpen class="h-5 w-5 text-sidebar-primary" />
+        <span class="font-semibold text-sm tracking-tight">LitGuardian</span>
       </div>
-    </header>
 
-    <!-- ── Body ───────────────────────────────────────────────────────────── -->
-    <div class="flex flex-1 overflow-hidden">
+      <!-- Nav items -->
+      <nav class="flex flex-col gap-1 p-2 flex-1 overflow-y-auto">
+        <SidebarNavItem
+          v-for="item in navItems"
+          :key="item.id"
+          :icon="item.icon"
+          :label="item.label"
+          :active="currentView === item.id"
+          :disabled="item.disabled"
+          @select="currentView = item.id"
+        />
+      </nav>
 
-      <!-- Sidebar -->
-      <aside class="flex flex-col w-52 shrink-0 border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
+      <!-- Close world -->
+      <div class="p-2 border-t border-sidebar-border shrink-0">
+        <Button
+          variant="ghost"
+          class="w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          @click="store.closeWorld()"
+        >
+          <LogOut class="h-4 w-4" />
+          Close World
+        </Button>
+      </div>
+    </aside>
 
-        <!-- Logo -->
-        <div class="flex items-center gap-2.5 px-4 py-4 border-b border-sidebar-border">
-          <BookOpen class="h-5 w-5 text-sidebar-primary" />
-          <span class="font-semibold text-sm tracking-tight">LitGuardian</span>
-        </div>
+    <!-- ── Right column ───────────────────────────────────────────────────── -->
+    <div class="flex flex-col flex-1 overflow-hidden">
 
-        <!-- Nav items -->
-        <nav class="flex flex-col gap-1 p-2 flex-1">
-          <SidebarNavItem
-            v-for="item in navItems"
-            :key="item.id"
-            :icon="item.icon"
-            :label="item.label"
-            :active="currentView === item.id"
-            :disabled="item.disabled"
-            @select="currentView = item.id"
+      <!-- Top nav -->
+      <header class="flex items-center gap-3 px-4 h-12 border-b border-border shrink-0">
+        <span class="text-sm font-medium truncate max-w-[200px]">
+          {{ store.currentWorld?.name }}
+        </span>
+        <div class="ml-auto flex items-center gap-2">
+          <Search class="h-4 w-4 text-muted-foreground shrink-0" />
+          <Input
+            class="h-8 w-56 bg-transparent border-none shadow-none focus-visible:ring-0 placeholder:text-muted-foreground/50 px-0"
+            placeholder="Search… (coming soon)"
+            disabled
           />
-        </nav>
-
-        <!-- Close world -->
-        <div class="p-2 border-t border-sidebar-border">
-          <Button
-            variant="ghost"
-            class="w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-            @click="store.closeWorld()"
-          >
-            <LogOut class="h-4 w-4" />
-            Close World
-          </Button>
         </div>
-      </aside>
+      </header>
 
       <!-- Content area -->
       <main class="flex-1 overflow-auto">
