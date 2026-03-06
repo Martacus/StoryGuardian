@@ -123,3 +123,30 @@
     height: 100%;
   }
 }
+
+/* ── grid-layout-plus overrides ─────────────────────────────────────────── */
+.vgl-layout {
+  /* Drag placeholder — use a muted tinted fill */
+  --vgl-placeholder-bg: oklch(0.556 0 0);
+  --vgl-placeholder-opacity: 15%;
+  --vgl-placeholder-z-index: 2;
+  /* Resize handle */
+  --vgl-resizer-size: 14px;
+  --vgl-resizer-border-color: oklch(0.708 0 0);
+  --vgl-resizer-border-width: 2px;
+  /* Dragging / resizing item states */
+  --vgl-item-resizing-z-index: 10;
+  --vgl-item-resizing-opacity: 85%;
+  --vgl-item-dragging-z-index: 10;
+  --vgl-item-dragging-opacity: 90%;
+}
+
+/* Match card border-radius on the drop placeholder */
+.vgl-item--placeholder {
+  border-radius: var(--radius-lg, 0.5rem);
+}
+
+.dark .vgl-layout {
+  --vgl-placeholder-bg: oklch(0.708 0 0);
+  --vgl-resizer-border-color: oklch(0.556 0 0);
+}

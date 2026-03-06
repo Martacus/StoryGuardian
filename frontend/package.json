@@ -15,13 +15,13 @@
     "@wailsio/runtime": "latest",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "grid-layout-plus": "^1.1.1",
     "lucide-vue-next": "^0.576.0",
     "pinia": "^3.0.4",
     "reka-ui": "^2.9.0",
     "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.2.1",
     "vue": "^3.2.45",
-    "vue-draggable-plus": "^0.6.1",
     "vue-sonner": "^2.0.9"
   },
   "devDependencies": {

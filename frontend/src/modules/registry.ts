@@ -6,7 +6,10 @@ export interface ModuleDefinition {
   id: string
   label: string
   icon: Component
-  defaultColSpan: number
+  defaultW: number
+  defaultH: number
+  minW?: number
+  minH?: number
   component: Component
   views: string[]
 }
@@ -16,7 +19,10 @@ export const moduleRegistry: ModuleDefinition[] = [
     id: 'overview-info',
     label: 'World Info',
     icon: FileText,
-    defaultColSpan: 6,
+    defaultW: 6,
+    defaultH: 8,
+    minW: 3,
+    minH: 3,
     component: defineAsyncComponent(() => import('./overview/InfoModule.vue')),
     views: ['overview'],
   },
@@ -24,7 +30,10 @@ export const moduleRegistry: ModuleDefinition[] = [
     id: 'overview-entities',
     label: 'Entities',
     icon: Users,
-    defaultColSpan: 6,
+    defaultW: 6,
+    defaultH: 6,
+    minW: 3,
+    minH: 3,
     component: defineAsyncComponent(() => import('./overview/EntitiesModule.vue')),
     views: ['overview'],
   },
@@ -32,7 +41,10 @@ export const moduleRegistry: ModuleDefinition[] = [
     id: 'overview-images',
     label: 'Images',
     icon: ImageIcon,
-    defaultColSpan: 12,
+    defaultW: 12,
+    defaultH: 6,
+    minW: 3,
+    minH: 3,
     component: defineAsyncComponent(() => import('./overview/ImagesModule.vue')),
     views: ['overview'],
   },
@@ -40,10 +52,32 @@ export const moduleRegistry: ModuleDefinition[] = [
 
 /**
  * Returns the default ModuleLayout array for a view when no layout.json exists.
- * Filters the registry by viewId and maps each definition to its defaults.
+ * Auto-positions modules left-to-right, wrapping to the next row when x + w > 12.
  */
 export function getDefaultModules(viewId: string): ModuleLayout[] {
-  return moduleRegistry
-    .filter(m => m.views.includes(viewId))
-    .map(m => new ModuleLayout({ id: m.id, colSpan: m.defaultColSpan, visible: true }))
+  const defs = moduleRegistry.filter(m => m.views.includes(viewId))
+  const result: ModuleLayout[] = []
+  let x = 0
+  let y = 0
+  let rowMaxH = 0
+
+  for (const def of defs) {
+    if (x + def.defaultW > 12) {
+      x = 0
+      y += rowMaxH
+      rowMaxH = 0
+    }
+    result.push(new ModuleLayout({
+      id: def.id,
+      x,
+      y,
+      w: def.defaultW,
+      h: def.defaultH,
+      visible: true,
+    }))
+    rowMaxH = Math.max(rowMaxH, def.defaultH)
+    x += def.defaultW
+  }
+
+  return result
 }

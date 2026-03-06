@@ -13,7 +13,10 @@ const layoutFileName = "layout.json"
 // ModuleLayout stores the persisted layout config for a single module.
 type ModuleLayout struct {
 	ID      string `json:"id"`
-	ColSpan int    `json:"colSpan"`
+	X       int    `json:"x"`
+	Y       int    `json:"y"`
+	W       int    `json:"w"`
+	H       int    `json:"h"`
 	Visible bool   `json:"visible"`
 }
 
@@ -24,8 +27,8 @@ type ViewLayout struct {
 
 // DashboardLayout is the root structure written to layout.json.
 type DashboardLayout struct {
-	Version int                     `json:"version"`
-	Views   map[string]ViewLayout   `json:"views"`
+	Version int                   `json:"version"`
+	Views   map[string]ViewLayout `json:"views"`
 }
 
 // LayoutService handles reading and writing layout.json for a world folder.
