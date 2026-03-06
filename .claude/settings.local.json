@@ -2,16 +2,23 @@
   "permissions": {
     "allow": [
       "WebFetch(domain:www.shadcn-vue.com)",
-      "Bash(npx shadcn-vue@latest init:*)",
-      "Bash(npx shadcn-vue@latest add:*)",
-      "Bash(npx vue-tsc:*)",
+      "Bash(pnpm dlx shadcn-vue@latest init:*)",
+      "Bash(pnpm dlx shadcn-vue@latest add:*)",
+      "Bash(pnpm vue-tsc:*)",
       "Bash(echo:*)",
-      "Bash(npx vite build:*)",
+      "Bash(pnpm vite build:*)",
       "Bash(go build:*)",
       "Bash(ls:*)",
-      "Bash(npm install:*)",
+      "Bash(pnpm install:*)",
       "Bash(wails3 generate bindings:*)",
-      "Bash(npx tsc:*)"
+      "Bash(pnpm tsc:*)",
+      "WebFetch(domain:grid-layout-plus.netlify.app)",
+      "Bash(npm install:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm remove:*)",
+      "Bash(python3:*)",
+      "Bash(npx vite build)"
     ]
   }
 }

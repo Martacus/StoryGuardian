@@ -34,7 +34,7 @@ Vue 3 components → Pinia stores → Wails-generated bindings → Go services �
 
 - **Regen bindings** after any Go service change: `wails3 generate bindings -ts -d frontend/bindings`
 - **Go build check**: `go build -v .` (ignore `build/ios` errors — pre-existing Wails platform stubs)
-- **Vite build check**: `cd frontend && npx vite build`
+- **Vite build check**: `cd frontend && pnpm vite build`
 - **Bindings import path** from `src/`: use relative `../../bindings/litguardian` (`@/` alias won't reach bindings outside `src/`)
 
 ## Project Structure
@@ -113,7 +113,7 @@ All design documentation lives in **`C:\Vaults\LitGuardian`**:
 - **Cross-store calls in Pinia**: call `useOtherStore()` inside the action body, not at module top-level (avoids circular import issues).
 - All file I/O goes through Go services, never from frontend
 - Entity data stored as individual JSON files: `world-folder/entities/{id}.json`
-- Use shadcn-vue components wherever possible; add new ones via `npx shadcn-vue@latest add <component>`
+- Use shadcn-vue components wherever possible; add new ones via `pnpm dlx shadcn-vue@latest add <component>`
 
 ## Implemented Features
 
