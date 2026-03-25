@@ -2,18 +2,27 @@
 import { ref, computed, watch, nextTick } from 'vue'
 import { GridLayout, GridItem } from 'grid-layout-plus'
 import type { LayoutItem } from 'grid-layout-plus'
-import { Settings2, Check } from 'lucide-vue-next'
+import { Settings2, Check, Plus } from 'lucide-vue-next'
 import { useLayoutStore } from '@/stores/layoutStore'
 import { moduleRegistry } from '@/modules/registry'
 import type { ModuleLayout } from '../../../bindings/litguardian/models'
 import ModuleCard from './ModuleCard.vue'
 import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 const props = defineProps<{
   viewId: string
 }>()
 
 const layoutStore = useLayoutStore()
+
+// Modules from the registry that aren't currently on the grid — shown in "Add Module" dropdown
+const addableModules = computed(() => layoutStore.getAddableModules(props.viewId))
 
 // In edit mode show all modules (hidden ones are dimmed); in view mode only visible
 const activeModules = computed<ModuleLayout[]>(() => {
@@ -89,15 +98,42 @@ function onLayoutUpdated(newLayout: LayoutItem[]) {
       <h1 class="text-xl font-semibold">
         <slot name="title" />
       </h1>
-      <Button
-        :variant="layoutStore.editMode ? 'default' : 'outline'"
-        size="sm"
-        @click="layoutStore.toggleEditMode()"
-      >
-        <Check v-if="layoutStore.editMode" class="h-4 w-4" />
-        <Settings2 v-else class="h-4 w-4" />
-        {{ layoutStore.editMode ? 'Done' : 'Customize' }}
-      </Button>
+      <div class="flex items-center gap-2">
+        <!-- Add Module dropdown -->
+        <DropdownMenu>
+          <DropdownMenuTrigger as-child>
+            <Button
+              variant="outline"
+              size="sm"
+              :disabled="addableModules.length === 0"
+            >
+              <Plus class="h-4 w-4" />
+              Add Module
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              v-for="def in addableModules"
+              :key="def.id"
+              @click="layoutStore.addModule(viewId, def.id)"
+            >
+              <component :is="def.icon" class="h-4 w-4" />
+              {{ def.label }}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <!-- Customize / Done -->
+        <Button
+          :variant="layoutStore.editMode ? 'default' : 'outline'"
+          size="sm"
+          @click="layoutStore.toggleEditMode()"
+        >
+          <Check v-if="layoutStore.editMode" class="h-4 w-4" />
+          <Settings2 v-else class="h-4 w-4" />
+          {{ layoutStore.editMode ? 'Done' : 'Customize' }}
+        </Button>
+      </div>
     </div>
 
     <!-- ── Free-form grid ─────────────────────────────────────────────── -->
@@ -132,6 +168,7 @@ function onLayoutUpdated(newLayout: LayoutItem[]) {
             :view-id="viewId"
             :module="getModule(String(item.i))!"
             class="h-full"
+            @remove="layoutStore.removeModule(viewId, String(item.i))"
           >
             <component
               :is="getComponent(String(item.i))"

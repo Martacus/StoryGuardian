@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, provide } from 'vue'
-import { GripVertical, Eye, EyeOff } from 'lucide-vue-next'
+import { GripVertical, Eye, EyeOff, X } from 'lucide-vue-next'
 import { useLayoutStore } from '@/stores/layoutStore'
 import { moduleRegistry } from '@/modules/registry'
 import type { ModuleLayout } from '../../../bindings/litguardian/models'
@@ -10,6 +10,10 @@ import { Button } from '@/components/ui/button'
 const props = defineProps<{
   viewId: string
   module: ModuleLayout
+}>()
+
+const emit = defineEmits<{
+  remove: []
 }>()
 
 const layoutStore = useLayoutStore()
@@ -67,6 +71,17 @@ function toggleVisibility() {
         >
           <Eye v-if="module.visible" class="h-4 w-4" />
           <EyeOff v-else class="h-4 w-4" />
+        </Button>
+        <!-- Remove button: edit mode only -->
+        <Button
+          v-if="layoutStore.editMode"
+          variant="ghost"
+          size="icon-sm"
+          class="no-drag text-muted-foreground hover:text-destructive"
+          title="Remove module"
+          @click="emit('remove')"
+        >
+          <X class="h-4 w-4" />
         </Button>
       </CardAction>
     </CardHeader>

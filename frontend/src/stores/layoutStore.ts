@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { LayoutService } from '../../bindings/litguardian'
 import { DashboardLayout, ViewLayout, ModuleLayout } from '../../bindings/litguardian/models'
-import { moduleRegistry, getDefaultModules } from '@/modules/registry'
+import { moduleRegistry, getDefaultModules, type ModuleDefinition } from '@/modules/registry'
 import { useWorldStore } from './worldStore'
 import { useAppToast } from '@/composables/useAppToast'
 
@@ -39,10 +39,10 @@ export const useLayoutStore = defineStore('layout', () => {
 
   /**
    * Returns the reconciled module list for a view.
-   * - Saved positions (x/y/w/h) and visibility are preserved
+   * - Saved modules array is the source of truth — only what's saved is shown
    * - Falls back to registry defaults when no layout exists for the view
-   * - Appends newly registered modules below existing ones
-   * - Drops modules that have been removed from the registry
+   * - Drops modules that have been removed from the registry (stale entries)
+   * - Does NOT auto-append new registry modules; use addModule() explicitly
    */
   function getViewModules(viewId: string): ModuleLayout[] {
     const savedView = layout.value.views?.[viewId]
@@ -53,41 +53,8 @@ export const useLayoutStore = defineStore('layout', () => {
     }
 
     const registryIds = new Set(registryForView.map(m => m.id))
-    const savedIds = new Set(savedView.modules.map(m => m.id))
-
     // Keep saved modules that still exist in registry (preserves x/y/w/h)
-    const reconciled = savedView.modules.filter(m => registryIds.has(m.id))
-
-    // Find the bottom edge of all existing modules to place new ones below
-    let maxY = 0
-    for (const m of reconciled) {
-      maxY = Math.max(maxY, m.y + m.h)
-    }
-
-    // Append new registry modules not yet in the saved layout
-    let x = 0
-    let rowMaxH = 0
-    for (const def of registryForView) {
-      if (!savedIds.has(def.id)) {
-        if (x + def.defaultW > 12) {
-          x = 0
-          maxY += rowMaxH
-          rowMaxH = 0
-        }
-        reconciled.push(new ModuleLayout({
-          id: def.id,
-          x,
-          y: maxY,
-          w: def.defaultW,
-          h: def.defaultH,
-          visible: true,
-        }))
-        rowMaxH = Math.max(rowMaxH, def.defaultH)
-        x += def.defaultW
-      }
-    }
-
-    return reconciled
+    return savedView.modules.filter(m => registryIds.has(m.id))
   }
 
   /** Replace the full module list for a view. */
@@ -118,6 +85,48 @@ export const useLayoutStore = defineStore('layout', () => {
       m.id === moduleId ? new ModuleLayout({ ...m, visible: !m.visible }) : m
     )
     updateViewLayout(viewId, modules)
+  }
+
+  /** Remove a module from the grid entirely. It can be re-added via addModule(). */
+  function removeModule(viewId: string, moduleId: string) {
+    const modules = getViewModules(viewId).filter(m => m.id !== moduleId)
+    updateViewLayout(viewId, modules)
+  }
+
+  /**
+   * Add a module to the grid at a default position below existing modules.
+   * If the module is already on the grid, this is a no-op.
+   */
+  function addModule(viewId: string, moduleId: string) {
+    const current = getViewModules(viewId)
+    if (current.some(m => m.id === moduleId)) return
+
+    const def = moduleRegistry.find(m => m.id === moduleId)
+    if (!def) return
+
+    const maxY = current.reduce((max, m) => Math.max(max, m.y + m.h), 0)
+
+    const modules = [
+      ...current,
+      new ModuleLayout({
+        id: moduleId,
+        x: 0,
+        y: maxY,
+        w: def.defaultW,
+        h: def.defaultH,
+        visible: true,
+      }),
+    ]
+    updateViewLayout(viewId, modules)
+  }
+
+  /**
+   * Returns registry modules for a view that are not currently on the grid.
+   * These are the candidates for the "Add Module" dropdown.
+   */
+  function getAddableModules(viewId: string): ModuleDefinition[] {
+    const currentIds = new Set(getViewModules(viewId).map(m => m.id))
+    return moduleRegistry.filter(m => m.views.includes(viewId) && !currentIds.has(m.id))
   }
 
   /** Set a single config key for a module. Merges into existing config. */
@@ -171,6 +180,9 @@ export const useLayoutStore = defineStore('layout', () => {
     updateViewLayout,
     handleLayoutUpdate,
     toggleModuleVisibility,
+    removeModule,
+    addModule,
+    getAddableModules,
     setModuleConfig,
     getModuleConfig,
     toggleEditMode,
