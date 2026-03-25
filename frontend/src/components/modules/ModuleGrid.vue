@@ -9,11 +9,13 @@ import type { ModuleLayout } from '../../../bindings/litguardian/models'
 import ModuleCard from './ModuleCard.vue'
 import { Button } from '@/components/ui/button'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 
 const props = defineProps<{
   viewId: string
@@ -21,7 +23,9 @@ const props = defineProps<{
 
 const layoutStore = useLayoutStore()
 
-// Modules from the registry that aren't currently on the grid — shown in "Add Module" dropdown
+const addModuleOpen = ref(false)
+
+// Modules from the registry that aren't currently on the grid
 const addableModules = computed(() => layoutStore.getAddableModules(props.viewId))
 
 // In edit mode show all modules (hidden ones are dimmed); in view mode only visible
@@ -74,6 +78,11 @@ function getComponent(moduleId: string) {
 // We raise suppressRebuild so the watcher doesn't replace the entire gridLayout
 // array while grid-layout-plus is still cleaning up its placeholder element.
 // The flag is cleared on the next tick, after grid-layout-plus has finished.
+function selectModule(moduleId: string) {
+  layoutStore.addModule(props.viewId, moduleId)
+  addModuleOpen.value = false
+}
+
 function onLayoutUpdated(newLayout: LayoutItem[]) {
   suppressRebuild = true
   layoutStore.handleLayoutUpdate(
@@ -99,9 +108,9 @@ function onLayoutUpdated(newLayout: LayoutItem[]) {
         <slot name="title" />
       </h1>
       <div class="flex items-center gap-2">
-        <!-- Add Module dropdown -->
-        <DropdownMenu>
-          <DropdownMenuTrigger as-child>
+        <!-- Add Module dialog -->
+        <Dialog v-model:open="addModuleOpen">
+          <DialogTrigger as-child>
             <Button
               variant="outline"
               size="sm"
@@ -110,18 +119,25 @@ function onLayoutUpdated(newLayout: LayoutItem[]) {
               <Plus class="h-4 w-4" />
               Add Module
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              v-for="def in addableModules"
-              :key="def.id"
-              @click="layoutStore.addModule(viewId, def.id)"
-            >
-              <component :is="def.icon" class="h-4 w-4" />
-              {{ def.label }}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+          </DialogTrigger>
+          <DialogContent class="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Add Module</DialogTitle>
+              <DialogDescription>Select a module to add to your dashboard.</DialogDescription>
+            </DialogHeader>
+            <div class="grid grid-cols-2 gap-3 pt-2">
+              <button
+                v-for="def in addableModules"
+                :key="def.id"
+                class="flex flex-col items-center gap-2 rounded-lg border p-4 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                @click="selectModule(def.id)"
+              >
+                <component :is="def.icon" class="h-8 w-8" />
+                {{ def.label }}
+              </button>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         <!-- Customize / Done -->
         <Button
