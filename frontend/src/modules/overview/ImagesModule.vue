@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, inject, type ComputedRef } from 'vue'
+import { ref, computed, watch, inject, onMounted, type ComputedRef } from 'vue'
 import { Upload, LayoutGrid, List, Trash2, Check, ImageOff } from 'lucide-vue-next'
 import { useImageStore } from '@/stores/imageStore'
 import { useLayoutStore } from '@/stores/layoutStore'
@@ -57,7 +57,13 @@ async function refreshDataUrls() {
   dataUrls.value = newMap
 }
 
+const teleportReady = ref(false)
+
 watch(() => imageStore.images, () => { refreshDataUrls() }, { immediate: true, deep: true })
+onMounted(() => {
+  teleportReady.value = true
+  refreshDataUrls()
+})
 
 function getDataUrl(fileName: string): string {
   return dataUrls.value.get(fileName) ?? ''
@@ -98,7 +104,7 @@ function formatBytes(bytes: number): string {
   <div class="flex flex-col h-full">
 
     <!-- ── Header actions (teleported into ModuleCard header) ──────────────── -->
-    <Teleport :to="'#' + actionsTarget">
+    <Teleport v-if="teleportReady" :to="'#' + actionsTarget">
       <Button
         variant="ghost"
         size="icon-sm"
