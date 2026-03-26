@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useWorldStore } from '@/stores/worldStore'
+import { useEntityStore } from '@/stores/entityStore'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import SidebarNavItem from './SidebarNavItem.vue'
 import WorldOverview from './WorldOverview.vue'
+import EntitiesListView from './EntitiesListView.vue'
+import EntityDetailView from './EntityDetailView.vue'
 import {
   BookOpen,
   Globe,
@@ -20,11 +23,19 @@ import type { Component } from 'vue'
 type View = 'overview' | 'entities' | 'links' | 'tags' | 'categories'
 
 const store = useWorldStore()
+const entityStore = useEntityStore()
 const currentView = ref<View>('overview')
+
+// Clear entity selection when navigating away from entities
+watch(currentView, (newView) => {
+  if (newView !== 'entities') {
+    entityStore.selectEntity(null)
+  }
+})
 
 const navItems: { id: View; icon: Component; label: string; disabled: boolean }[] = [
   { id: 'overview',    icon: Globe,      label: 'Overview',   disabled: false },
-  { id: 'entities',   icon: Users,      label: 'Entities',   disabled: true  },
+  { id: 'entities',   icon: Users,      label: 'Entities',   disabled: false },
   { id: 'links',      icon: Link,       label: 'Links',      disabled: true  },
   { id: 'tags',       icon: Tags,       label: 'Tags',       disabled: true  },
   { id: 'categories', icon: FolderTree, label: 'Categories', disabled: true  },
@@ -90,6 +101,11 @@ const navItems: { id: View; icon: Component; label: string; disabled: boolean }[
       <!-- Content area -->
       <main class="flex-1 overflow-auto">
         <WorldOverview v-if="currentView === 'overview'" />
+
+        <template v-else-if="currentView === 'entities'">
+          <EntityDetailView v-if="entityStore.selectedEntityId" />
+          <EntitiesListView v-else />
+        </template>
 
         <!-- Placeholder for future views -->
         <div

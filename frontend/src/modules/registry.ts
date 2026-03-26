@@ -1,5 +1,5 @@
 import { defineAsyncComponent, type Component } from 'vue'
-import { FileText, Users, Image as ImageIcon } from 'lucide-vue-next'
+import { FileText, Users, Image as ImageIcon, Info } from 'lucide-vue-next'
 import { ModuleLayout } from '../../bindings/litguardian/models'
 
 export interface ModuleDefinition {
@@ -47,6 +47,17 @@ export const moduleRegistry: ModuleDefinition[] = [
     minH: 3,
     component: defineAsyncComponent(() => import('./overview/ImagesModule.vue')),
     views: ['overview'],
+  },
+  {
+    id: 'entity-info',
+    label: 'Basic Info',
+    icon: Info,
+    defaultW: 6,
+    defaultH: 10,
+    minW: 3,
+    minH: 4,
+    component: defineAsyncComponent(() => import('./entity/InfoModule.vue')),
+    views: ['entity-detail'],
   },
 ]
 

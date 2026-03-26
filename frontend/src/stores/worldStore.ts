@@ -4,6 +4,7 @@ import { AppConfigService, WorldService } from '../../bindings/litguardian'
 import type { WorldInfo, WorldMeta } from '../../bindings/litguardian'
 import { useLayoutStore } from './layoutStore'
 import { useImageStore } from './imageStore'
+import { useEntityStore } from './entityStore'
 import { useAppToast } from '@/composables/useAppToast'
 
 export const useWorldStore = defineStore('world', () => {
@@ -77,6 +78,7 @@ export const useWorldStore = defineStore('world', () => {
       await loadWorldMeta()
       await useLayoutStore().loadLayout()
       await useImageStore().loadImages()
+      await useEntityStore().loadEntities()
     } catch (e) {
       errorToast('Failed to create world', String(e))
     } finally {
@@ -99,6 +101,7 @@ export const useWorldStore = defineStore('world', () => {
       await loadWorldMeta()
       await useLayoutStore().loadLayout()
       await useImageStore().loadImages()
+      await useEntityStore().loadEntities()
     } catch (e) {
       errorToast('Failed to open world', String(e))
     } finally {
@@ -128,6 +131,7 @@ export const useWorldStore = defineStore('world', () => {
     worldMeta.value = null
     useLayoutStore().reset()
     useImageStore().reset()
+    useEntityStore().reset()
   }
 
   return {
