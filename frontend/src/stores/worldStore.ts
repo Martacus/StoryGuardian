@@ -5,6 +5,7 @@ import type { WorldInfo, WorldMeta } from '../../bindings/litguardian'
 import { useLayoutStore } from './layoutStore'
 import { useImageStore } from './imageStore'
 import { useEntityStore } from './entityStore'
+import { useNavigationStore } from './navigationStore'
 import { useAppToast } from '@/composables/useAppToast'
 
 export const useWorldStore = defineStore('world', () => {
@@ -132,6 +133,7 @@ export const useWorldStore = defineStore('world', () => {
     useLayoutStore().reset()
     useImageStore().reset()
     useEntityStore().reset()
+    useNavigationStore().reset()
   }
 
   return {

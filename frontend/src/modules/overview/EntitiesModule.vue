@@ -2,6 +2,9 @@
 import { ref, computed, inject, h, onBeforeUnmount, type ShallowRef, type Component } from 'vue'
 import { Plus, Users } from 'lucide-vue-next'
 import { useEntityStore } from '@/stores/entityStore'
+import { useNavigationStore } from '@/stores/navigationStore'
+
+const navStore = useNavigationStore()
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -110,7 +113,8 @@ function resetDialog() {
         <div
           v-for="entity in previewEntities"
           :key="entity.id"
-          class="flex items-center gap-2 text-sm"
+          class="flex items-center gap-2 text-sm rounded px-1 -mx-1 cursor-pointer hover:bg-accent hover:text-accent-foreground transition-colors"
+          @click="() => navStore.navigateTo({ view: 'entities', entityId: entity.id })"
         >
           <span class="truncate">{{ entity.name }}</span>
           <span v-if="entity.type" class="text-xs text-muted-foreground shrink-0">

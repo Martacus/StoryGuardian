@@ -3,9 +3,11 @@ import { computed } from 'vue'
 import { ArrowLeft } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import { useEntityStore } from '@/stores/entityStore'
+import { useNavigationStore } from '@/stores/navigationStore'
 import ModuleGrid from '@/components/modules/ModuleGrid.vue'
 
 const entityStore = useEntityStore()
+const navStore = useNavigationStore()
 const entityName = computed(() => entityStore.selectedEntity?.name ?? 'Entity')
 </script>
 
@@ -17,7 +19,7 @@ const entityName = computed(() => entityStore.selectedEntity?.name ?? 'Entity')
           variant="ghost"
           size="icon"
           class="h-7 w-7"
-          @click="entityStore.selectEntity(null)"
+          @click="navStore.goBack()"
         >
           <ArrowLeft class="h-4 w-4" />
         </Button>

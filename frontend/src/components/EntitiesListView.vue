@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { Plus, Trash2, Users } from 'lucide-vue-next'
 import { useEntityStore } from '@/stores/entityStore'
+import { useNavigationStore } from '@/stores/navigationStore'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -16,6 +17,7 @@ import {
 } from '@/components/ui/dialog'
 
 const entityStore = useEntityStore()
+const navStore = useNavigationStore()
 
 const addDialogOpen = ref(false)
 const newName = ref('')
@@ -117,7 +119,7 @@ async function handleDelete(e: MouseEvent, id: string) {
           v-for="entity in entityStore.entities"
           :key="entity.id"
           class="flex items-center gap-3 rounded-md px-3 py-2.5 text-left transition-colors hover:bg-accent hover:text-accent-foreground group"
-          @click="entityStore.selectEntity(entity.id)"
+          @click="navStore.navigateTo({ view: 'entities', entityId: entity.id })"
         >
           <div class="flex-1 min-w-0">
             <div class="text-sm font-medium truncate">{{ entity.name }}</div>

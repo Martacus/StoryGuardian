@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { provide } from 'vue'
 import { useWorldStore } from '@/stores/worldStore'
-import { useEntityStore } from '@/stores/entityStore'
+import { useNavigationStore } from '@/stores/navigationStore'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import SidebarNavItem from './SidebarNavItem.vue'
@@ -23,14 +23,10 @@ import type { Component } from 'vue'
 type View = 'overview' | 'entities' | 'links' | 'tags' | 'categories'
 
 const store = useWorldStore()
-const entityStore = useEntityStore()
-const currentView = ref<View>('overview')
+const navStore = useNavigationStore()
 
-// Clear entity selection when navigating away from entities
-watch(currentView, (newView) => {
-  if (newView !== 'entities') {
-    entityStore.selectEntity(null)
-  }
+provide('navigate', (view: View) => {
+  navStore.navigateTo({ view, entityId: null })
 })
 
 const navItems: { id: View; icon: Component; label: string; disabled: boolean }[] = [
@@ -61,9 +57,9 @@ const navItems: { id: View; icon: Component; label: string; disabled: boolean }[
           :key="item.id"
           :icon="item.icon"
           :label="item.label"
-          :active="currentView === item.id"
+          :active="navStore.currentView === item.id"
           :disabled="item.disabled"
-          @select="currentView = item.id"
+          @select="navStore.navigateTo({ view: item.id, entityId: null })"
         />
       </nav>
 
@@ -100,10 +96,10 @@ const navItems: { id: View; icon: Component; label: string; disabled: boolean }[
 
       <!-- Content area -->
       <main class="flex-1 overflow-auto">
-        <WorldOverview v-if="currentView === 'overview'" />
+        <WorldOverview v-if="navStore.currentView === 'overview'" />
 
-        <template v-else-if="currentView === 'entities'">
-          <EntityDetailView v-if="entityStore.selectedEntityId" />
+        <template v-else-if="navStore.currentView === 'entities'">
+          <EntityDetailView v-if="navStore.currentEntityId" />
           <EntitiesListView v-else />
         </template>
 
@@ -112,7 +108,7 @@ const navItems: { id: View; icon: Component; label: string; disabled: boolean }[
           v-else
           class="flex items-center justify-center h-full text-muted-foreground text-sm"
         >
-          {{ navItems.find(n => n.id === currentView)?.label }} — coming soon
+          {{ navItems.find(n => n.id === navStore.currentView)?.label }} — coming soon
         </div>
       </main>
     </div>
