@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, provide } from 'vue'
+import { computed, provide, shallowRef, type Component } from 'vue'
 import { GripVertical, Eye, EyeOff, X } from 'lucide-vue-next'
 import { useLayoutStore } from '@/stores/layoutStore'
 import { moduleRegistry } from '@/modules/registry'
@@ -18,8 +18,8 @@ const emit = defineEmits<{
 
 const layoutStore = useLayoutStore()
 
-const actionsTargetId = computed(() => `module-actions-${props.module.id}`)
-provide('moduleActionsTarget', actionsTargetId)
+const moduleActions = shallowRef<Component | null>(null)
+provide('moduleActions', moduleActions)
 
 const definition = computed(() => moduleRegistry.find(m => m.id === props.module.id))
 const label = computed(() => definition.value?.label ?? props.module.id)
@@ -52,14 +52,11 @@ function toggleVisibility() {
         </div>
       </CardTitle>
 
-      <!-- Single CardAction: target div always in DOM (v-show) so Teleport never loses its anchor -->
       <CardAction>
-        <!-- Teleport target: hidden in edit mode so actions don't show while dragging -->
-        <div
-          v-show="!layoutStore.editMode"
-          :id="actionsTargetId"
-          class="flex items-center gap-1 no-drag"
-        />
+        <!-- Module-provided actions: hidden in edit mode -->
+        <div v-if="moduleActions && !layoutStore.editMode" class="flex items-center gap-1 no-drag">
+          <component :is="moduleActions" />
+        </div>
         <!-- Visibility toggle: edit mode only -->
         <Button
           v-if="layoutStore.editMode"

@@ -88,16 +88,17 @@ export const useLayoutStore = defineStore('layout', () => {
   }
 
   /** Remove a module from the grid entirely. It can be re-added via addModule(). */
-  function removeModule(viewId: string, moduleId: string) {
+  async function removeModule(viewId: string, moduleId: string) {
     const modules = getViewModules(viewId).filter(m => m.id !== moduleId)
     updateViewLayout(viewId, modules)
+    await saveLayout()
   }
 
   /**
    * Add a module to the grid at a default position below existing modules.
    * If the module is already on the grid, this is a no-op.
    */
-  function addModule(viewId: string, moduleId: string) {
+  async function addModule(viewId: string, moduleId: string) {
     const current = getViewModules(viewId)
     if (current.some(m => m.id === moduleId)) return
 
@@ -118,6 +119,7 @@ export const useLayoutStore = defineStore('layout', () => {
       }),
     ]
     updateViewLayout(viewId, modules)
+    await saveLayout()
   }
 
   /**

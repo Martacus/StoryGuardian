@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, inject, onMounted, type ComputedRef } from 'vue'
+import { ref, computed, watch, inject, h, onMounted, onBeforeUnmount, type ShallowRef, type Component } from 'vue'
 import { Upload, LayoutGrid, List, Trash2, Check, ImageOff } from 'lucide-vue-next'
 import { useImageStore } from '@/stores/imageStore'
 import { useLayoutStore } from '@/stores/layoutStore'
@@ -7,7 +7,7 @@ import { useWorldStore } from '@/stores/worldStore'
 import { ImageService } from '../../../bindings/litguardian'
 import { Button } from '@/components/ui/button'
 
-const actionsTarget = inject<ComputedRef<string>>('moduleActionsTarget')!
+const moduleActions = inject<ShallowRef<Component | null>>('moduleActions')!
 import {
   Tooltip,
   TooltipContent,
@@ -57,13 +57,31 @@ async function refreshDataUrls() {
   dataUrls.value = newMap
 }
 
-const teleportReady = ref(false)
-
 watch(() => imageStore.images, () => { refreshDataUrls() }, { immediate: true, deep: true })
-onMounted(() => {
-  teleportReady.value = true
-  refreshDataUrls()
-})
+onMounted(() => { refreshDataUrls() })
+
+moduleActions.value = () => [
+  h(Button, {
+    variant: 'ghost',
+    size: 'icon-sm',
+    disabled: imageStore.loading,
+    title: 'Import images',
+    onClick: () => imageStore.importImages(),
+  }, () => h(Upload, { class: 'h-3.5 w-3.5' })),
+  h(Button, {
+    variant: viewMode.value === 'grid' ? 'default' : 'ghost',
+    size: 'icon-sm',
+    title: 'Grid view',
+    onClick: () => setViewMode('grid'),
+  }, () => h(LayoutGrid, { class: 'h-3.5 w-3.5' })),
+  h(Button, {
+    variant: viewMode.value === 'list' ? 'default' : 'ghost',
+    size: 'icon-sm',
+    title: 'List view',
+    onClick: () => setViewMode('list'),
+  }, () => h(List, { class: 'h-3.5 w-3.5' })),
+]
+onBeforeUnmount(() => { moduleActions.value = null })
 
 function getDataUrl(fileName: string): string {
   return dataUrls.value.get(fileName) ?? ''
@@ -102,35 +120,6 @@ function formatBytes(bytes: number): string {
 
 <template>
   <div class="flex flex-col h-full">
-
-    <!-- ── Header actions (teleported into ModuleCard header) ──────────────── -->
-    <Teleport v-if="teleportReady" :to="'#' + actionsTarget">
-      <Button
-        variant="ghost"
-        size="icon-sm"
-        :disabled="imageStore.loading"
-        title="Import images"
-        @click="imageStore.importImages()"
-      >
-        <Upload class="h-3.5 w-3.5" />
-      </Button>
-      <Button
-        :variant="viewMode === 'grid' ? 'default' : 'ghost'"
-        size="icon-sm"
-        title="Grid view"
-        @click="setViewMode('grid')"
-      >
-        <LayoutGrid class="h-3.5 w-3.5" />
-      </Button>
-      <Button
-        :variant="viewMode === 'list' ? 'default' : 'ghost'"
-        size="icon-sm"
-        title="List view"
-        @click="setViewMode('list')"
-      >
-        <List class="h-3.5 w-3.5" />
-      </Button>
-    </Teleport>
 
     <!-- ── Content ────────────────────────────────────────────────────────── -->
     <div class="flex-1 overflow-y-auto px-3 py-3">
