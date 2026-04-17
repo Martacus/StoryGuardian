@@ -25,14 +25,11 @@ const predefinedTypes = [
 const name = ref('')
 const description = ref('')
 const entityType = ref('')
-const categories = ref('')
-
 // Sync when selected entity changes
 watch(() => entityStore.selectedEntity, (entity) => {
   name.value = entity?.name ?? ''
   description.value = entity?.description ?? ''
   entityType.value = entity?.type ?? ''
-  categories.value = entity?.categories?.join(', ') ?? ''
 }, { immediate: true })
 
 const isDirty = computed(() => {
@@ -41,8 +38,7 @@ const isDirty = computed(() => {
   return (
     name.value !== (entity.name ?? '') ||
     description.value !== (entity.description ?? '') ||
-    entityType.value !== (entity.type ?? '') ||
-    categories.value !== (entity.categories?.join(', ') ?? '')
+    entityType.value !== (entity.type ?? '')
   )
 })
 
@@ -53,17 +49,11 @@ const canSave = computed(() =>
 async function save() {
   if (!canSave.value || !entityStore.selectedEntity) return
 
-  const cats = categories.value
-    .split(',')
-    .map(c => c.trim())
-    .filter(c => c.length > 0)
-
   const updated = new Entity({
     ...entityStore.selectedEntity,
     name: name.value.trim(),
     description: description.value,
     type: entityType.value.trim(),
-    categories: cats,
   })
 
   await entityStore.updateEntity(updated)
@@ -114,17 +104,6 @@ function formatDate(date: string | Date | null | undefined): string {
         placeholder="Describe this entity…"
         class="min-h-28 resize-y"
       />
-    </div>
-
-    <!-- Categories -->
-    <div class="grid gap-2">
-      <Label for="entity-categories">Categories</Label>
-      <Input
-        id="entity-categories"
-        v-model="categories"
-        placeholder="e.g. Protagonist, Royal Family"
-      />
-      <p class="text-xs text-muted-foreground">Separate multiple categories with commas</p>
     </div>
 
     <!-- Save button -->

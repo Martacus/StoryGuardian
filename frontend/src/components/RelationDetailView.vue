@@ -103,112 +103,115 @@ const predefinedRelationTypes = [
 </script>
 
 <template>
-  <div class="h-full overflow-auto">
-    <div class="max-w-2xl mx-auto p-6">
-      <!-- Header -->
-      <div class="flex items-center gap-3 mb-6">
-        <Button variant="ghost" size="icon" class="h-8 w-8" @click="navStore.goBack()">
-          <ArrowLeft class="h-4 w-4" />
-        </Button>
-        <h1 class="text-lg font-semibold">
-          {{ link?.type ? `Relation: ${link.type}` : 'Relation' }}
-        </h1>
+  <div class="flex flex-col">
+    <!-- ── Page header (matches ModuleGrid layout) ─────────────────────── -->
+    <div class="flex items-center gap-2 px-6 py-4 shrink-0">
+      <Button variant="ghost" size="icon" class="h-7 w-7" @click="navStore.goBack()">
+        <ArrowLeft class="h-4 w-4" />
+      </Button>
+      <h1 class="text-xl font-semibold">
+        {{ link?.type ? `Relation: ${link.type}` : 'Relation' }}
+      </h1>
+    </div>
+
+    <!-- ── Content ─────────────────────────────────────────────────────── -->
+    <div class="flex-1 overflow-auto px-6 pb-6">
+      <div class="max-w-2xl">
+        <div v-if="loading" class="flex items-center justify-center py-12">
+          <Loader2 class="h-6 w-6 animate-spin text-muted-foreground" />
+        </div>
+
+        <div v-else-if="!link" class="text-center py-12 text-muted-foreground">
+          Relation not found.
+        </div>
+
+        <template v-else>
+          <!-- Entities card -->
+          <Card class="mb-4">
+            <CardHeader>
+              <CardTitle class="text-sm font-medium">Linked Entities</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div class="flex flex-col gap-3">
+                <div class="flex items-center gap-2">
+                  <span class="text-sm text-muted-foreground w-12 shrink-0">From</span>
+                  <Button
+                    variant="link"
+                    class="h-auto p-0 text-sm font-medium"
+                    @click="fromEntity && navigateToEntity(fromEntity.id)"
+                  >
+                    {{ fromEntity?.name ?? 'Unknown entity' }}
+                  </Button>
+                  <span v-if="fromEntity?.type" class="text-xs text-muted-foreground">{{ fromEntity.type }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="text-sm text-muted-foreground w-12 shrink-0">To</span>
+                  <Button
+                    variant="link"
+                    class="h-auto p-0 text-sm font-medium"
+                    @click="toEntity && navigateToEntity(toEntity.id)"
+                  >
+                    {{ toEntity?.name ?? 'Unknown entity' }}
+                  </Button>
+                  <span v-if="toEntity?.type" class="text-xs text-muted-foreground">{{ toEntity.type }}</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <!-- Edit form -->
+          <Card>
+            <CardHeader>
+              <CardTitle class="text-sm font-medium">Details</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div class="flex flex-col gap-4">
+                <!-- Type -->
+                <div class="grid gap-2">
+                  <Label for="relation-detail-type">Type</Label>
+                  <Input
+                    id="relation-detail-type"
+                    v-model="editType"
+                    placeholder="e.g. Alliance, Rivalry, Parent…"
+                    list="relation-detail-type-options"
+                  />
+                  <datalist id="relation-detail-type-options">
+                    <option v-for="t in predefinedRelationTypes" :key="t" :value="t" />
+                  </datalist>
+                </div>
+
+                <!-- Description -->
+                <div class="grid gap-2">
+                  <Label for="relation-detail-description">Description</Label>
+                  <Textarea
+                    id="relation-detail-description"
+                    v-model="editDescription"
+                    placeholder="Describe this relation…"
+                    class="min-h-28 resize-y"
+                  />
+                </div>
+
+                <!-- Actions -->
+                <div class="flex items-center justify-between">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    class="text-destructive hover:text-destructive"
+                    @click="deleteRelation"
+                  >
+                    <Trash2 class="h-3 w-3 mr-1" />
+                    Delete
+                  </Button>
+                  <Button :disabled="!canSave" size="sm" @click="save">
+                    <Loader2 v-if="linkStore.loading" class="h-3 w-3 animate-spin" />
+                    Save
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </template>
       </div>
-
-      <div v-if="loading" class="flex items-center justify-center py-12">
-        <Loader2 class="h-6 w-6 animate-spin text-muted-foreground" />
-      </div>
-
-      <div v-else-if="!link" class="text-center py-12 text-muted-foreground">
-        Relation not found.
-      </div>
-
-      <template v-else>
-        <!-- Entities card -->
-        <Card class="mb-4">
-          <CardHeader>
-            <CardTitle class="text-sm font-medium">Linked Entities</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div class="flex flex-col gap-3">
-              <div class="flex items-center gap-2">
-                <span class="text-sm text-muted-foreground w-12 shrink-0">From</span>
-                <Button
-                  variant="link"
-                  class="h-auto p-0 text-sm font-medium"
-                  @click="fromEntity && navigateToEntity(fromEntity.id)"
-                >
-                  {{ fromEntity?.name ?? 'Unknown entity' }}
-                </Button>
-                <span v-if="fromEntity?.type" class="text-xs text-muted-foreground">{{ fromEntity.type }}</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <span class="text-sm text-muted-foreground w-12 shrink-0">To</span>
-                <Button
-                  variant="link"
-                  class="h-auto p-0 text-sm font-medium"
-                  @click="toEntity && navigateToEntity(toEntity.id)"
-                >
-                  {{ toEntity?.name ?? 'Unknown entity' }}
-                </Button>
-                <span v-if="toEntity?.type" class="text-xs text-muted-foreground">{{ toEntity.type }}</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <!-- Edit form -->
-        <Card>
-          <CardHeader>
-            <CardTitle class="text-sm font-medium">Details</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div class="flex flex-col gap-4">
-              <!-- Type -->
-              <div class="grid gap-2">
-                <Label for="relation-detail-type">Type</Label>
-                <Input
-                  id="relation-detail-type"
-                  v-model="editType"
-                  placeholder="e.g. Alliance, Rivalry, Parent…"
-                  list="relation-detail-type-options"
-                />
-                <datalist id="relation-detail-type-options">
-                  <option v-for="t in predefinedRelationTypes" :key="t" :value="t" />
-                </datalist>
-              </div>
-
-              <!-- Description -->
-              <div class="grid gap-2">
-                <Label for="relation-detail-description">Description</Label>
-                <Textarea
-                  id="relation-detail-description"
-                  v-model="editDescription"
-                  placeholder="Describe this relation…"
-                  class="min-h-28 resize-y"
-                />
-              </div>
-
-              <!-- Actions -->
-              <div class="flex items-center justify-between">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  class="text-destructive hover:text-destructive"
-                  @click="deleteRelation"
-                >
-                  <Trash2 class="h-3 w-3 mr-1" />
-                  Delete
-                </Button>
-                <Button :disabled="!canSave" size="sm" @click="save">
-                  <Loader2 v-if="linkStore.loading" class="h-3 w-3 animate-spin" />
-                  Save
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </template>
     </div>
   </div>
 </template>

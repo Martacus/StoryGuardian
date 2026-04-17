@@ -8,6 +8,7 @@ import SidebarNavItem from './SidebarNavItem.vue'
 import WorldOverview from './WorldOverview.vue'
 import EntitiesListView from './EntitiesListView.vue'
 import EntityDetailView from './EntityDetailView.vue'
+import RelationDetailView from './RelationDetailView.vue'
 import {
   BookOpen,
   Globe,
@@ -99,7 +100,8 @@ const navItems: { id: View; icon: Component; label: string; disabled: boolean }[
         <WorldOverview v-if="navStore.currentView === 'overview'" />
 
         <template v-else-if="navStore.currentView === 'entities'">
-          <EntityDetailView v-if="navStore.currentEntityId" />
+          <RelationDetailView v-if="navStore.currentLinkId" />
+          <EntityDetailView v-else-if="navStore.currentEntityId" />
           <EntitiesListView v-else />
         </template>
 
