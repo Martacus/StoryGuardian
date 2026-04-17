@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useWorldStore } from '@/stores/worldStore'
 import { Toaster } from '@/components/ui/sonner'
-import WelcomeScreen from './components/WelcomeScreen.vue'
-import DashboardLayout from './components/DashboardLayout.vue'
+import WelcomeScreen from './components/layout/WelcomeScreen.vue'
+import DashboardLayout from './components/layout/DashboardLayout.vue'
 
 const worldStore = useWorldStore()
 </script>

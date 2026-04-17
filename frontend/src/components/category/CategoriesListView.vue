@@ -5,7 +5,7 @@ import { useEntityStore } from '@/stores/entityStore'
 import { useNavigationStore } from '@/stores/navigationStore'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Entity } from '../../bindings/litguardian/models'
+import { Entity } from '../../../bindings/litguardian/models'
 
 const entityStore = useEntityStore()
 const navStore = useNavigationStore()

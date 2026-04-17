@@ -5,12 +5,12 @@ import { useNavigationStore } from '@/stores/navigationStore'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import SidebarNavItem from './SidebarNavItem.vue'
-import WorldOverview from './WorldOverview.vue'
-import EntitiesListView from './EntitiesListView.vue'
-import EntityDetailView from './EntityDetailView.vue'
-import RelationDetailView from './RelationDetailView.vue'
-import CategoriesListView from './CategoriesListView.vue'
-import CategoryDetailView from './CategoryDetailView.vue'
+import WorldOverview from '../world/WorldOverview.vue'
+import EntitiesListView from '../entity/EntitiesListView.vue'
+import EntityDetailView from '../entity/EntityDetailView.vue'
+import RelationDetailView from '../entity/RelationDetailView.vue'
+import CategoriesListView from '../category/CategoriesListView.vue'
+import CategoryDetailView from '../category/CategoryDetailView.vue'
 import {
   BookOpen,
   Globe,

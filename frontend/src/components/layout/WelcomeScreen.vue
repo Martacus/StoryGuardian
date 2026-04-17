@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useWorldStore } from '@/stores/worldStore'
-import { WorldService } from '../../bindings/litguardian'
+import { WorldService } from '../../../bindings/litguardian'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { BookOpen, PlusCircle, FolderOpen } from 'lucide-vue-next'
-import WorldListItem from './WorldListItem.vue'
-import CreateWorldDialog from './CreateWorldDialog.vue'
+import WorldListItem from '../world/WorldListItem.vue'
+import CreateWorldDialog from '../world/CreateWorldDialog.vue'
 
 const store = useWorldStore()
 const showCreateDialog = ref(false)

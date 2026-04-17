@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, inject, h, onBeforeUnmount, type ShallowRef, type Component } from 'vue'
-import { Plus, Tags } from 'lucide-vue-next'
+import { Plus, Tags, X } from 'lucide-vue-next'
 import { useEntityStore } from '@/stores/entityStore'
 import { Entity } from '../../../bindings/litguardian/models'
 import { Badge } from '@/components/ui/badge'
@@ -171,16 +171,20 @@ onBeforeUnmount(() => { moduleActions.value = null })
       <p class="text-sm">No categories yet.</p>
     </div>
 
-    <div v-else class="flex flex-wrap gap-1.5">
+    <div v-else class="flex flex-wrap gap-2">
       <Badge
         v-for="cat in categories"
         :key="cat"
         variant="secondary"
-        class="cursor-pointer hover:bg-destructive/20 hover:text-destructive transition-colors"
-        @click="removeCategory(cat)"
+        class="text-sm px-3 py-1.5 gap-2"
       >
         {{ cat }}
-        <span class="ml-1 text-xs opacity-60">&times;</span>
+        <button
+          class="rounded-full p-0.5 hover:bg-destructive/20 hover:text-destructive transition-colors"
+          @click="removeCategory(cat)"
+        >
+          <X class="h-3 w-3" />
+        </button>
       </Badge>
     </div>
   </div>
