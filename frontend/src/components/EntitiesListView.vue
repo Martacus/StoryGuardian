@@ -119,7 +119,7 @@ async function handleDelete(e: MouseEvent, id: string) {
           v-for="entity in entityStore.entities"
           :key="entity.id"
           class="flex items-center gap-3 rounded-md px-3 py-2.5 text-left transition-colors hover:bg-accent hover:text-accent-foreground group"
-          @click="navStore.navigateTo({ view: 'entities', entityId: entity.id, linkId: null })"
+          @click="navStore.navigateTo({ view: 'entities', entityId: entity.id, linkId: null, categoryName: null })"
         >
           <div class="flex-1 min-w-0">
             <div class="text-sm font-medium truncate">{{ entity.name }}</div>

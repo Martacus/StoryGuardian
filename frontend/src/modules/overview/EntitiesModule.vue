@@ -114,7 +114,7 @@ function resetDialog() {
           v-for="entity in previewEntities"
           :key="entity.id"
           class="flex items-center gap-2 text-sm rounded px-1 -mx-1 cursor-pointer hover:bg-accent hover:text-accent-foreground transition-colors"
-          @click="() => navStore.navigateTo({ view: 'entities', entityId: entity.id, linkId: null })"
+          @click="() => navStore.navigateTo({ view: 'entities', entityId: entity.id, linkId: null, categoryName: null })"
         >
           <span class="truncate">{{ entity.name }}</span>
           <span v-if="entity.type" class="text-xs text-muted-foreground shrink-0">

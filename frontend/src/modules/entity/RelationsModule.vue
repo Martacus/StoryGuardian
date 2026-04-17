@@ -94,6 +94,7 @@ function navigateToRelation(linkId: string) {
     view: 'entities',
     entityId: entityStore.selectedEntity.id,
     linkId,
+    categoryName: null,
   })
 }
 

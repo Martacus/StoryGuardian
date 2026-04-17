@@ -9,6 +9,8 @@ import WorldOverview from './WorldOverview.vue'
 import EntitiesListView from './EntitiesListView.vue'
 import EntityDetailView from './EntityDetailView.vue'
 import RelationDetailView from './RelationDetailView.vue'
+import CategoriesListView from './CategoriesListView.vue'
+import CategoryDetailView from './CategoryDetailView.vue'
 import {
   BookOpen,
   Globe,
@@ -27,7 +29,7 @@ const store = useWorldStore()
 const navStore = useNavigationStore()
 
 provide('navigate', (view: View) => {
-  navStore.navigateTo({ view, entityId: null, linkId: null })
+  navStore.navigateTo({ view, entityId: null, linkId: null, categoryName: null })
 })
 
 const navItems: { id: View; icon: Component; label: string; disabled: boolean }[] = [
@@ -35,7 +37,7 @@ const navItems: { id: View; icon: Component; label: string; disabled: boolean }[
   { id: 'entities',   icon: Users,      label: 'Entities',   disabled: false },
   { id: 'links',      icon: Link,       label: 'Links',      disabled: true  },
   { id: 'tags',       icon: Tags,       label: 'Tags',       disabled: true  },
-  { id: 'categories', icon: FolderTree, label: 'Categories', disabled: true  },
+  { id: 'categories', icon: FolderTree, label: 'Categories', disabled: false },
 ]
 </script>
 
@@ -60,7 +62,7 @@ const navItems: { id: View; icon: Component; label: string; disabled: boolean }[
           :label="item.label"
           :active="navStore.currentView === item.id"
           :disabled="item.disabled"
-          @select="navStore.navigateTo({ view: item.id, entityId: null, linkId: null })"
+          @select="navStore.navigateTo({ view: item.id, entityId: null, linkId: null, categoryName: null })"
         />
       </nav>
 
@@ -103,6 +105,11 @@ const navItems: { id: View; icon: Component; label: string; disabled: boolean }[
           <RelationDetailView v-if="navStore.currentLinkId" />
           <EntityDetailView v-else-if="navStore.currentEntityId" />
           <EntitiesListView v-else />
+        </template>
+
+        <template v-else-if="navStore.currentView === 'categories'">
+          <CategoryDetailView v-if="navStore.currentCategoryName" />
+          <CategoriesListView v-else />
         </template>
 
         <!-- Placeholder for future views -->

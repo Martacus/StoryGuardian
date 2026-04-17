@@ -83,7 +83,7 @@ async function deleteRelation() {
 }
 
 function navigateToEntity(entityId: string) {
-  navStore.navigateTo({ view: 'entities', entityId, linkId: null })
+  navStore.navigateTo({ view: 'entities', entityId, linkId: null, categoryName: null })
 }
 
 const predefinedRelationTypes = [
