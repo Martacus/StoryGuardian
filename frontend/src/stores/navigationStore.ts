@@ -5,18 +5,20 @@ import { useEntityStore } from './entityStore'
 export interface NavState {
   view: string
   entityId: string | null
+  linkId: string | null
 }
 
 export const useNavigationStore = defineStore('navigation', () => {
   const history = ref<NavState[]>([])
-  const current = ref<NavState>({ view: 'overview', entityId: null })
+  const current = ref<NavState>({ view: 'overview', entityId: null, linkId: null })
 
   const canGoBack = computed(() => history.value.length > 0)
   const currentView = computed(() => current.value.view)
   const currentEntityId = computed(() => current.value.entityId)
+  const currentLinkId = computed(() => current.value.linkId)
 
   function isSameState(a: NavState, b: NavState) {
-    return a.view === b.view && a.entityId === b.entityId
+    return a.view === b.view && a.entityId === b.entityId && a.linkId === b.linkId
   }
 
   function navigateTo(state: NavState) {
@@ -31,7 +33,7 @@ export const useNavigationStore = defineStore('navigation', () => {
     if (prev) {
       current.value = prev
     } else {
-      current.value = { view: 'overview', entityId: null }
+      current.value = { view: 'overview', entityId: null, linkId: null }
     }
     syncEntityStore()
   }
@@ -43,7 +45,7 @@ export const useNavigationStore = defineStore('navigation', () => {
 
   function reset() {
     history.value = []
-    current.value = { view: 'overview', entityId: null }
+    current.value = { view: 'overview', entityId: null, linkId: null }
   }
 
   return {
@@ -52,6 +54,7 @@ export const useNavigationStore = defineStore('navigation', () => {
     canGoBack,
     currentView,
     currentEntityId,
+    currentLinkId,
     navigateTo,
     goBack,
     reset,

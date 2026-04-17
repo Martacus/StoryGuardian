@@ -68,11 +68,13 @@ export const useEntityStore = defineStore('entities', () => {
     }
   }
 
-  /** Delete an entity and clear selection if it was selected. */
+  /** Delete an entity, clean up its links, and clear selection if it was selected. */
   async function deleteEntity(id: string) {
     const worldStore = useWorldStore()
     if (!worldStore.currentWorld) return
     try {
+      const { useLinkStore } = await import('./linkStore')
+      await useLinkStore().deleteLinksForEntity(id)
       await EntityService.DeleteEntity(worldStore.currentWorld.path, id)
       if (selectedEntityId.value === id) {
         selectedEntityId.value = null

@@ -26,7 +26,7 @@ const store = useWorldStore()
 const navStore = useNavigationStore()
 
 provide('navigate', (view: View) => {
-  navStore.navigateTo({ view, entityId: null })
+  navStore.navigateTo({ view, entityId: null, linkId: null })
 })
 
 const navItems: { id: View; icon: Component; label: string; disabled: boolean }[] = [
@@ -59,7 +59,7 @@ const navItems: { id: View; icon: Component; label: string; disabled: boolean }[
           :label="item.label"
           :active="navStore.currentView === item.id"
           :disabled="item.disabled"
-          @select="navStore.navigateTo({ view: item.id, entityId: null })"
+          @select="navStore.navigateTo({ view: item.id, entityId: null, linkId: null })"
         />
       </nav>
 
