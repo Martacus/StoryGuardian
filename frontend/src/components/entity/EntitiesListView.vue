@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import EntityTypeInput from '@/components/entity/EntityTypeInput.vue'
 import {
   Dialog,
   DialogContent,
@@ -82,15 +83,13 @@ async function handleDelete(e: MouseEvent, id: string) {
             </div>
             <div class="grid gap-2">
               <Label for="entity-type">Type</Label>
-              <Input
+              <EntityTypeInput
                 id="entity-type"
                 v-model="newType"
                 placeholder="e.g. Character, Location, Item…"
-                list="entity-type-options"
+                :options="predefinedTypes"
+                @enter="handleCreate"
               />
-              <datalist id="entity-type-options">
-                <option v-for="t in predefinedTypes" :key="t" :value="t" />
-              </datalist>
             </div>
             <div class="flex justify-end">
               <Button :disabled="!newName.trim() || entityStore.loading" size="sm" @click="handleCreate">

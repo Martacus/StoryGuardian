@@ -8,6 +8,7 @@ const navStore = useNavigationStore()
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import EntityTypeInput from '@/components/entity/EntityTypeInput.vue'
 import {
   Dialog,
   DialogContent,
@@ -79,15 +80,13 @@ function resetDialog() {
         </div>
         <div class="grid gap-2">
           <Label for="overview-entity-type">Type</Label>
-          <Input
+          <EntityTypeInput
             id="overview-entity-type"
             v-model="newType"
             placeholder="e.g. Character, Location, Item…"
-            list="overview-entity-type-options"
+            :options="predefinedTypes"
+            @enter="handleCreate"
           />
-          <datalist id="overview-entity-type-options">
-            <option v-for="t in predefinedTypes" :key="t" :value="t" />
-          </datalist>
         </div>
         <div class="flex justify-end">
           <Button :disabled="!newName.trim() || entityStore.loading" size="sm" @click="handleCreate">

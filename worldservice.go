@@ -42,6 +42,8 @@ func (s *WorldService) SelectFolder() (string, error) {
 }
 
 // CreateWorld scaffolds a new world at folderPath with the given name.
+// If folderPath already contains files, the world is created in a child folder
+// named after the world instead.
 // It creates: world.json, entities/, links.json, tags.json, categories.json.
 // Returns a WorldInfo suitable for adding to the recents list.
 func (s *WorldService) CreateWorld(name, folderPath string) (*WorldInfo, error) {
@@ -52,14 +54,17 @@ func (s *WorldService) CreateWorld(name, folderPath string) (*WorldInfo, error) 
 		return nil, fmt.Errorf("folder path cannot be empty")
 	}
 
-	// Require the target folder to be empty (catches existing worlds too,
-	// since world.json would make the folder non-empty).
 	entries, err := os.ReadDir(folderPath)
 	if err != nil && !os.IsNotExist(err) {
 		return nil, fmt.Errorf("read folder: %w", err)
 	}
 	if len(entries) > 0 {
-		return nil, fmt.Errorf("folder is not empty: %s", folderPath)
+		folderPath = filepath.Join(folderPath, name)
+		if _, err := os.Stat(folderPath); err == nil {
+			return nil, fmt.Errorf("world folder already exists: %s", folderPath)
+		} else if !os.IsNotExist(err) {
+			return nil, fmt.Errorf("check world folder: %w", err)
+		}
 	}
 
 	now := time.Now().UTC()

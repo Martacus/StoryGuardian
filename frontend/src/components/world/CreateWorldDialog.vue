@@ -60,7 +60,7 @@ function handleCancel() {
       <DialogHeader>
         <DialogTitle>Create New World</DialogTitle>
         <DialogDescription>
-          Give your world a name and choose an empty folder to save it in.
+          Give your world a name and choose where to save it.
         </DialogDescription>
       </DialogHeader>
 
