@@ -22,7 +22,8 @@
       "Bash(find c:/Projects/StoryGuardian/plans -type f -name *.md)",
       "Bash(grep -r \"entity\\\\|Entity\" c:/Projects/StoryGuardian --include=*.go --include=*.ts --include=*.vue --exclude-dir=node_modules --exclude-dir=bindings)",
       "Bash(find /c/Projects/StoryGuardian -name *entity* -o -name *link*)",
-      "Bash(grep -E \"\\\\.\\(go|ts|vue\\)$\")"
+      "Bash(grep -E \"\\\\.\\(go|ts|vue\\)$\")",
+      "Bash(mkdir -p C:\\\\Projects\\\\StoryGuardian\\\\internal)"
     ]
   }
 }

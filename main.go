@@ -4,6 +4,8 @@ import (
 	"embed"
 	"log"
 
+	"litguardian/internal"
+
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
@@ -15,12 +17,12 @@ func main() {
 		Name:        "litguardian",
 		Description: "Local-first worldbuilding app for LitRPG and fantasy authors",
 		Services: []application.Service{
-			application.NewService(&AppConfigService{}),
-			application.NewService(&WorldService{}),
-			application.NewService(&LayoutService{}),
-			application.NewService(&ImageService{}),
-			application.NewService(&EntityService{}),
-			application.NewService(&LinkService{}),
+			application.NewService(&internal.AppConfigService{}),
+			application.NewService(&internal.WorldService{}),
+			application.NewService(&internal.LayoutService{}),
+			application.NewService(&internal.ImageService{}),
+			application.NewService(&internal.EntityService{}),
+			application.NewService(&internal.LinkService{}),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
