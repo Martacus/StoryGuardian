@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useWorldStore } from '@/stores/worldStore'
-import { WorldService } from '../../../bindings/litguardian'
+import { WorldService } from '../../../bindings/litguardian/internal'
 import {
   Dialog,
   DialogContent,

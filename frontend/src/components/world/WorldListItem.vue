@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { WorldInfo } from '../../../bindings/litguardian'
+import type { WorldInfo } from '../../../bindings/litguardian/internal'
 import { useWorldStore } from '@/stores/worldStore'
 import {
   DropdownMenu,

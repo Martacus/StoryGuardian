@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useWorldStore } from '@/stores/worldStore'
-import { WorldService } from '../../../bindings/litguardian'
+import { WorldService } from '../../../bindings/litguardian/internal'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'

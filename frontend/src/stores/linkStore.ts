@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { LinkService } from '../../bindings/litguardian'
-import type { Link } from '../../bindings/litguardian'
+import { LinkService } from '../../bindings/litguardian/internal'
+import type { Link } from '../../bindings/litguardian/internal'
 import { useWorldStore } from './worldStore'
 import { useAppToast } from '@/composables/useAppToast'
 

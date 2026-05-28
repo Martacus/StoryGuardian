@@ -1,7 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import { EntityService } from '../../bindings/litguardian'
-import type { Entity } from '../../bindings/litguardian'
+import { EntityService } from '../../bindings/litguardian/internal'
+import type { Entity } from '../../bindings/litguardian/internal'
 import { useWorldStore } from './worldStore'
 import { useAppToast } from '@/composables/useAppToast'
 

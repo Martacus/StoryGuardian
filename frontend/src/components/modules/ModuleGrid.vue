@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, computed, watch, nextTick } from 'vue'
+import { ref, computed, watch, nextTick, onMounted } from 'vue'
 import { GridLayout, GridItem } from 'grid-layout-plus'
 import type { LayoutItem } from 'grid-layout-plus'
 import { Settings2, Check, Plus } from 'lucide-vue-next'
 import { useLayoutStore } from '@/stores/layoutStore'
 import { moduleRegistry } from '@/modules/registry'
-import type { ModuleLayout } from '../../../bindings/litguardian/models'
+import type { ModuleLayout } from '../../../bindings/litguardian/internal/models'
 import ModuleCard from './ModuleCard.vue'
 import { Button } from '@/components/ui/button'
 import {
@@ -37,6 +37,15 @@ const activeModules = computed<ModuleLayout[]>(() => {
 // Local mutable array for grid-layout-plus — the library mutates this in place
 // during drag/resize, so it must be a ref (not a computed).
 const gridLayout = ref<LayoutItem[]>([])
+
+// Suppresses CSS transitions on initial mount so items appear at their correct
+// positions immediately instead of sliding in from 0,0. Enabled after first paint.
+const isReady = ref(false)
+onMounted(() => {
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => { isReady.value = true })
+  })
+})
 
 // Guard flag: prevents the watch from replacing gridLayout mid-drag.
 // When layout-updated fires we update the store, which causes activeModules to
@@ -155,6 +164,7 @@ function onLayoutUpdated(newLayout: LayoutItem[]) {
     <!-- ── Free-form grid ─────────────────────────────────────────────── -->
     <div class="px-6 pb-6">
       <GridLayout
+        :class="{ 'grid-ready': isReady }"
         v-model:layout="gridLayout"
         :col-num="12"
         :row-height="40"

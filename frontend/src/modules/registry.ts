@@ -1,6 +1,6 @@
 import { defineAsyncComponent, type Component } from 'vue'
 import { FileText, Users, Image as ImageIcon, Info, Link, Tags } from 'lucide-vue-next'
-import { ModuleLayout } from '../../bindings/litguardian/models'
+import { ModuleLayout } from '../../bindings/litguardian/internal/models'
 
 export interface ModuleDefinition {
   id: string

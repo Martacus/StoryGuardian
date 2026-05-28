@@ -3,7 +3,7 @@ import { computed, provide, shallowRef, type Component } from 'vue'
 import { GripVertical, Eye, EyeOff, X } from 'lucide-vue-next'
 import { useLayoutStore } from '@/stores/layoutStore'
 import { moduleRegistry } from '@/modules/registry'
-import type { ModuleLayout } from '../../../bindings/litguardian/models'
+import type { ModuleLayout } from '../../../bindings/litguardian/internal/models'
 import { Card, CardHeader, CardTitle, CardContent, CardAction } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 

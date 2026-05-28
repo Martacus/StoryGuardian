@@ -2,7 +2,7 @@
 import { ref, computed, inject, h, onBeforeUnmount, type ShallowRef, type Component } from 'vue'
 import { Plus, Tags, X } from 'lucide-vue-next'
 import { useEntityStore } from '@/stores/entityStore'
-import { Entity } from '../../../bindings/litguardian/models'
+import { Entity } from '../../../bindings/litguardian/internal/models'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'

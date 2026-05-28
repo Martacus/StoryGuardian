@@ -4,7 +4,7 @@ import { Upload, LayoutGrid, List, Trash2, Check, ImageOff } from 'lucide-vue-ne
 import { useImageStore } from '@/stores/imageStore'
 import { useLayoutStore } from '@/stores/layoutStore'
 import { useWorldStore } from '@/stores/worldStore'
-import { ImageService } from '../../../bindings/litguardian'
+import { ImageService } from '../../../bindings/litguardian/internal'
 import { Button } from '@/components/ui/button'
 
 const moduleActions = inject<ShallowRef<Component | null>>('moduleActions')!

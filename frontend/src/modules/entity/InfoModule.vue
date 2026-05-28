@@ -2,7 +2,7 @@
 import { ref, computed, watch } from 'vue'
 import { Loader2 } from 'lucide-vue-next'
 import { useEntityStore } from '@/stores/entityStore'
-import { Entity } from '../../../bindings/litguardian/models'
+import { Entity } from '../../../bindings/litguardian/internal/models'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'

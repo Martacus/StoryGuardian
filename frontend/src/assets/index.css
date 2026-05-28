@@ -143,6 +143,13 @@
   --vgl-item-dragging-opacity: 90%;
 }
 
+/* Suppress initial-mount slide animation — items appear at their saved positions
+   immediately. Transitions re-enable after the first paint (grid-ready class added
+   in ModuleGrid.vue) so drag/resize still has smooth feedback. */
+.vgl-layout:not(.grid-ready) .vgl-item:not(.vgl-item--placeholder) {
+  transition: none !important;
+}
+
 /* Match card border-radius on the drop placeholder */
 .vgl-item--placeholder {
   border-radius: var(--radius-lg, 0.5rem);

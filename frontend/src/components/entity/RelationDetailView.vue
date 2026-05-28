@@ -9,8 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useEntityStore } from '@/stores/entityStore'
 import { useLinkStore } from '@/stores/linkStore'
 import { useNavigationStore } from '@/stores/navigationStore'
-import { LinkService } from '../../../bindings/litguardian'
-import { Link } from '../../../bindings/litguardian/models'
+import { LinkService } from '../../../bindings/litguardian/internal'
+import { Link } from '../../../bindings/litguardian/internal/models'
 import { useWorldStore } from '@/stores/worldStore'
 
 const entityStore = useEntityStore()
