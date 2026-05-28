@@ -8,7 +8,7 @@ const navStore = useNavigationStore()
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import EntityTypeInput from '@/components/entity/EntityTypeInput.vue'
+import ComboInput from '@/components/ui/combo-input/ComboInput.vue'
 import {
   Dialog,
   DialogContent,
@@ -80,7 +80,7 @@ function resetDialog() {
         </div>
         <div class="grid gap-2">
           <Label for="overview-entity-type">Type</Label>
-          <EntityTypeInput
+          <ComboInput
             id="overview-entity-type"
             v-model="newType"
             placeholder="e.g. Character, Location, Item…"

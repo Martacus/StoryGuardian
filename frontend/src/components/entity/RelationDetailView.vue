@@ -12,6 +12,7 @@ import { useNavigationStore } from '@/stores/navigationStore'
 import { LinkService } from '../../../bindings/litguardian/internal'
 import { Link } from '../../../bindings/litguardian/internal/models'
 import { useWorldStore } from '@/stores/worldStore'
+import ComboInput from '@/components/ui/combo-input/ComboInput.vue'
 
 const entityStore = useEntityStore()
 const linkStore = useLinkStore()
@@ -169,15 +170,12 @@ const predefinedRelationTypes = [
                 <!-- Type -->
                 <div class="grid gap-2">
                   <Label for="relation-detail-type">Type</Label>
-                  <Input
+                  <ComboInput
                     id="relation-detail-type"
                     v-model="editType"
                     placeholder="e.g. Alliance, Rivalry, Parent…"
-                    list="relation-detail-type-options"
+                    :options="predefinedRelationTypes"
                   />
-                  <datalist id="relation-detail-type-options">
-                    <option v-for="t in predefinedRelationTypes" :key="t" :value="t" />
-                  </datalist>
                 </div>
 
                 <!-- Description -->

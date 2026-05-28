@@ -7,6 +7,7 @@ import { useNavigationStore } from '@/stores/navigationStore'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import ComboInput from '@/components/ui/combo-input/ComboInput.vue'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   Dialog,
@@ -144,16 +145,13 @@ onBeforeUnmount(() => { moduleActions.value = null })
         <!-- Relation type -->
         <div class="grid gap-2">
           <Label for="relation-type">Relation Type</Label>
-          <Input
+          <ComboInput
             id="relation-type"
             v-model="newType"
             placeholder="e.g. Alliance, Rivalry, Parent…"
-            list="relation-type-options"
-            @keydown.enter="handleCreate"
+            :options="predefinedRelationTypes"
+            @enter="handleCreate"
           />
-          <datalist id="relation-type-options">
-            <option v-for="t in predefinedRelationTypes" :key="t" :value="t" />
-          </datalist>
         </div>
 
         <div class="flex justify-end">
