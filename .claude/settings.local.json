@@ -23,7 +23,11 @@
       "Bash(grep -r \"entity\\\\|Entity\" c:/Projects/StoryGuardian --include=*.go --include=*.ts --include=*.vue --exclude-dir=node_modules --exclude-dir=bindings)",
       "Bash(find /c/Projects/StoryGuardian -name *entity* -o -name *link*)",
       "Bash(grep -E \"\\\\.\\(go|ts|vue\\)$\")",
-      "Bash(mkdir -p C:\\\\Projects\\\\StoryGuardian\\\\internal)"
+      "Bash(mkdir -p C:\\\\Projects\\\\StoryGuardian\\\\internal)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Projects\\\\StoryGuardian\" -Force)",
+      "Bash(Select-Object Name, FullName)",
+      "Bash(git -C \"C:\\\\Projects\\\\StoryGuardian\" log --all --oneline --grep=\"EntityTypeInput\\\\|entity form\")",
+      "Bash(git -C \"C:\\\\Projects\\\\StoryGuardian\" show 69361b4 --stat)"
     ]
   }
 }
