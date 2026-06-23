@@ -10,7 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@lucide/vue": "^1.21.0",
     "@tailwindcss/vite": "^4.2.1",
+    "@tanstack/vue-table": "^8.21.3",
     "@vueuse/core": "^14.2.1",
     "@wailsio/runtime": "latest",
     "class-variance-authority": "^0.7.1",

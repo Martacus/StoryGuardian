@@ -27,7 +27,9 @@
       "Bash(Get-ChildItem -Path \"C:\\\\Projects\\\\StoryGuardian\" -Force)",
       "Bash(Select-Object Name, FullName)",
       "Bash(git -C \"C:\\\\Projects\\\\StoryGuardian\" log --all --oneline --grep=\"EntityTypeInput\\\\|entity form\")",
-      "Bash(git -C \"C:\\\\Projects\\\\StoryGuardian\" show 69361b4 --stat)"
+      "Bash(git -C \"C:\\\\Projects\\\\StoryGuardian\" show 69361b4 --stat)",
+      "Bash(Get-ChildItem -Path \"frontend\" -Directory)",
+      "Bash(grep -E \"\\\\.\\(go|ts\\)$\")"
     ]
   }
 }

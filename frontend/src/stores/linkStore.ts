@@ -10,9 +10,25 @@ export const useLinkStore = defineStore('links', () => {
 
   // ── State ─────────────────────────────────────────────────────────────────
   const links = ref<Link[]>([])
+  const allLinks = ref<Link[]>([])
   const loading = ref(false)
 
   // ── Actions ───────────────────────────────────────────────────────────────
+
+  /** Load every link in the world (for the Relations overview). */
+  async function loadAllLinks() {
+    const worldStore = useWorldStore()
+    if (!worldStore.currentWorld) return
+    loading.value = true
+    try {
+      const result = await LinkService.ListLinks(worldStore.currentWorld.path)
+      allLinks.value = result ?? []
+    } catch (e) {
+      errorToast('Failed to load relations', String(e))
+    } finally {
+      loading.value = false
+    }
+  }
 
   /** Load all links for a specific entity. */
   async function loadLinksForEntity(entityId: string) {
@@ -89,12 +105,15 @@ export const useLinkStore = defineStore('links', () => {
   /** Reset to blank state. Called when a world is closed. */
   function reset() {
     links.value = []
+    allLinks.value = []
     loading.value = false
   }
 
   return {
     links,
+    allLinks,
     loading,
+    loadAllLinks,
     loadLinksForEntity,
     createLink,
     updateLink,

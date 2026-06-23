@@ -9,6 +9,7 @@ import WorldOverview from '../world/WorldOverview.vue'
 import EntitiesListView from '../entity/EntitiesListView.vue'
 import EntityDetailView from '../entity/EntityDetailView.vue'
 import RelationDetailView from '../entity/RelationDetailView.vue'
+import RelationsListView from '../entity/RelationsListView.vue'
 import CategoriesListView from '../category/CategoriesListView.vue'
 import CategoryDetailView from '../category/CategoryDetailView.vue'
 import {
@@ -35,7 +36,7 @@ provide('navigate', (view: View) => {
 const navItems: { id: View; icon: Component; label: string; disabled: boolean }[] = [
   { id: 'overview',    icon: Globe,      label: 'Overview',   disabled: false },
   { id: 'entities',   icon: Users,      label: 'Entities',   disabled: false },
-  { id: 'links',      icon: Link,       label: 'Links',      disabled: true  },
+  { id: 'links',      icon: Link,       label: 'Relations',  disabled: false },
   { id: 'tags',       icon: Tags,       label: 'Tags',       disabled: true  },
   { id: 'categories', icon: FolderTree, label: 'Categories', disabled: false },
 ]
@@ -105,6 +106,11 @@ const navItems: { id: View; icon: Component; label: string; disabled: boolean }[
           <RelationDetailView v-if="navStore.currentLinkId" />
           <EntityDetailView v-else-if="navStore.currentEntityId" />
           <EntitiesListView v-else />
+        </template>
+
+        <template v-else-if="navStore.currentView === 'links'">
+          <RelationDetailView v-if="navStore.currentLinkId" />
+          <RelationsListView v-else />
         </template>
 
         <template v-else-if="navStore.currentView === 'categories'">
