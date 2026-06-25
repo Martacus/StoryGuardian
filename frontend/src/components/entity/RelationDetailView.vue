@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { ArrowLeft, Loader2, Trash2 } from 'lucide-vue-next'
+import { ArrowLeft, ArrowLeftRight, Loader2, Trash2 } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -133,29 +133,24 @@ const predefinedRelationTypes = [
               <CardTitle class="text-sm font-medium">Linked Entities</CardTitle>
             </CardHeader>
             <CardContent>
-              <div class="flex flex-col gap-3">
-                <div class="flex items-center gap-2">
-                  <span class="text-sm text-muted-foreground w-12 shrink-0">From</span>
-                  <Button
-                    variant="link"
-                    class="h-auto p-0 text-sm font-medium"
-                    @click="fromEntity && navigateToEntity(fromEntity.id)"
-                  >
-                    {{ fromEntity?.name ?? 'Unknown entity' }}
-                  </Button>
-                  <span v-if="fromEntity?.type" class="text-xs text-muted-foreground">{{ fromEntity.type }}</span>
-                </div>
-                <div class="flex items-center gap-2">
-                  <span class="text-sm text-muted-foreground w-12 shrink-0">To</span>
-                  <Button
-                    variant="link"
-                    class="h-auto p-0 text-sm font-medium"
-                    @click="toEntity && navigateToEntity(toEntity.id)"
-                  >
-                    {{ toEntity?.name ?? 'Unknown entity' }}
-                  </Button>
-                  <span v-if="toEntity?.type" class="text-xs text-muted-foreground">{{ toEntity.type }}</span>
-                </div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <Button
+                  variant="link"
+                  class="h-auto p-0 text-sm font-medium"
+                  @click="fromEntity && navigateToEntity(fromEntity.id)"
+                >
+                  {{ fromEntity?.name ?? 'Unknown entity' }}
+                </Button>
+                <span v-if="fromEntity?.type" class="text-xs text-muted-foreground">{{ fromEntity.type }}</span>
+                <ArrowLeftRight class="h-4 w-4 text-muted-foreground mx-1 shrink-0" />
+                <Button
+                  variant="link"
+                  class="h-auto p-0 text-sm font-medium"
+                  @click="toEntity && navigateToEntity(toEntity.id)"
+                >
+                  {{ toEntity?.name ?? 'Unknown entity' }}
+                </Button>
+                <span v-if="toEntity?.type" class="text-xs text-muted-foreground">{{ toEntity.type }}</span>
               </div>
             </CardContent>
           </Card>

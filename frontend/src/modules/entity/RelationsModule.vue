@@ -115,7 +115,7 @@ onBeforeUnmount(() => { moduleActions.value = null })
     <DialogContent class="sm:max-w-md">
       <DialogHeader>
         <DialogTitle>Add Relation</DialogTitle>
-        <DialogDescription>Create a relation from {{ entityStore.selectedEntity?.name }} to another entity.</DialogDescription>
+        <DialogDescription>Create a relation between {{ entityStore.selectedEntity?.name }} and another entity.</DialogDescription>
       </DialogHeader>
       <div class="flex flex-col gap-4 pt-2">
         <!-- Target entity picker -->

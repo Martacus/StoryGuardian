@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { Link as LinkIcon, ChevronUp, ChevronDown, ChevronRight } from 'lucide-vue-next'
+import { Link as LinkIcon, ChevronUp, ChevronDown, ChevronRight, ArrowLeftRight } from 'lucide-vue-next'
 import { useEntityStore } from '@/stores/entityStore'
 import { useLinkStore } from '@/stores/linkStore'
 import { useNavigationStore } from '@/stores/navigationStore'
@@ -31,8 +31,8 @@ onMounted(() => {
 const mode = ref<'relation' | 'entity'>('relation')
 const query = ref('')
 
-type SortKey = 'from' | 'type' | 'to'
-const sortKey = ref<SortKey>('from')
+type SortKey = 'entities' | 'type'
+const sortKey = ref<SortKey>('entities')
 const sortDir = ref<'asc' | 'desc'>('asc')
 
 function toggleSort(key: SortKey) {
@@ -68,27 +68,25 @@ function matchesQuery(link: Link) {
 // ── By Relation rows ──────────────────────────────────────────────────────
 interface RelationRow {
   link: Link
-  fromName: string
-  fromType: string
-  toName: string
-  toType: string
+  nameA: string
+  nameB: string
 }
 
 const relationRows = computed<RelationRow[]>(() => {
   const rows = linkStore.allLinks
     .filter(matchesQuery)
-    .map(link => ({
-      link,
-      fromName: entityName(link.fromEntityId),
-      fromType: entityById.value.get(link.fromEntityId)?.type ?? '',
-      toName: entityName(link.toEntityId),
-      toType: entityById.value.get(link.toEntityId)?.type ?? '',
-    }))
+    .map(link => {
+      // Order-independent pair: present the two entities alphabetically so the
+      // row reads identically regardless of stored from/to order.
+      const [nameA, nameB] = [entityName(link.fromEntityId), entityName(link.toEntityId)]
+        .sort((x, y) => x.localeCompare(y, undefined, { sensitivity: 'base' }))
+      return { link, nameA, nameB }
+    })
 
   const dir = sortDir.value === 'asc' ? 1 : -1
   rows.sort((a, b) => {
-    const av = sortKey.value === 'from' ? a.fromName : sortKey.value === 'to' ? a.toName : a.link.type
-    const bv = sortKey.value === 'from' ? b.fromName : sortKey.value === 'to' ? b.toName : b.link.type
+    const av = sortKey.value === 'type' ? a.link.type : a.nameA
+    const bv = sortKey.value === 'type' ? b.link.type : b.nameA
     return (av ?? '').localeCompare(bv ?? '', undefined, { sensitivity: 'base' }) * dir
   })
   return rows
@@ -191,12 +189,12 @@ function openRelation(link: Link) {
       <Table v-else-if="mode === 'relation'">
         <TableHeader>
           <TableRow>
-            <TableHead class="cursor-pointer select-none" @click="toggleSort('from')">
+            <TableHead class="cursor-pointer select-none" @click="toggleSort('entities')">
               <span class="inline-flex items-center gap-1">
-                From
+                Entities
                 <component
                   :is="sortDir === 'asc' ? ChevronUp : ChevronDown"
-                  v-if="sortKey === 'from'"
+                  v-if="sortKey === 'entities'"
                   class="h-3.5 w-3.5"
                 />
               </span>
@@ -211,16 +209,6 @@ function openRelation(link: Link) {
                 />
               </span>
             </TableHead>
-            <TableHead class="cursor-pointer select-none" @click="toggleSort('to')">
-              <span class="inline-flex items-center gap-1">
-                To
-                <component
-                  :is="sortDir === 'asc' ? ChevronUp : ChevronDown"
-                  v-if="sortKey === 'to'"
-                  class="h-3.5 w-3.5"
-                />
-              </span>
-            </TableHead>
             <TableHead>Description</TableHead>
           </TableRow>
         </TableHeader>
@@ -231,15 +219,20 @@ function openRelation(link: Link) {
             class="cursor-pointer"
             @click="openRelation(row.link)"
           >
-            <TableCell class="font-medium">{{ row.fromName }}</TableCell>
+            <TableCell class="font-medium">
+              <span class="inline-flex items-center gap-2">
+                {{ row.nameA }}
+                <ArrowLeftRight class="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                {{ row.nameB }}
+              </span>
+            </TableCell>
             <TableCell class="text-muted-foreground">{{ row.link.type || '—' }}</TableCell>
-            <TableCell class="font-medium">{{ row.toName }}</TableCell>
             <TableCell class="text-muted-foreground max-w-xs truncate">
               {{ row.link.description || '—' }}
             </TableCell>
           </TableRow>
           <TableRow v-if="relationRows.length === 0">
-            <TableCell colspan="4" class="text-center text-muted-foreground py-8">
+            <TableCell colspan="3" class="text-center text-muted-foreground py-8">
               No relations match your search.
             </TableCell>
           </TableRow>

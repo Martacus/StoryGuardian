@@ -29,7 +29,8 @@
       "Bash(git -C \"C:\\\\Projects\\\\StoryGuardian\" log --all --oneline --grep=\"EntityTypeInput\\\\|entity form\")",
       "Bash(git -C \"C:\\\\Projects\\\\StoryGuardian\" show 69361b4 --stat)",
       "Bash(Get-ChildItem -Path \"frontend\" -Directory)",
-      "Bash(grep -E \"\\\\.\\(go|ts\\)$\")"
+      "Bash(grep -E \"\\\\.\\(go|ts\\)$\")",
+      "Bash(xargs grep -l \"writeJSONAtomic\")"
     ]
   }
 }
