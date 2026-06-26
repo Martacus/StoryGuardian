@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 import { AppConfigService, WorldService } from '../../bindings/litguardian/internal'
 import type { WorldInfo, WorldMeta } from '../../bindings/litguardian/internal'
 import { useLayoutStore } from './layoutStore'
+import { useThemeStore } from './themeStore'
 import { useImageStore } from './imageStore'
 import { useEntityStore } from './entityStore'
 import { useLinkStore } from './linkStore'
@@ -79,6 +80,7 @@ export const useWorldStore = defineStore('world', () => {
       currentWorld.value = worldInfo
       await loadWorldMeta()
       await useLayoutStore().loadLayout()
+      await useThemeStore().loadThemes()
       await useImageStore().loadImages()
       await useEntityStore().loadEntities()
     } catch (e) {
@@ -102,6 +104,7 @@ export const useWorldStore = defineStore('world', () => {
       currentWorld.value = worldInfo
       await loadWorldMeta()
       await useLayoutStore().loadLayout()
+      await useThemeStore().loadThemes()
       await useImageStore().loadImages()
       await useEntityStore().loadEntities()
     } catch (e) {
@@ -132,6 +135,7 @@ export const useWorldStore = defineStore('world', () => {
     currentWorld.value = null
     worldMeta.value = null
     useLayoutStore().reset()
+    useThemeStore().reset()
     useImageStore().reset()
     useEntityStore().reset()
     useLinkStore().reset()

@@ -12,6 +12,7 @@ import RelationDetailView from '../entity/RelationDetailView.vue'
 import RelationsListView from '../entity/RelationsListView.vue'
 import CategoriesListView from '../category/CategoriesListView.vue'
 import CategoryDetailView from '../category/CategoryDetailView.vue'
+import ThemesView from '../themes/ThemesView.vue'
 import {
   BookOpen,
   Globe,
@@ -19,12 +20,13 @@ import {
   Link,
   Tags,
   FolderTree,
+  LayoutGrid,
   Search,
   LogOut,
 } from 'lucide-vue-next'
 import type { Component } from 'vue'
 
-type View = 'overview' | 'entities' | 'links' | 'tags' | 'categories'
+type View = 'overview' | 'entities' | 'links' | 'tags' | 'categories' | 'themes'
 
 const store = useWorldStore()
 const navStore = useNavigationStore()
@@ -39,6 +41,7 @@ const navItems: { id: View; icon: Component; label: string; disabled: boolean }[
   { id: 'links',      icon: Link,       label: 'Relations',  disabled: false },
   { id: 'tags',       icon: Tags,       label: 'Tags',       disabled: true  },
   { id: 'categories', icon: FolderTree, label: 'Categories', disabled: false },
+  { id: 'themes',     icon: LayoutGrid, label: 'Themes',     disabled: false },
 ]
 </script>
 
@@ -104,7 +107,7 @@ const navItems: { id: View; icon: Component; label: string; disabled: boolean }[
 
         <template v-else-if="navStore.currentView === 'entities'">
           <RelationDetailView v-if="navStore.currentLinkId" />
-          <EntityDetailView v-else-if="navStore.currentEntityId" />
+          <EntityDetailView v-else-if="navStore.currentEntityId" :key="navStore.currentEntityId" />
           <EntitiesListView v-else />
         </template>
 
@@ -117,6 +120,8 @@ const navItems: { id: View; icon: Component; label: string; disabled: boolean }[
           <CategoryDetailView v-if="navStore.currentCategoryName" />
           <CategoriesListView v-else />
         </template>
+
+        <ThemesView v-else-if="navStore.currentView === 'themes'" />
 
         <!-- Placeholder for future views -->
         <div

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, inject, h, onMounted, onBeforeUnmount, type ShallowRef, type Component } from 'vue'
+import { ref, computed, watch, inject, h, onMounted, onBeforeUnmount, type ComputedRef, type ShallowRef, type Component } from 'vue'
 import { Upload, LayoutGrid, List, Trash2, Check, ImageOff } from 'lucide-vue-next'
 import { useImageStore } from '@/stores/imageStore'
 import { useLayoutStore } from '@/stores/layoutStore'
@@ -16,10 +16,7 @@ import {
 } from '@/components/ui/tooltip'
 import { timeAgo } from '@/lib/timeago'
 
-const props = defineProps<{
-  viewId: string
-  moduleId: string
-}>()
+const ctx = inject<ComputedRef<{ viewId: string; moduleId: string }>>('moduleContext')!
 
 const imageStore = useImageStore()
 const layoutStore = useLayoutStore()
@@ -28,11 +25,11 @@ const worldStore = useWorldStore()
 // ── View mode (grid / list) ──────────────────────────────────────────────────
 
 const viewMode = computed(() =>
-  layoutStore.getModuleConfig(props.viewId, props.moduleId, 'viewMode', 'grid') as 'grid' | 'list'
+  layoutStore.getModuleConfig(ctx.value.viewId, ctx.value.moduleId, 'viewMode', 'grid') as 'grid' | 'list'
 )
 
 async function setViewMode(mode: 'grid' | 'list') {
-  layoutStore.setModuleConfig(props.viewId, props.moduleId, 'viewMode', mode)
+  layoutStore.setModuleConfig(ctx.value.viewId, ctx.value.moduleId, 'viewMode', mode)
   await layoutStore.saveLayout()
 }
 

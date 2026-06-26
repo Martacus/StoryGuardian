@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import { ref, computed, watch, nextTick, onMounted } from 'vue'
+import { ref, computed, watch, nextTick, onMounted, onBeforeUnmount, provide } from 'vue'
 import { GridLayout, GridItem } from 'grid-layout-plus'
 import type { LayoutItem } from 'grid-layout-plus'
 import { Settings2, Check, Plus } from 'lucide-vue-next'
 import { useLayoutStore } from '@/stores/layoutStore'
+import {
+  useWorldLayoutController,
+  LAYOUT_CONTROLLER_KEY,
+  type LayoutController,
+} from '@/composables/useLayoutController'
 import { moduleRegistry } from '@/modules/registry'
 import type { ModuleLayout } from '../../../bindings/litguardian/internal/models'
 import ModuleCard from './ModuleCard.vue'
@@ -19,18 +24,24 @@ import {
 
 const props = defineProps<{
   viewId: string
+  // Where modules are read from / saved to. Defaults to the world layout for viewId.
+  controller?: LayoutController
 }>()
 
 const layoutStore = useLayoutStore()
 
+// Use the provided controller, or fall back to the world layout for this view.
+const controller: LayoutController = props.controller ?? useWorldLayoutController(props.viewId)
+provide(LAYOUT_CONTROLLER_KEY, controller)
+
 const addModuleOpen = ref(false)
 
 // Modules from the registry that aren't currently on the grid
-const addableModules = computed(() => layoutStore.getAddableModules(props.viewId))
+const addableModules = computed(() => controller.getAddableModules())
 
 // In edit mode show all modules (hidden ones are dimmed); in view mode only visible
 const activeModules = computed<ModuleLayout[]>(() => {
-  const all = layoutStore.getViewModules(props.viewId)
+  const all = controller.getModules()
   return layoutStore.editMode ? all : all.filter(m => m.visible)
 })
 
@@ -47,19 +58,19 @@ onMounted(() => {
   })
 })
 
-// Guard flag: prevents the watch from replacing gridLayout mid-drag.
-// When layout-updated fires we update the store, which causes activeModules to
-// recompute. Without this guard the watch would immediately replace gridLayout
-// with a fresh array, orphaning the placeholder <div> in the DOM and leaving it
-// sitting on top of cards (blocking all interaction) until the page is reloaded.
+// suppressRebuild: raised during a drag/resize cycle so the watch doesn't replace
+// gridLayout while grid-layout-plus is still cleaning up its placeholder.
+// Also raised during an external layout rebuild (theme switch, etc.) so the grid
+// firing layout-updated back doesn't re-fork the entity to Custom.
 let suppressRebuild = false
 
-// Rebuild gridLayout whenever the store changes (world load, visibility toggle,
-// editMode switch). Suppressed while a drag/resize cycle is in flight.
+// Rebuild gridLayout whenever the source changes (world load, visibility toggle,
+// editMode switch, theme switch). Suppressed while a drag/resize cycle is in flight.
 watch(
   activeModules,
   (modules) => {
     if (suppressRebuild) return
+    suppressRebuild = true
     gridLayout.value = modules.map(m => ({
       i: m.id,
       x: m.x,
@@ -67,6 +78,7 @@ watch(
       w: m.w,
       h: m.h,
     }))
+    nextTick(() => { suppressRebuild = false })
   },
   { immediate: true, deep: true },
 )
@@ -76,26 +88,25 @@ function getModuleDef(moduleId: string) {
 }
 
 function getModule(moduleId: string): ModuleLayout | undefined {
-  return layoutStore.getViewModules(props.viewId).find(m => m.id === moduleId)
+  return controller.getModules().find(m => m.id === moduleId)
 }
 
 function getComponent(moduleId: string) {
   return getModuleDef(moduleId)?.component
 }
 
-// Called by grid-layout-plus after a drag or resize completes — sync back to store.
-// We raise suppressRebuild so the watcher doesn't replace the entire gridLayout
-// array while grid-layout-plus is still cleaning up its placeholder element.
-// The flag is cleared on the next tick, after grid-layout-plus has finished.
 function selectModule(moduleId: string) {
-  layoutStore.addModule(props.viewId, moduleId)
+  controller.addModule(moduleId)
   addModuleOpen.value = false
 }
 
+// Called by grid-layout-plus after a drag or resize completes — sync back to the
+// controller. We raise suppressRebuild so the watcher doesn't replace the entire
+// gridLayout array while grid-layout-plus is still cleaning up its placeholder.
 function onLayoutUpdated(newLayout: LayoutItem[]) {
+  if (suppressRebuild) return
   suppressRebuild = true
-  layoutStore.handleLayoutUpdate(
-    props.viewId,
+  controller.handleLayoutUpdate(
     newLayout.map(item => ({
       i: String(item.i),
       x: item.x,
@@ -106,6 +117,25 @@ function onLayoutUpdated(newLayout: LayoutItem[]) {
   )
   nextTick(() => { suppressRebuild = false })
 }
+
+// Toggle edit mode. Saving (via the active controller) happens when leaving edit.
+async function toggleEdit() {
+  if (layoutStore.editMode) {
+    await controller.save()
+  }
+  layoutStore.editMode = !layoutStore.editMode
+}
+
+// Flush any in-progress edits if the grid is torn down while still in edit mode
+// (e.g. navigating away via the sidebar without clicking Done). The synchronous
+// part of save() commits the draft to the store before unmount completes; the
+// store mutation is what the next view reads.
+onBeforeUnmount(() => {
+  if (layoutStore.editMode) {
+    controller.save()
+    layoutStore.editMode = false
+  }
+})
 </script>
 
 <template>
@@ -117,6 +147,9 @@ function onLayoutUpdated(newLayout: LayoutItem[]) {
         <slot name="title" />
       </h1>
       <div class="flex items-center gap-2">
+        <!-- View-provided controls (e.g. entity theme dropdown) -->
+        <slot name="actions" />
+
         <!-- Add Module dialog -->
         <Dialog v-model:open="addModuleOpen">
           <DialogTrigger as-child>
@@ -152,7 +185,7 @@ function onLayoutUpdated(newLayout: LayoutItem[]) {
         <Button
           :variant="layoutStore.editMode ? 'default' : 'outline'"
           size="sm"
-          @click="layoutStore.toggleEditMode()"
+          @click="toggleEdit()"
         >
           <Check v-if="layoutStore.editMode" class="h-4 w-4" />
           <Settings2 v-else class="h-4 w-4" />
@@ -194,13 +227,9 @@ function onLayoutUpdated(newLayout: LayoutItem[]) {
             :view-id="viewId"
             :module="getModule(String(item.i))!"
             class="h-full"
-            @remove="layoutStore.removeModule(viewId, String(item.i))"
+            @remove="controller.removeModule(String(item.i))"
           >
-            <component
-              :is="getComponent(String(item.i))"
-              :view-id="viewId"
-              :module-id="String(item.i)"
-            />
+            <component :is="getComponent(String(item.i))" />
           </ModuleCard>
         </GridItem>
       </GridLayout>

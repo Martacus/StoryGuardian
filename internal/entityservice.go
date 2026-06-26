@@ -22,6 +22,14 @@ type Entity struct {
 	Categories  []string  `json:"categories"`
 	CreatedAt   time.Time `json:"createdAt"`
 	UpdatedAt   time.Time `json:"updatedAt"`
+
+	// LayoutThemeID selects which entity-detail layout this entity follows:
+	// "" = follow the world's default theme, "custom" = use CustomLayout,
+	// otherwise the id of a shared theme.
+	LayoutThemeID string `json:"layoutThemeId,omitempty"`
+	// CustomLayout holds this entity's own module layout; used only when
+	// LayoutThemeID == "custom".
+	CustomLayout []ModuleLayout `json:"customLayout,omitempty"`
 }
 
 // EntityService handles CRUD operations for entities within a world folder.

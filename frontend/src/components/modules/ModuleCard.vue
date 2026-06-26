@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, provide, shallowRef, type Component } from 'vue'
+import { computed, provide, inject, shallowRef, type Component } from 'vue'
 import { GripVertical, Eye, EyeOff, X } from 'lucide-vue-next'
 import { useLayoutStore } from '@/stores/layoutStore'
+import { LAYOUT_CONTROLLER_KEY, type LayoutController } from '@/composables/useLayoutController'
 import { moduleRegistry } from '@/modules/registry'
 import type { ModuleLayout } from '../../../bindings/litguardian/internal/models'
 import { Card, CardHeader, CardTitle, CardContent, CardAction } from '@/components/ui/card'
@@ -17,16 +18,21 @@ const emit = defineEmits<{
 }>()
 
 const layoutStore = useLayoutStore()
+const controller = inject<LayoutController>(LAYOUT_CONTROLLER_KEY)
 
 const moduleActions = shallowRef<Component | null>(null)
 provide('moduleActions', moduleActions)
+
+// Module identity, provided to the slotted module component (which used to
+// receive these as fallthrough attrs — see useModuleContext).
+provide('moduleContext', computed(() => ({ viewId: props.viewId, moduleId: props.module.id })))
 
 const definition = computed(() => moduleRegistry.find(m => m.id === props.module.id))
 const label = computed(() => definition.value?.label ?? props.module.id)
 const icon = computed(() => definition.value?.icon)
 
 function toggleVisibility() {
-  layoutStore.toggleModuleVisibility(props.viewId, props.module.id)
+  controller?.toggleVisibility(props.module.id)
 }
 </script>
 

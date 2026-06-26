@@ -20,6 +20,7 @@ func main() {
 			application.NewService(&internal.AppConfigService{}),
 			application.NewService(&internal.WorldService{}),
 			application.NewService(&internal.LayoutService{}),
+			application.NewService(&internal.ThemeService{}),
 			application.NewService(&internal.ImageService{}),
 			application.NewService(&internal.EntityService{}),
 			application.NewService(&internal.LinkService{}),
